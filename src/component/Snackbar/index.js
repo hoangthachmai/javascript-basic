@@ -74,7 +74,12 @@ const Snackbar = (props) => {
         />
       )}
       {snackbarInitial.variant === 'alert' && (
-        <MuiSnackbar anchorOrigin={snackbarInitial.anchorOrigin} open={open} autoHideDuration={6000} onClose={handleClose}>
+        <MuiSnackbar
+          anchorOrigin={snackbarInitial.anchorOrigin}
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+        >
           <Alert variant="filled" onClose={handleClose} severity={snackbarInitial.alertSeverity}>
             {snackbarInitial.message}
           </Alert>

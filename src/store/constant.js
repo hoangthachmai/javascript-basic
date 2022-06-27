@@ -2,22 +2,26 @@ export const gridSpacing = 3;
 export const drawerWidth = 320;
 export const drawerWidthIcon = 120;
 export const vibEndpoints = {
-  authenticate: '/Primary/?FlowAlias=hnn_api_authenticate&action=api',
+  authenticate: '/Primary/?FlowAlias=hnn_api_authenticate_booking&action=api',
   login: '/Primary/?FlowAlias=portal_api_sgin_sign_in&action=api',
   home: '/Primary/?FlowAlias=portal_api_home_get_home_page&outputtype=RawJson&action=api',
   menu: '/Primary/?FlowAlias=portal_api_home_get_menu&outputtype=RawJson&action=api',
-  get_project_list: '/Primary/?FlowAlias=hnn_api_get_menu_project_list&action=api',
-  get_folders: '/Primary/?FlowAlias=hnn_api_get_folder_tree_by_project&action=api',
+  get_project_list: '/Primary/?FlowAlias=hnn_booking_api_get_menu_project&action=api',
+  get_folders: '/Primary/?FlowAlias=hnn_booking_api_get_menu_tree&action=api',
 
-  get_mentor_detail: '/Primary/?FlowAlias=hnn_api_cons_get_consultant_detail&action=api',
+  get_mentor_detail: '/Primary/?FlowAlias=hnn_api_booking_get_mentor_detail_by_id&action=api',
 
   //booking
-  get_draft_booking: '/Primary/?FlowAlias=hnn_api_booking_get_all_draft_booking&action=api',
-  get_reviewed_booking: '/Primary/?FlowAlias=hnn_api_booking_get_all_reviewed_booking&action=api',
-  get_completed_booking: '/Primary/?FlowAlias=hnn_api_booking_get_all_completed_booking&action=api',
-  get_booking_detail: '/Primary/?FlowAlias=hnn_api_booking_get_booking_detail_by_id&action=api',
+  get_all_booking: '/Primary/?FlowAlias=hnn_api_booking_get_all_booking&action=api',
+  get_handle_booking: '/Primary/?FlowAlias=hnn_api_booking_get_all_handle_booking&action=api',
+  get_cancel_booking: '/Primary/?FlowAlias=hnn_api_booking_get_all_cancel_booking&action=api',
+  get_completed_booking:
+    '/Primary/?FlowAlias=hnn_api_booking_get_all_completed_bookings&action=api',
+  get_by_date_booking: '/Primary/?FlowAlias=hnn_api_booking_get_all_booking_by_date&action=api',
+  get_by_mentor_booking: '/Primary/?FlowAlias=hnn_api_booking_get_all_booking&action=api',
+  get_booking_detail: '/Primary/?FlowAlias=hnn_api_booking_get_detail_booking&action=api',
   set_booking_status: '/Primary/?FlowAlias=hnn_api_booking_set_booking_status&action=api',
-  update_booking: '/Primary/?FlowAlias=hnn_api_booking_update_booking&action=api',
+  update_booking: '/Primary/?FlowAlias=hnn_api_booking_update_booking_information&action=api',
 };
 export const apiDomain = 'https://upload.truebpm.vn';
 // export const apiDomain = 'http://localhost:4000'
@@ -26,9 +30,12 @@ export const apiEndpoints = {
 };
 
 export const bookingActions = {
-  draft_list: 'BOOKING_LIST_OPEN_DRAFT_ACTION',
-  reviewed_list: 'BOOKING_LIST_OPEN_REVIEWED_ACTION',
-  completed_list: 'BOOKING_LIST_OPEN_COMPLETED_ACTION',
+  all_list: 'HNN_ACTION_OPEN_BOOKING_LIST',
+  handle_list: 'HNN_ACTION_OPEN_HANDLE_BOOKING_LIST',
+  cancel_list: 'HNN_ACTION_OPEN_CANCEL_BOOKING_LIST',
+  completed_list: 'HNN_ACTION_OPEN_COMPLETED_BOOKING_LIST',
+  by_date_list: 'HNN_ACTION_OPEN_DATE_BOOKING_LIST',
+  by_mentor_list: 'HNN_ACTION_OPEN_MENTOR_STATISTIC_LIST',
 };
 
 export const tinyMCESecretKey = '7kiqm5c7crs3mdgf1lgiq973xn7kdxtf6ohasxhmkb2mpc45';
@@ -41,12 +48,11 @@ export const view = {
   floating: {},
   booking: {
     list: {
-      recall: 'BOOKING_LIST_RECALL_MENU_BUTTON',
-      approve_pending: 'BOOKING_LIST_APPROVE_PENDING_MENU_BUTTON',
-      submit: 'BOOKING_LIST_SUBMIT_MENU_BUTTON',
+      cancel: 'BOOKING_LIST_CANCEL_MENU_BUTTON',
+      review: 'BOOKING_LIST_REVIEW_MENU_BUTTON',
+      handled: 'BOOKING_LIST_HANDLED_MENU_BUTTON',
     },
     detail: {
-      back: 'BOOKING_DETAIL_CLOSE_FORM_BUTTON',
       save: 'BOOKING_DETAIL_SAVE_FORM_BUTTON',
     },
   },

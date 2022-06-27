@@ -47,6 +47,9 @@ export function theme(customization) {
         dark: value.primaryDark,
         100: value.primary100,
       },
+      warning: {
+        main: value.warning,
+      },
       secondary: {
         light: value.secondaryLight,
         main: value.secondary,

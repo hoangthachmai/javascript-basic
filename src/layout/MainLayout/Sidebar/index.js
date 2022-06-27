@@ -1,6 +1,14 @@
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { makeStyles, useMediaQuery, useTheme, Divider, Drawer, Grid, Hidden } from '@material-ui/core';
+import {
+  makeStyles,
+  useMediaQuery,
+  useTheme,
+  Divider,
+  Drawer,
+  Grid,
+  Hidden,
+} from '@material-ui/core';
 
 import MenuList from './MenuList';
 
@@ -19,7 +27,8 @@ const useStyles = makeStyles((theme) => ({
   logoContainer: {
     lineHeight: 0,
     background: theme.palette.primary.main,
-    boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)',
+    boxShadow:
+      '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)',
   },
   drawerPaper: {
     width: drawerWidth,

@@ -2,7 +2,7 @@ import * as actionTypes from './actions';
 
 export const initialState = {
   selectedDocument: null,
-  documentType: ''
+  documentType: '',
 };
 
 const documentReducer = (state = initialState, action) => {
@@ -12,7 +12,7 @@ const documentReducer = (state = initialState, action) => {
         ...state,
         selectedDocument: action.selectedDocument,
         documentType: action.documentType,
-      }
+      };
     default:
       return state;
   }

@@ -5,20 +5,20 @@ export const initialState = {
     documents: [
       {
         id: '1',
-        title: "xxx Review Audit Planning [THANH] Kiểm toán định kỳ năm 2021 - VIB Hải Châu",
-        url: "https://google.com",
-        assigned_by: "Bích Vân",
+        title: 'xxx Review Audit Planning [THANH] Kiểm toán định kỳ năm 2021 - VIB Hải Châu',
+        url: 'https://google.com',
+        assigned_by: 'Bích Vân',
         assign_date: 1635343491291,
-        application: "Internal Audit - Wholesale Banking"
+        application: 'Internal Audit - Wholesale Banking',
       },
       {
         id: '2',
-        title: "xxx Review Audit Planning Kiểm toán định kỳ năm 2021 - Upas LC [Test]",
-        url: "https://google.com",
-        assigned_by: "Bích Vân",
+        title: 'xxx Review Audit Planning Kiểm toán định kỳ năm 2021 - Upas LC [Test]',
+        url: 'https://google.com',
+        assigned_by: 'Bích Vân',
         assign_date: 1635128823000,
-        application: "Internal Audit - Wholesale Banking"
-      }
+        application: 'Internal Audit - Wholesale Banking',
+      },
     ],
     total_item: 0,
     total_page: 0,
@@ -27,8 +27,8 @@ export const initialState = {
     order_by: 'assigned_date',
     order_type: 'desc',
     folder_id: '',
-    project_id: ''
-  }
+    project_id: '',
+  },
 };
 
 const taskReducer = (state = initialState, action) => {
@@ -47,9 +47,9 @@ const taskReducer = (state = initialState, action) => {
           search_text: action.search_text,
           category_id: action.category_id,
           folder_id: action.folder_id,
-          project_id: action.project_id
-        }
-    }
+          project_id: action.project_id,
+        },
+      };
     default:
       return state;
   }

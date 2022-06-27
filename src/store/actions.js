@@ -18,4 +18,3 @@ export const CONFIRM_CHANGE = '@confirm/CHANGE';
 export const DOCUMENT_CHANGE = '@document/CHANGE';
 export const NEWS_CHANGE = '@news/CHANGE';
 export const TASK_CHANGE = '@task/CHANGE_TASK';
-

@@ -24,7 +24,13 @@ const NavMotion = ({ children }) => {
   };
 
   return (
-    <motion.div initial="initial" animate="in" exit="out" variants={motionVariants} transition={motionTransition}>
+    <motion.div
+      initial="initial"
+      animate="in"
+      exit="out"
+      variants={motionVariants}
+      transition={motionTransition}
+    >
       {children}
     </motion.div>
   );

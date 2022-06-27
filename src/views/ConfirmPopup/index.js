@@ -54,11 +54,17 @@ export default function ConfirmPupup() {
   };
 
   return (
-    <Modal open={open} onClose={closeConfirmPopup} aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description">
-      <div style={{ ...modalStyle, width: matchDownXs ? '100%' : '500px' }} className={classes.paper}>
-        <Typography variant="subtitle1">
-          {title}
-        </Typography>
+    <Modal
+      open={open}
+      onClose={closeConfirmPopup}
+      aria-labelledby="simple-modal-title"
+      aria-describedby="simple-modal-description"
+    >
+      <div
+        style={{ ...modalStyle, width: matchDownXs ? '100%' : '500px' }}
+        className={classes.paper}
+      >
+        <Typography variant="subtitle1">{title}</Typography>
         <Divider className={classes.divider} />
         <Typography variant="subtitle2">{message}</Typography>
         <Grid container justify="flex-end" spacing={gridSpacing}>

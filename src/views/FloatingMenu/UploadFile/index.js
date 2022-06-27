@@ -80,11 +80,17 @@ export default function PermissionModal(props) {
   }
 
   return (
-    <Modal open={openDialog || false} onClose={onClose} aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description">
-      <div style={{ ...modalStyle, width: matchDownXs ? '100%' : '500px' }} className={classes.paper}>
-        <Typography variant="subtitle1">
-          Tải file lên
-        </Typography>
+    <Modal
+      open={openDialog || false}
+      onClose={onClose}
+      aria-labelledby="simple-modal-title"
+      aria-describedby="simple-modal-description"
+    >
+      <div
+        style={{ ...modalStyle, width: matchDownXs ? '100%' : '500px' }}
+        className={classes.paper}
+      >
+        <Typography variant="subtitle1">Tải file lên</Typography>
         <Divider className={classes.divider} />
         <Dropzone multiple={false}>
           {() => (
@@ -92,7 +98,9 @@ export default function PermissionModal(props) {
               <div {...getRootProps({ className: classes.dropzone })}>
                 <input {...getInputProps()} />
                 {selectedFiles.length && selectedFiles[0].name ? (
-                  <div className="selected-file">{selectedFiles.length && selectedFiles[0].name}</div>
+                  <div className="selected-file">
+                    {selectedFiles.length && selectedFiles[0].name}
+                  </div>
                 ) : (
                   'Kéo thả file vào đây, hoặc click để bắt đầu chọn'
                 )}
@@ -107,7 +115,12 @@ export default function PermissionModal(props) {
             </Button>
           </Grid>
           <Grid item>
-            <Button variant="contained" color="primary" disabled={!selectedFiles} onClick={uploadToStorage}>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={!selectedFiles}
+              onClick={uploadToStorage}
+            >
               Tải lên
             </Button>
           </Grid>

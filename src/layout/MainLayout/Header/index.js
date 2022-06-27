@@ -56,7 +56,13 @@ const Header = (props) => {
             </Grid>
           </Grid>
           <Grid item>
-            <IconButton edge="start" className={classes.menuButton} aria-label="open drawer" color="inherit" onClick={drawerToggle}>
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              aria-label="open drawer"
+              color="inherit"
+              onClick={drawerToggle}
+            >
               <MenuTwoToneIcon className={classes.menuIcon} />
             </IconButton>
           </Grid>

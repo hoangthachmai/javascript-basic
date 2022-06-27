@@ -14,6 +14,7 @@ import {
   Checkbox,
 } from '@material-ui/core';
 // import Breadcrumb from './../../component/Breadcrumb';
+import Modal from '../Table/Modal';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -27,12 +28,8 @@ import SearchTwoToneIcon from '@material-ui/icons/SearchTwoTone';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import { gridSpacing, view } from '../../store/constant';
 import { useSelector, useDispatch } from 'react-redux';
-import { format as formatDate } from 'date-fns';
 import useTask from './../../hooks/useTask';
 import useConfirmPopup from './../../hooks/useConfirmPopup';
 import useView from './../../hooks/useView';
@@ -40,20 +37,9 @@ import {
   FLOATING_MENU_CHANGE,
   DOCUMENT_CHANGE,
   TASK_CHANGE,
-  SELECTED_FOLDER_CHANGE,
   CONFIRM_CHANGE,
 } from '../../store/actions';
-import axiosInstance from '../../services/axios';
 import useBooking from './../../hooks/useBooking';
-
-async function setFeaturedNew(setFeaturedUrl, documentId, isFeatured) {
-  return await axiosInstance
-    .post(setFeaturedUrl, { outputtype: 'RawJson', id: documentId, value: isFeatured })
-    .then((response) => {
-      if (response.status === 200 && response.data.return === 200) return true;
-      else return false;
-    });
-}
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -82,9 +68,11 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'fullname', numeric: false, disablePadding: false, label: 'Họ và tên', maxWidth: 150 },
-  { id: 'phone', numeric: false, disablePadding: false, label: 'SĐT', maxWidth: 100 },
-  { id: 'consultant', numeric: false, disablePadding: false, label: 'Mentor', maxWidth: 100 },
+  { id: 'fullname', numeric: false, disablePadding: false, label: 'Khách hàng', maxWidth: 150 },
+  { id: 'university', numeric: false, disablePadding: false, label: 'Dự án', maxWidth: 100 },
+  { id: 'assess', numeric: false, disablePadding: false, label: 'Đánh giá', maxWidth: 150 },
+  { id: 'email', numeric: false, disablePadding: false, label: 'Email', maxWidth: 100 },
+  { id: 'number_phone', numeric: false, disablePadding: false, label: 'SĐT', maxWidth: 100 },
   {
     id: 'consultation_day',
     numeric: false,
@@ -92,9 +80,10 @@ const headCells = [
     label: 'Lịch tư vấn',
     maxWidth: 100,
   },
-  { id: 'created_date', numeric: false, disablePadding: false, label: 'Ngày tạo', maxWidth: 100 },
+  { id: 'mentor', numeric: false, disablePadding: false, label: 'Mentor', maxWidth: 100 },
+  { id: 'link', numeric: false, disablePadding: false, label: 'Link', maxWidth: 100 },
   { id: 'status', numeric: false, disablePadding: false, label: 'Trạng thái', maxWidth: 100 },
-  { id: 'link', numeric: false, disablePadding: false, label: 'Link Meeting', maxWidth: 100 },
+  { id: 'note', numeric: false, disablePadding: false, label: 'Chú thích', maxWidth: 100 },
 ];
 
 function EnhancedTableHead(props) {
@@ -186,13 +175,11 @@ const EnhancedTableToolbar = (props) => {
   const {
     numSelected,
     tableTitle,
-
-    buttonSetBookingDraft,
-    recallBookings,
-    buttonSetBookingReviewed,
-    submitBookings,
-    buttonSetBookingCompleted,
-    approveBookings,
+    buttonBookingCancel,
+    buttonBookingReview,
+    buttonBookingHandled,
+    handleCancelBooking,
+    handleReviewBooking,
   } = props;
 
   return (
@@ -214,40 +201,39 @@ const EnhancedTableToolbar = (props) => {
       <Grid container justify="flex-end" spacing={gridSpacing}>
         {
           <>
-            {buttonSetBookingDraft && (
+            {buttonBookingHandled && (
               <Grid item>
                 <Button
                   variant="contained"
-                  color={buttonSetBookingDraft.style ? buttonSetBookingDraft.style : 'primary'}
-                  onClick={recallBookings}
+                  color={buttonBookingHandled.style ? buttonBookingHandled.style : 'primary'}
+                  style={{ background: '#FFC000' }}
+                  onClick={() => {}}
                 >
-                  {buttonSetBookingDraft.text}
+                  {buttonBookingHandled.text}
                 </Button>
               </Grid>
             )}
-            {buttonSetBookingReviewed && (
+            {buttonBookingCancel && (
               <Grid item>
                 <Button
                   variant="contained"
-                  color={
-                    buttonSetBookingReviewed.style ? buttonSetBookingReviewed.style : 'primary'
-                  }
-                  onClick={submitBookings}
+                  color={buttonBookingCancel.style ? buttonBookingCancel.style : 'primary'}
+                  style={{ background: '#FFC000' }}
+                  onClick={handleCancelBooking}
                 >
-                  {buttonSetBookingReviewed.text}
+                  {buttonBookingCancel.text}
                 </Button>
               </Grid>
             )}
-            {buttonSetBookingCompleted && (
+            {buttonBookingReview && (
               <Grid item>
                 <Button
                   variant="contained"
-                  color={
-                    buttonSetBookingCompleted.style ? buttonSetBookingCompleted.style : 'primary'
-                  }
-                  onClick={approveBookings}
+                  color={buttonBookingReview.style ? buttonBookingReview.style : 'primary'}
+                  style={{ background: '#FFC000' }}
+                  onClick={handleReviewBooking}
                 >
-                  {buttonSetBookingCompleted.text}
+                  {buttonBookingReview.text}
                 </Button>
               </Grid>
             )}
@@ -330,42 +316,42 @@ export default function GeneralTable(props) {
   const dontHaveColumnSettings = !tableColumns || !tableColumns.length;
   const displayOptions = {
     fullname: dontHaveColumnSettings ? true : tableColumns.includes('fullname'),
-    start_time: dontHaveColumnSettings ? true : tableColumns.includes('start_time'),
-    phone: dontHaveColumnSettings ? true : tableColumns.includes('number_phone'),
-    consultant: dontHaveColumnSettings ? true : tableColumns.includes('consultant'),
+    university: dontHaveColumnSettings ? true : tableColumns.includes('university'),
+    assess: dontHaveColumnSettings ? true : tableColumns.includes('assess'),
+    email: dontHaveColumnSettings ? true : tableColumns.includes('email'),
+    number_phone: dontHaveColumnSettings ? true : tableColumns.includes('number_phone'),
     consultation_day: dontHaveColumnSettings ? true : tableColumns.includes('consultation_day'),
     link: dontHaveColumnSettings ? true : tableColumns.includes('link'),
     status: dontHaveColumnSettings ? true : tableColumns.includes('status'),
+    mentor: dontHaveColumnSettings ? true : tableColumns.includes('mentor'),
+    note: dontHaveColumnSettings ? true : tableColumns.includes('note'),
   };
 
-  const buttonSetBookingDraft = menuButtons.find(
-    (button) => button.name === view.booking.list.recall
-  );
-  const buttonSetBookingReviewed = menuButtons.find(
-    (button) => button.name === view.booking.list.submit
-  );
-  const buttonSetBookingCompleted = menuButtons.find(
-    (button) => button.name === view.booking.list.approve_pending
+  const buttonBookingCancel = menuButtons.find(
+    (button) => button.name === view.booking.list.cancel
   );
 
+  const buttonBookingReview = menuButtons.find(
+    (button) => button.name === view.booking.list.review
+  );
+
+  const buttonBookingHandled = menuButtons.find(
+    (button) => button.name === view.booking.list.handled
+  );
+
+  const [isOpenModal, setIsOpenModal] = React.useState(false);
+  const [modalType, setModalType] = React.useState('');
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
   const [category, setCategory] = React.useState(null);
   const [selectedCategory, setSelectedCategory] = React.useState(null);
   const [searchText, setSearchText] = React.useState('');
-  const {
-    url,
-    documentType,
-    categories = [],
-    tableTitle,
-    showPreviewUrl = true,
-  } = props;
+  const { url, documentType, categories = [], tableTitle, showPreviewUrl = true } = props;
 
   const { projects } = useSelector((state) => state.project);
   const selectedProject = projects.find((project) => project.selected);
   const { flattenFolders, selectedFolder } = useSelector((state) => state.folder);
-  const parentFolder = flattenFolders.find((folder) => folder.id === selectedFolder.parent_id);
 
   const reduxDocuments = useSelector((state) => state.task);
   const {
@@ -377,29 +363,28 @@ export default function GeneralTable(props) {
     no_item_per_page = 10,
     category_id = '',
     search_text = '',
-    career_id = '',
     folder_id,
     project_id,
+    from_date = '',
+    to_date = '',
   } = reduxDocuments[documentType] || {};
 
   const defaultQueries = {
-    career_id,
     page: 1,
     order_by,
     order_type,
     no_item_per_page,
     category_id,
     search_text,
+    from_date: '',
+    to_date: '',
   };
-
-  function handleBackToParentFolder() {
-    dispatch({ type: SELECTED_FOLDER_CHANGE, selectedFolder: parentFolder });
-  }
 
   const { getDocuments } = useTask();
 
-  const { setBookingDraft, setBookingReviewed, setBookingCompleted, getBookingDetail } =
-    useBooking();
+  const { 
+    getBookingDetail,
+  } = useBooking();
 
   useEffect(() => {
     if (selectedProject && selectedFolder && url) {
@@ -418,6 +403,8 @@ export default function GeneralTable(props) {
         category_id,
         folder_id,
         project_id,
+        from_date,
+        to_date,
       });
     }
   }, [selectedFolder]);
@@ -534,45 +521,33 @@ export default function GeneralTable(props) {
     });
   };
 
-  const submitBooking = async () => {
-    if (buttonSetBookingReviewed && buttonSetBookingReviewed.is_required_input && !selected.length)
-      return showConfirmPopup({});
-    showConfirmPopup({
-      message: 'Bạn chắc chắn muốn gửi duyệt các đăng ký này?',
-      action: setBookingReviewed,
-      payload: selected,
-      onSuccess: reloadCurrentDocuments,
-    });
+  const handleOpenModal = (type) => {
+    if (selected.length === 0) return;
+    setIsOpenModal(true);
+    setModalType(type);
   };
 
-  const _recallBooking = async () => {
-    if (buttonSetBookingDraft && buttonSetBookingDraft.is_required_input && !selected.length)
-      return showConfirmPopup({});
-    showConfirmPopup({
-      message: 'Bạn chắc chắn muốn thu hồi các đăng ký này?',
-      action: setBookingDraft,
-      payload: selected,
-      onSuccess: reloadCurrentDocuments,
-    });
+  const handleCancelBooking = (data) => {
+    console.log('cancel', selected, data);
+    setIsOpenModal(false);
+    setModalType('');
   };
 
-  const approveBooking = async () => {
-    if (
-      buttonSetBookingCompleted &&
-      buttonSetBookingCompleted.is_required_input &&
-      !selected.length
-    )
-      return showConfirmPopup({});
-    showConfirmPopup({
-      message: 'Bạn chắc chắn muốn duyệt các đăng ký này?',
-      action: setBookingCompleted,
-      payload: selected,
-      onSuccess: reloadCurrentDocuments,
-    });
+  const handleReviewBooking = (data) => {
+    console.log('review', selected, data);
+    setIsOpenModal(false);
+    setModalType('');
   };
 
   return (
     <React.Fragment>
+      <Modal
+        isOpen={isOpenModal}
+        handleClose={() => setIsOpenModal(false)}
+        type={modalType}
+        handleCancel={handleCancelBooking}
+        handleReview={handleReviewBooking}
+      />
       <Grid container spacing={gridSpacing}>
         <Grid item xs={12}>
           <Grid container justify="space-between">
@@ -656,12 +631,11 @@ export default function GeneralTable(props) {
               <EnhancedTableToolbar
                 numSelected={selected.length}
                 tableTitle={tableTitle}
-                submitBookings={submitBooking}
-                buttonSetBookingReviewed={buttonSetBookingReviewed}
-                recallBookings={_recallBooking}
-                buttonSetBookingDraft={buttonSetBookingDraft}
-                approveBookings={approveBooking}
-                buttonSetBookingCompleted={buttonSetBookingCompleted}
+                buttonBookingCancel={buttonBookingCancel}
+                buttonBookingReview={buttonBookingReview}
+                buttonBookingHandled={buttonBookingHandled}
+                handleCancelBooking={() => handleOpenModal('cancel')}
+                handleReviewBooking={() => handleOpenModal('review')}
               />
               <TableContainer>
                 <Table
@@ -711,27 +685,30 @@ export default function GeneralTable(props) {
                                 &nbsp;&nbsp;
                               </TableCell>
                             )}
+                            {displayOptions.university && (
+                              <TableCell align="left">{row.university_name || ''}</TableCell>
+                            )}
+                            {displayOptions.assess && <TableCell align="left">4 sao</TableCell>}
+                            {displayOptions.email && (
+                              <TableCell align="left">{row.email || ''}</TableCell>
+                            )}
                             {displayOptions.phone && (
                               <TableCell align="left">{row.number_phone || ''}</TableCell>
-                            )}
-                            {displayOptions.start_time && (
-                              <TableCell align="left">
-                                {row.start_time
-                                  ? formatDate(new Date(row.start_time), 'dd/MM/yyyy h:mm aa')
-                                  : ''}
-                              </TableCell>
-                            )}
-                            {displayOptions.consultant && (
-                              <TableCell align="left">{row.consultant_name}</TableCell>
                             )}
                             {displayOptions.consultation_day && (
                               <TableCell align="left">{row.schedule || ''}</TableCell>
                             )}
-                            {displayOptions.status && (
-                              <TableCell align="left">{row.status}</TableCell>
+                            {displayOptions.mentor && (
+                              <TableCell align="left">{row.mentor_name || ''}</TableCell>
                             )}
                             {displayOptions.link && (
                               <TableCell align="left">{row.link || ''}</TableCell>
+                            )}
+                            {displayOptions.status && (
+                              <TableCell align="left">{row.status}</TableCell>
+                            )}
+                            {displayOptions.note && (
+                              <TableCell align="left">{row.status}</TableCell>
                             )}
                           </TableRow>
                         );

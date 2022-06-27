@@ -67,13 +67,15 @@ export const BookingProvider = ({ children }) => {
   };
 
   const getMentorDetail = async (id) => {
-    return axiosInstance.post(vibEndpoints.get_mentor_detail, { outputtype: 'RawJson', id }).then((response) => {
+    return axiosInstance
+      .post(vibEndpoints.get_mentor_detail, { outputtype: 'RawJson', id })
+      .then((response) => {
         if (response.status === 200 && response.data.return === 200) {
-            const { data: mentor } = response.data
-            return mentor
-        } else return {}
-    });
-}
+          const { data: mentor } = response.data;
+          return mentor;
+        } else return {};
+      });
+  };
 
   return (
     <BookingContext.Provider
@@ -83,7 +85,7 @@ export const BookingProvider = ({ children }) => {
         setBookingReviewed,
         setBookingCompleted,
         updateBooking,
-        getMentorDetail
+        getMentorDetail,
       }}
     >
       {children}

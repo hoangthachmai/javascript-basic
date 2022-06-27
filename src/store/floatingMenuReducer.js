@@ -1,7 +1,7 @@
 import * as actionTypes from './actions';
 
 export const initialState = {
-  folder: false, 
+  folder: false,
   document: false,
   detailDocument: false,
 };

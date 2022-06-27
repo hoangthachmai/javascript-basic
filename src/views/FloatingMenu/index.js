@@ -31,7 +31,6 @@ export default function FloatingMenu() {
       onClose={handleClose}
       onOpen={handleOpen}
       open={open}
-    >
-    </SpeedDial>
+    ></SpeedDial>
   );
 }

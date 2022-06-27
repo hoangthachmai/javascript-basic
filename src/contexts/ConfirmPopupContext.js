@@ -32,7 +32,11 @@ export const ConfirmPopupProvider = ({ children }) => {
     });
   };
 
-  return <ConfirmPopupContext.Provider value={{ ...state, setConfirmPopup }}>{children}</ConfirmPopupContext.Provider>;
+  return (
+    <ConfirmPopupContext.Provider value={{ ...state, setConfirmPopup }}>
+      {children}
+    </ConfirmPopupContext.Provider>
+  );
 };
 
 export default ConfirmPopupContext;

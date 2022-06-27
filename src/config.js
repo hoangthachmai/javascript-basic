@@ -6,5 +6,5 @@ export default {
   jwt: {
     secret: 'SECRET-KEY',
     timeout: '1 days',
-  }, 
+  },
 };

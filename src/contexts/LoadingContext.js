@@ -24,7 +24,11 @@ export const LoadingProvider = ({ children }) => {
     dispatch({ type: LOADING_CHANGE, loading: false });
   };
 
-  return <LoadingContext.Provider value={{ ...state, turnOnLoading, turnOffLoading }}>{children}</LoadingContext.Provider>;
+  return (
+    <LoadingContext.Provider value={{ ...state, turnOnLoading, turnOffLoading }}>
+      {children}
+    </LoadingContext.Provider>
+  );
 };
 
 export default LoadingContext;

@@ -13,19 +13,25 @@ export const FolderProvider = ({ children }) => {
 
   function getFolders(selectedProject) {
     if (!selectedProject) return;
-    axiosInstance.post(vibEndpoints.get_folders, { outputtype: 'RawJson', project_id: selectedProject.id }).then((response) => {
-      if (response.status === 200 && response.data.return === 200) {
-        const { Item: folders } = response.data;
+    axiosInstance
+      .post(vibEndpoints.get_folders, { outputtype: 'RawJson', project_id: selectedProject.id })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) {
+          const { Item: folders } = response.data;
 
-        dispatch({
-          type: FOLDER_CHANGE,
-          folder: folders,
-        });
-      }
-    });
+          dispatch({
+            type: FOLDER_CHANGE,
+            folder: folders,
+          });
+        }
+      });
   }
 
-  return <FolderContext.Provider value={{ getFolders, reloadFolders: getFolders }}>{children}</FolderContext.Provider>;
+  return (
+    <FolderContext.Provider value={{ getFolders, reloadFolders: getFolders }}>
+      {children}
+    </FolderContext.Provider>
+  );
 };
 
 export default FolderContext;

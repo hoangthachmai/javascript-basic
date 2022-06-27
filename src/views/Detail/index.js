@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   Grid,
   Button,
@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  TextareaAutosize,
   Tabs,
   Box,
   Typography,
@@ -17,12 +18,11 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import { getUrlByAction } from '../../utils/utils';
 import { gridSpacing, view } from '../../store/constant.js';
 import { FLOATING_MENU_CHANGE } from '../../store/actions.js';
 import useView from './../../hooks/useView';
 import useBooking from './../../hooks/useBooking';
-import useTask from './../../hooks/useTask';
+import ConfirmSaveDialog from './ConfirmSaveDialog';
 
 const useStyles = makeStyles((theme) => ({
   useradddialog: {
@@ -97,6 +97,7 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     margin: theme.spacing(0.5, 0),
+    background: '##FFC000',
   },
   listSelectedNews: {
     minHeight: '300px',
@@ -192,9 +193,9 @@ const labelDay = {
 
 const DetailDocumentDialog = () => {
   const classes = useStyles();
-  const editorRef = useRef(null);
   const dispatch = useDispatch();
   const [tabIndex, setTabIndex] = React.useState(0);
+  const [isOpenConfirmSaveDialog, setIsOpenConfirmSaveDialog] = React.useState(false);
   const { form_buttons: formButtons, name, tabs, disabled_fields } = useView();
 
   const dontHaveColumnSettings = !tabs || !tabs.length;
@@ -212,7 +213,6 @@ const DetailDocumentDialog = () => {
     consultant: dontHaveColumnSettings ? true : tabs.includes('consultant'),
   };
 
-  const buttonBackBooking = formButtons.find((button) => button.name === view.booking.detail.back);
   const buttonSaveBooking = formButtons.find((button) => button.name === view.booking.detail.save);
 
   const handleChangeTab = (event, newValue) => {
@@ -222,16 +222,12 @@ const DetailDocumentDialog = () => {
     setTabIndex(newValue);
   };
 
-  const { reloadDocuments } = useTask();
   const { updateBooking, getMentorDetail } = useBooking();
 
   const { detailDocument: openDialog } = useSelector((state) => state.floatingMenu);
   const { projects } = useSelector((state) => state.project);
-  const selectedProject = projects.find((project) => project.selected);
-  const { selectedFolder } = useSelector((state) => state.folder);
-  const { selectedDocument, documentType } = useSelector((state) => state.document);
-  // const { categories } = useSelector((state) => state.category);
-  const reduxDocuments = useSelector((state) => state.task);
+  const { selectedDocument } = useSelector((state) => state.document);
+  const [enableSaveButton, setEnableSaveButton] = React.useState(false);
   const [document, setDocument] = React.useState({
     fullname: '',
     contact: '',
@@ -255,7 +251,7 @@ const DetailDocumentDialog = () => {
       ...selectedDocument,
       category_id: selectedDocument.category_id ? selectedDocument.category_id : '',
     });
-    getConsultantDetail(selectedDocument.consultant_id);
+    getConsultantDetail(selectedDocument.mentor_id);
   }, [selectedDocument]);
 
   const getConsultantDetail = async (id) => {
@@ -267,63 +263,23 @@ const DetailDocumentDialog = () => {
     setDocumentToDefault();
     dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: false });
   };
-  const removeFields = (document) => {
-    if (!tabDisplayOptions.content) {
-      delete document.content;
-    }
-    if (!tabDisplayOptions.related_news) {
-      delete document.related_news;
-      delete document.related_news_id_list;
-    }
-    if (!tabDisplayOptions.seo) {
-      delete document.keywords;
-    }
-    if (!tabDisplayOptions.answers) {
-      delete document.answer_id_list;
-    }
 
-    return document;
+  const handleSaveBooking = async (is_send_email) => {
+    const { email_address, number_phone, ...rest } = document;
+    setIsOpenConfirmSaveDialog(false);
+    await updateBooking({
+      ...rest,
+      is_send_email,
+      outputtype: 'RawJson',
+      email: email_address,
+      phone: number_phone,
+    });
   };
 
-  const updateDocument = async () => {
-    let updatedDocument = {
-      outputtype: 'RawJson',
-      id: document.id,
-      project_id: selectedProject.id,
-      title: document.title,
-      content:
-        editorRef.current && editorRef.current.getContent()
-          ? editorRef.current.getContent()
-          : document.content,
-      category_id: document.category_id,
-      short_description: document.short_description,
-      attachment_url_list: [],
-      source_name: document.source_name,
-      source_url: document.source_url,
-      image_url: document.image_url,
-      is_featured: document.is_featured,
-      keywords: document.keywords,
-    };
-    updatedDocument = removeFields(updatedDocument);
-
-    if (documentType === 'booking') {
-      updatedDocument = {
-        ...updatedDocument,
-        consultant_id: document.consultant_id,
-      };
-      await updateBooking(updatedDocument);
-    }
-    // await axiosInstance.post(vibEndpoints.update_document, { outputtype: "RawJson", id: document.id, project_id: selectedProject.id, title: document.title, content: editorRef.current && editorRef.current.getContent() ? editorRef.current.getContent() : document.content, category_id: document.category_id, short_description: document.short_description, attachment_url_list: [], source_name: document.source_name, source_url: document.source_url, image_url: document.image_url, is_featured: true } )
-    handleCloseDialog();
-    const url = getUrlByAction(selectedFolder);
-    // const { documents = [], total_item: count = 0, page = 1, order_by = 'created_at', order_type = 'desc', no_item_per_page = 10, category_id = '', search_text = '', folder_id, project_id } = reduxDocuments[documentType] || {}
-    reloadDocuments(
-      url,
-      documentType,
-      selectedProject.id,
-      selectedFolder.id,
-      reduxDocuments[documentType]
-    );
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value || document.email_address;
+    setEnableSaveButton(newEmail !== selectedDocument.email_address);
+    setDocument({ ...document, email_address: newEmail });
   };
 
   const setDocumentToDefault = async () => {
@@ -339,6 +295,11 @@ const DetailDocumentDialog = () => {
 
   return (
     <React.Fragment>
+      <ConfirmSaveDialog
+        isOpen={isOpenConfirmSaveDialog}
+        handleClose={() => setIsOpenConfirmSaveDialog(false)}
+        handleSubmit={handleSaveBooking}
+      />
       <Grid container>
         <Dialog
           open={openDialog || false}
@@ -418,11 +379,11 @@ const DetailDocumentDialog = () => {
                     </Grid>
                     <Grid item lg={6} md={6} xs={12}>
                       <TextField
-                        disabled
                         fullWidth
                         label="Email"
                         variant="outlined"
                         value={document.email_address}
+                        onChange={handleEmailChange}
                       />
                     </Grid>
                     <Grid item lg={6} md={6} xs={12}>
@@ -469,7 +430,7 @@ const DetailDocumentDialog = () => {
                       <TextField
                         disabled
                         fullWidth
-                        label="Ngảnh nghề"
+                        label="Ngành nghề"
                         variant="outlined"
                         value={document.career}
                         InputLabelProps={{ shrink: true }}
@@ -590,13 +551,9 @@ const DetailDocumentDialog = () => {
                       <TextField
                         disabled
                         fullWidth
-                        label="Link Meeting"
+                        label="Link meeting"
                         variant="outlined"
-                        value={(
-                          <Link href="#" underline="none">
-                            {'underline="none"'}
-                          </Link>
-                        )}
+                        value={document.link_meeting}
                         InputLabelProps={{ shrink: true }}
                       />
                     </Grid>
@@ -628,22 +585,27 @@ const DetailDocumentDialog = () => {
             <Grid container justify="space-between">
               <Grid item>
                 {/* {buttonBackBooking && ( */}
-                <Button variant="contained" color="secondary" onClick={handleCloseDialog}>
+                <Button
+                  variant="contained"
+                  style={{ background: '#FFC000' }}
+                  onClick={handleCloseDialog}
+                >
                   {/* {buttonBackBooking.text} */} Đóng
                 </Button>
                 {/* )} */}
               </Grid>
-              <Grid item>
-                <Grid container justify="flex-end" spacing={gridSpacing}>
-                  {/* {
-                                        buttonSaveBooking && <Grid item>
-                                            <Button variant="contained" color="primary" onClick={updateDocument}>
-                                                {buttonSaveBooking.text}
-                                            </Button>
-                                        </Grid>
-                                    } */}
+              {buttonSaveBooking && (
+                <Grid item>
+                  <Button
+                    disabled={!enableSaveButton}
+                    variant="contained"
+                    style={{ background: '#FFC000' }}
+                    onClick={() => setIsOpenConfirmSaveDialog(true)}
+                  >
+                    {buttonSaveBooking.text}
+                  </Button>
                 </Grid>
-              </Grid>
+              )}
             </Grid>
           </DialogActions>
         </Dialog>

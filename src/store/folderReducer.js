@@ -9,7 +9,8 @@ export const initialState = {
 function getFlattenFolder(folder) {
   let flattenFolder = [...folder];
   folder.forEach((folder) => {
-    if (folder.children && folder.children.length) flattenFolder = [...flattenFolder, ...getFlattenFolder(folder.children)];
+    if (folder.children && folder.children.length)
+      flattenFolder = [...flattenFolder, ...getFlattenFolder(folder.children)];
   });
   return flattenFolder.map((folder) => {
     const { children, ...data } = folder;

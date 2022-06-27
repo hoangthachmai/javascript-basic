@@ -290,7 +290,12 @@ const NotificationSection = () => {
                               <QueryBuilderTwoToneIcon className={classes.actionIcon} />
                             </Grid>
                             <Grid item>
-                              <Typography variant="caption" display="block" gutterBottom className={classes.actionColor}>
+                              <Typography
+                                variant="caption"
+                                display="block"
+                                gutterBottom
+                                className={classes.actionColor}
+                              >
                                 now
                               </Typography>
                             </Grid>
@@ -318,7 +323,12 @@ const NotificationSection = () => {
                               <QueryBuilderTwoToneIcon className={classes.actionIcon} />
                             </Grid>
                             <Grid item>
-                              <Typography variant="caption" display="block" gutterBottom className={classes.actionColor}>
+                              <Typography
+                                variant="caption"
+                                display="block"
+                                gutterBottom
+                                className={classes.actionColor}
+                              >
                                 now
                               </Typography>
                             </Grid>

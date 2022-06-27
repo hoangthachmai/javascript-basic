@@ -1,6 +1,16 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTheme, useMediaQuery, Box, makeStyles, Tooltip, TextField, MenuItem, InputAdornment, Hidden } from '@material-ui/core';
+import {
+  useTheme,
+  useMediaQuery,
+  Box,
+  makeStyles,
+  Tooltip,
+  TextField,
+  MenuItem,
+  InputAdornment,
+  Hidden,
+} from '@material-ui/core';
 import useProject from '../../../../hooks/useProject';
 import { PROJECT_CHANGE } from '../../../../store/actions';
 
@@ -53,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     ':before': {
       display: 'none',
     },
-  }
+  },
 }));
 
 const CompanySelectionSection = () => {
