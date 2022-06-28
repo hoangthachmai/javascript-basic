@@ -20,50 +20,39 @@ export const BookingProvider = ({ children }) => {
       });
   };
 
-  const setBookingDraft = async (ids, status = 'Draft') => {
-    return axiosInstance
-      .post(vibEndpoints.set_booking_status, {
-        outputtype: 'RawJson',
-        id_list: ids,
-        status: status,
-      })
-      .then((response) => {
-        if (response.status === 200 && response.data.return === 200) return true;
-        return false;
-      });
-  };
-
-  const setBookingReviewed = async (ids, status = 'Reviewed') => {
-    return axiosInstance
-      .post(vibEndpoints.set_booking_status, {
-        outputtype: 'RawJson',
-        id_list: ids,
-        status: status,
-      })
-      .then((response) => {
-        if (response.status === 200 && response.data.return === 200) return true;
-        return false;
-      });
-  };
-
-  const setBookingCompleted = async (ids, status = 'Completed') => {
-    return axiosInstance
-      .post(vibEndpoints.set_booking_status, {
-        outputtype: 'RawJson',
-        id_list: ids,
-        status: status,
-      })
-      .then((response) => {
-        if (response.status === 200 && response.data.return === 200) return true;
-        return false;
-      });
-  };
-
   const updateBooking = async (booking) => {
     return axiosInstance.post(vibEndpoints.update_booking, booking).then((response) => {
       if (response.status === 200 && response.data.return === 200) return true;
       return false;
     });
+  };
+
+  const cancelBooking = async (id, action, note) => {
+    return axiosInstance
+      .post(vibEndpoints.cancel_booking, {
+        outputtype: 'RawJson',
+        id: id,
+        action: action,
+        note: note,
+      })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) return true;
+        return false;
+      });
+  };
+
+  const reviewBooking = async (id, action, note) => {
+    return axiosInstance
+      .post(vibEndpoints.review_booking, {
+        outputtype: 'RawJson',
+        id: id,
+        action: action,
+        note: note,
+      })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) return true;
+        return false;
+      });
   };
 
   const getMentorDetail = async (id) => {
@@ -81,10 +70,9 @@ export const BookingProvider = ({ children }) => {
     <BookingContext.Provider
       value={{
         getBookingDetail,
-        setBookingDraft,
-        setBookingReviewed,
-        setBookingCompleted,
         updateBooking,
+        cancelBooking,
+        reviewBooking,
         getMentorDetail,
       }}
     >

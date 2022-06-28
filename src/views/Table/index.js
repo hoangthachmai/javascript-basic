@@ -382,9 +382,7 @@ export default function GeneralTable(props) {
 
   const { getDocuments } = useTask();
 
-  const { 
-    getBookingDetail,
-  } = useBooking();
+  const { getBookingDetail, cancelBooking, reviewBooking } = useBooking();
 
   useEffect(() => {
     if (selectedProject && selectedFolder && url) {
@@ -527,16 +525,20 @@ export default function GeneralTable(props) {
     setModalType(type);
   };
 
-  const handleCancelBooking = (data) => {
+  const handleCancelBooking = async (data) => {
     console.log('cancel', selected, data);
+    await cancelBooking(selected[0], data.status, data.note);
     setIsOpenModal(false);
     setModalType('');
+    reloadCurrentDocuments()
   };
 
-  const handleReviewBooking = (data) => {
+  const handleReviewBooking = async (data) => {
     console.log('review', selected, data);
+    await reviewBooking(selected[0], data.status, data.note);
     setIsOpenModal(false);
     setModalType('');
+    reloadCurrentDocuments()
   };
 
   return (
