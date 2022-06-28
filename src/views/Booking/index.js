@@ -16,9 +16,6 @@ const BookingWrapper = () => {
 
   useEffect(() => {
     async function fetchData() {
-      // const categories = await getJobCategories()
-      // dispatch({ type: CATEGORY_CHANGE, categories })
-      // setCategories(categories)
       dispatch({ type: DOCUMENT_CHANGE, documentType: 'booking' });
     }
     if (selectedProject) {

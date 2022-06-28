@@ -6,7 +6,6 @@ import { Grid } from '@material-ui/core';
 import { bookingActions, gridSpacing } from './../../../store/constant';
 
 const Default = () => {
-
   const { selectedFolder } = useSelector((state) => state.folder);
 
   const availableBookingEndpoint = [

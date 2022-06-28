@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core';
 // import Breadcrumb from './../../component/Breadcrumb';
 import Modal from '../Table/Modal';
+import StarIcon from '@material-ui/icons/Star';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -28,7 +29,7 @@ import SearchTwoToneIcon from '@material-ui/icons/SearchTwoTone';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import { gridSpacing, view } from '../../store/constant';
+import { bookingActions, gridSpacing, view } from '../../store/constant';
 import { useSelector, useDispatch } from 'react-redux';
 import useTask from './../../hooks/useTask';
 import useConfirmPopup from './../../hooks/useConfirmPopup';
@@ -40,6 +41,22 @@ import {
   CONFIRM_CHANGE,
 } from '../../store/actions';
 import useBooking from './../../hooks/useBooking';
+
+const style = {
+  datePickerWrap: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  datePickerLabel: {
+    marginRight: '12px',
+  },
+  datePickerInput: {
+    border: 'unset',
+    background: 'transparent',
+    outline: 'none',
+  },
+};
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -65,6 +82,15 @@ function stableSort(array, comparator) {
     return a[1] - b[1];
   });
   return stabilizedThis.map((el) => el[0]);
+}
+
+function getTodayAndTomorrow(date) {
+  let today = new Date(date);
+  const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  return {
+    today: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}T00:00:00`,
+    tomorrow: `${tomorrow.getFullYear()}-${tomorrow.getMonth() + 1}-${tomorrow.getDate()}T00:00:00`,
+  };
 }
 
 const headCells = [
@@ -353,6 +379,11 @@ export default function GeneralTable(props) {
   const selectedProject = projects.find((project) => project.selected);
   const { flattenFolders, selectedFolder } = useSelector((state) => state.folder);
 
+  const buttonSelectUniversity = selectedFolder.action === bookingActions.all_list;
+  const buttonSelectSource = selectedFolder.action === bookingActions.handle_list;
+  const buttonSelectDate = selectedFolder.action === bookingActions.by_date_list;
+  const buttonSelectMentor = selectedFolder.action === bookingActions.completed_list;
+
   const reduxDocuments = useSelector((state) => state.task);
   const {
     documents = [],
@@ -376,8 +407,8 @@ export default function GeneralTable(props) {
     no_item_per_page,
     category_id,
     search_text,
-    from_date: '',
-    to_date: '',
+    from_date: getTodayAndTomorrow(Date.now()).today,
+    to_date: getTodayAndTomorrow(Date.now()).tomorrow,
   };
 
   const { getDocuments } = useTask();
@@ -437,23 +468,15 @@ export default function GeneralTable(props) {
     setCategory(event.currentTarget);
   };
 
-  const handleCloseCategory = (event) => {
-    setCategory(null);
-    const selectedCategory = categories.find(
-      (category) => category.id === event.target.getAttribute('value')
-    );
-    setSelectedCategory(selectedCategory);
-    fetchDocument({
-      page: 1,
-      category_id: event.target.getAttribute('value'),
-      career_id: event.target.getAttribute('value'),
-    });
-  };
-
   const handlePressEnterToSearch = (event) => {
     if (event.key === 'Enter') {
       fetchDocument({ search_text: searchText });
     }
+  };
+
+  const handleDatePickerChange = (e) => {
+    const { today, tomorrow } = getTodayAndTomorrow(e.target.value);
+    fetchDocument({ from_date: today, to_date: tomorrow });
   };
 
   const handleClick = (event, id) => {
@@ -526,19 +549,17 @@ export default function GeneralTable(props) {
   };
 
   const handleCancelBooking = async (data) => {
-    console.log('cancel', selected, data);
     await cancelBooking(selected[0], data.status, data.note);
     setIsOpenModal(false);
     setModalType('');
-    reloadCurrentDocuments()
+    reloadCurrentDocuments();
   };
 
   const handleReviewBooking = async (data) => {
-    console.log('review', selected, data);
     await reviewBooking(selected[0], data.status, data.note);
     setIsOpenModal(false);
     setModalType('');
-    reloadCurrentDocuments()
+    reloadCurrentDocuments();
   };
 
   return (
@@ -567,7 +588,7 @@ export default function GeneralTable(props) {
             </Grid>
             <Grid item lg={8} md={6} xs={12}>
               <Grid container spacing={gridSpacing} justify="flex-end" alignItems="center">
-                <Grid item xs={12} md={6} lg={8}>
+                <Grid item xs={12} md={6} lg={6}>
                   <div className={classes.search}>
                     <div className={classes.searchIcon}>
                       <SearchTwoToneIcon />
@@ -584,42 +605,39 @@ export default function GeneralTable(props) {
                     />
                   </div>
                 </Grid>
-                {!!categories.length && (
-                  <Grid item xs={12} md={2} lg={4}>
-                    <FormControl className={classes.formControl}>
-                      <Button
-                        onClick={handleClicksort}
-                        endIcon={<ExpandMoreRoundedIcon />}
-                        variant="text"
-                        size="small"
-                      >
-                        {selectedCategory ? selectedCategory.title : 'Chọn danh mục'}
-                      </Button>
-                      <Menu
-                        id="category"
-                        anchorEl={category}
-                        keepMounted
-                        open={Boolean(category)}
-                        onClose={handleCloseCategory}
-                        transformOrigin={{
-                          vertical: 'top',
-                          horizontal: 'center',
-                        }}
-                      >
-                        <MenuItem value="" onClick={handleCloseCategory}>
-                          <em>Không chọn</em>
-                        </MenuItem>
-                        {categories.map((category) => (
-                          <MenuItem
-                            key={category.id}
-                            value={category.id}
-                            onClick={handleCloseCategory}
-                          >
-                            {category.title}
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                    </FormControl>
+                {buttonSelectDate && (
+                  <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
+                    <div style={style.datePickerLabel}>Chọn thời gian: </div>
+                    <input
+                      style={style.datePickerInput}
+                      type="date"
+                      name="selected_date"
+                      onChange={handleDatePickerChange}
+                    />
+                  </Grid>
+                )}
+                {buttonSelectUniversity && (
+                  <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
+                    <div style={style.datePickerLabel}>Chọn dự án:</div>
+                    <select style={style.datePickerInput}>
+                      <option>Tất cả</option>
+                    </select>
+                  </Grid>
+                )}
+                {buttonSelectMentor && (
+                  <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
+                    <div style={style.datePickerLabel}>Chọn Mentor: </div>
+                    <select style={style.datePickerInput}>
+                      <option>Tất cả</option>
+                    </select>
+                  </Grid>
+                )}
+                {buttonSelectSource && (
+                  <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
+                    <div style={style.datePickerLabel}>Chọn nguồn: </div>
+                    <select style={style.datePickerInput}>
+                      <option>Tất cả</option>
+                    </select>
                   </Grid>
                 )}
               </Grid>
@@ -690,11 +708,17 @@ export default function GeneralTable(props) {
                             {displayOptions.university && (
                               <TableCell align="left">{row.university_name || ''}</TableCell>
                             )}
-                            {displayOptions.assess && <TableCell align="left">4 sao</TableCell>}
-                            {displayOptions.email && (
-                              <TableCell align="left">{row.email || ''}</TableCell>
+                            {displayOptions.assess && (
+                              <TableCell align="left">
+                                {new Array(5).fill(1)?.map((_, index) => (
+                                  <StarIcon key={index} color="primary" />
+                                ))}
+                              </TableCell>
                             )}
-                            {displayOptions.phone && (
+                            {displayOptions.email && (
+                              <TableCell align="left">{row.email_address || ''}</TableCell>
+                            )}
+                            {displayOptions.number_phone && (
                               <TableCell align="left">{row.number_phone || ''}</TableCell>
                             )}
                             {displayOptions.consultation_day && (

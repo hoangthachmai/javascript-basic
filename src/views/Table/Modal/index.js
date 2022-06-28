@@ -107,6 +107,7 @@ export default function BasicModal({
   const handleChange = (e) => {
     if (e.target.name === 'status') {
       setFormData({ ...formData, status: e.target.value });
+      setHelperText('');
     } else if (e.target.name === 'note') {
       setFormData({ ...formData, note: e.target.value });
     }
@@ -127,11 +128,20 @@ export default function BasicModal({
     });
   };
 
+  const handleCloseModal = () => {
+    setHelperText('');
+    setFormData({
+      status: '',
+      note: '',
+    });
+    handleClose();
+  };
+
   return (
     <div>
       <Modal
         open={isOpen}
-        onClose={handleClose}
+        onClose={handleCloseModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -169,7 +179,12 @@ export default function BasicModal({
               />
             </FormControl>
             <div style={style.buttonWrap}>
-              <Button type="button" variant="contained" style={style.button} onClick={handleClose}>
+              <Button
+                type="button"
+                variant="contained"
+                style={style.button}
+                onClick={handleCloseModal}
+              >
                 Đóng
               </Button>
               {buttonCancelBooking && (

@@ -29,6 +29,8 @@ const viewReducer = (state = initialState, action) => {
           action.menu_buttons.length &&
           isListAction
             ? action.menu_buttons
+            : isDetailAction
+            ? state.menu_buttons
             : [],
         side_buttons:
           action.side_buttons && Array.isArray(action.side_buttons) && isListAction

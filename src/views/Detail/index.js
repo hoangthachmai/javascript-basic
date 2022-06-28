@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  OutlinedInput,
   TextareaAutosize,
   Tabs,
   Box,
@@ -15,6 +16,7 @@ import {
   Tab,
   Link,
 } from '@material-ui/core';
+import StarIcon from '@material-ui/icons/Star';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -147,6 +149,27 @@ const useStyles = makeStyles((theme) => ({
   },
   pr: {
     paddingRight: '12px',
+  },
+  feedbackAssess: {
+    display: 'flex',
+    alignItems: 'center',
+    '& > div:first-child': {
+      marginRight: '12px',
+      fontWeight: 'bold',
+    },
+  },
+  feedbackStar: {
+    transform: 'translateY(1px)',
+  },
+  timeNumberInput: {
+    width: '52px',
+    height: '20px',
+  },
+  fontBold: {
+    fontWeight: 'bold',
+  },
+  fullWidth: {
+    width: '100%',
   },
 }));
 
@@ -363,6 +386,19 @@ const DetailDocumentDialog = () => {
                     value={2}
                     {...a11yProps(2)}
                   />
+                  <Tab
+                    label={
+                      <Typography
+                        className={classes.capitalize}
+                        component="span"
+                        variant="subtitle1"
+                      >
+                        Feedback
+                      </Typography>
+                    }
+                    value={3}
+                    {...a11yProps(3)}
+                  />
                 </Tabs>
               </Grid>
               <Grid item xs={12}>
@@ -574,6 +610,42 @@ const DetailDocumentDialog = () => {
                         variant="outlined"
                         // value={document.curent_job}
                         InputLabelProps={{ shrink: true }}
+                      />
+                    </Grid>
+                  </Grid>
+                </TabPanel>
+                <TabPanel value={tabIndex} index={3}>
+                  <Grid container spacing={gridSpacing} alignItems="center">
+                    <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
+                      <div>Đánh giá dịch vụ: </div>
+                      <div>
+                        {new Array(5).fill(1)?.map((_, index) => (
+                          <StarIcon key={index} color="primary" />
+                        ))}
+                      </div>
+                    </Grid>
+                    <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
+                      <div>Đánh giá Mentor: </div>
+                      <div className={classes.feedbackStar}>
+                        {new Array(5).fill(1)?.map((_, index) => (
+                          <StarIcon key={index} color="primary" />
+                        ))}
+                      </div>
+                    </Grid>
+                    <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
+                      <div>Đây là lần thứ mấy bạn tham gia dịch vụ hướng nghiệp của trường?</div>
+                      <OutlinedInput
+                        className={classes.timeNumberInput}
+                        defaultValue={4}
+                        disabled
+                      />
+                    </Grid>
+                    <Grid item lg={12} md={12} xs={12}>
+                      <div className={classes.fontBold}>Ý kiến đánh giá và góp ý: </div>
+                      <OutlinedInput
+                        className={classes.fullWidth}
+                        defaultValue={'Chất lượng tuyệt vời lắm!'}
+                        disabled
                       />
                     </Grid>
                   </Grid>
