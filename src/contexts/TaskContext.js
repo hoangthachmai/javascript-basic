@@ -29,6 +29,7 @@ export const TaskProvider = ({ children }) => {
       search_text = '',
       from_date = '',
       to_date = '',
+      university_id = ''
     } = paginateOption;
     axiosInstance
       .post(url, {
@@ -42,6 +43,7 @@ export const TaskProvider = ({ children }) => {
         project_id,
         from_date,
         to_date,
+        university_id,
         outputtype: 'RawJson',
       })
       .then((res) => {

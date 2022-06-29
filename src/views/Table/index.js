@@ -56,6 +56,10 @@ const style = {
     background: 'transparent',
     outline: 'none',
   },
+  starIcon: {
+    color: '#4472C4',
+    fontSize: '20px'
+  }
 };
 
 function descendingComparator(a, b, orderBy) {
@@ -109,6 +113,10 @@ const headCells = [
   { id: 'mentor', numeric: false, disablePadding: false, label: 'Mentor', maxWidth: 100 },
   { id: 'link', numeric: false, disablePadding: false, label: 'Link', maxWidth: 100 },
   { id: 'status', numeric: false, disablePadding: false, label: 'Trạng thái', maxWidth: 100 },
+  { id: 'rating', numeric: false, disablePadding: false, label: 'Đánh giá', maxWidth: 100 },
+  { id: 'total', numeric: false, disablePadding: false, label: 'Tổng số', maxWidth: 100 },
+  { id: 'reject', numeric: false, disablePadding: false, label: 'Từ chối', maxWidth: 100 },
+  { id: 'uncomplete', numeric: false, disablePadding: false, label: 'Chưa hoàn thành', maxWidth: 100 },
   { id: 'note', numeric: false, disablePadding: false, label: 'Chú thích', maxWidth: 100 },
 ];
 
@@ -184,13 +192,13 @@ const useToolbarStyles = makeStyles((theme) => ({
   highlight:
     theme.palette.type === 'light'
       ? {
-          color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-        }
+        color: theme.palette.secondary.main,
+        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+      }
       : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
-        },
+        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.secondary.dark,
+      },
   title: {
     flex: '1 2 100%',
   },
@@ -233,7 +241,7 @@ const EnhancedTableToolbar = (props) => {
                   variant="contained"
                   color={buttonBookingHandled.style ? buttonBookingHandled.style : 'primary'}
                   style={{ background: '#FFC000' }}
-                  onClick={() => {}}
+                  onClick={() => { }}
                 >
                   {buttonBookingHandled.text}
                 </Button>
@@ -337,7 +345,7 @@ export default function GeneralTable(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { setConfirmPopup } = useConfirmPopup();
-  const { menu_buttons: menuButtons, columns: tableColumns } = useView();
+  const { menu_buttons: menuButtons, columns: tableColumns, tabs } = useView();
 
   const dontHaveColumnSettings = !tableColumns || !tableColumns.length;
   const displayOptions = {
@@ -350,6 +358,10 @@ export default function GeneralTable(props) {
     link: dontHaveColumnSettings ? true : tableColumns.includes('link'),
     status: dontHaveColumnSettings ? true : tableColumns.includes('status'),
     mentor: dontHaveColumnSettings ? true : tableColumns.includes('mentor'),
+    rating: dontHaveColumnSettings ? true : tableColumns.includes('rating'),
+    total: dontHaveColumnSettings ? true : tableColumns.includes('total'),
+    reject: dontHaveColumnSettings ? true : tableColumns.includes('reject'),
+    uncomplete: dontHaveColumnSettings ? true : tableColumns.includes('uncomplete'),
     note: dontHaveColumnSettings ? true : tableColumns.includes('note'),
   };
 
@@ -370,9 +382,8 @@ export default function GeneralTable(props) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
-  const [category, setCategory] = React.useState(null);
-  const [selectedCategory, setSelectedCategory] = React.useState(null);
   const [searchText, setSearchText] = React.useState('');
+  const [university, setUniversity] = React.useState(null);
   const { url, documentType, categories = [], tableTitle, showPreviewUrl = true } = props;
 
   const { projects } = useSelector((state) => state.project);
@@ -381,7 +392,7 @@ export default function GeneralTable(props) {
 
   const buttonSelectUniversity = selectedFolder.action === bookingActions.all_list;
   const buttonSelectSource = selectedFolder.action === bookingActions.handle_list;
-  const buttonSelectDate = selectedFolder.action === bookingActions.by_date_list;
+  const buttonSelectDate = selectedFolder.action === bookingActions.by_date_list || selectedFolder.action === bookingActions.by_men;
   const buttonSelectMentor = selectedFolder.action === bookingActions.completed_list;
 
   const reduxDocuments = useSelector((state) => state.task);
@@ -409,11 +420,17 @@ export default function GeneralTable(props) {
     search_text,
     from_date: getTodayAndTomorrow(Date.now()).today,
     to_date: getTodayAndTomorrow(Date.now()).tomorrow,
+    university_id: '',
   };
 
   const { getDocuments } = useTask();
 
-  const { getBookingDetail, cancelBooking, reviewBooking } = useBooking();
+  const { getBookingDetail, cancelBooking, reviewBooking, getListUniversity } = useBooking();
+
+  const initListUniversity = async () => {
+    const data = await getListUniversity();
+    setUniversity(data);
+  }
 
   useEffect(() => {
     if (selectedProject && selectedFolder && url) {
@@ -435,6 +452,10 @@ export default function GeneralTable(props) {
         from_date,
         to_date,
       });
+    }
+
+    if (selectedFolder.action === bookingActions.all_list) {
+      initListUniversity()
     }
   }, [selectedFolder]);
 
@@ -464,10 +485,6 @@ export default function GeneralTable(props) {
     setSelected([]);
   };
 
-  const handleClicksort = (event) => {
-    setCategory(event.currentTarget);
-  };
-
   const handlePressEnterToSearch = (event) => {
     if (event.key === 'Enter') {
       fetchDocument({ search_text: searchText });
@@ -478,6 +495,10 @@ export default function GeneralTable(props) {
     const { today, tomorrow } = getTodayAndTomorrow(e.target.value);
     fetchDocument({ from_date: today, to_date: tomorrow });
   };
+
+  const handleChangeUniversity = (e) => {
+    fetchDocument({ university_id: e.target.value });
+  }
 
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
@@ -524,24 +545,6 @@ export default function GeneralTable(props) {
     fetchDocument({ page: 1 });
   };
 
-  const showConfirmPopup = ({
-    title = 'Thông báo',
-    message = 'Yêu cầu lựa chọn ít nhất một bản ghi',
-    action = null,
-    payload = null,
-    onSuccess = null,
-  }) => {
-    setConfirmPopup({
-      type: CONFIRM_CHANGE,
-      open: true,
-      title,
-      message,
-      action,
-      payload,
-      onSuccess,
-    });
-  };
-
   const handleOpenModal = (type) => {
     if (selected.length === 0) return;
     setIsOpenModal(true);
@@ -549,17 +552,27 @@ export default function GeneralTable(props) {
   };
 
   const handleCancelBooking = async (data) => {
-    await cancelBooking(selected[0], data.status, data.note);
-    setIsOpenModal(false);
-    setModalType('');
-    reloadCurrentDocuments();
+    try {
+      await cancelBooking(selected[0], data.status, data.note);
+    } catch (e) {
+
+    } finally {
+      setIsOpenModal(false);
+      setModalType('');
+      reloadCurrentDocuments();
+    }
   };
 
   const handleReviewBooking = async (data) => {
-    await reviewBooking(selected[0], data.status, data.note);
-    setIsOpenModal(false);
-    setModalType('');
-    reloadCurrentDocuments();
+    try {
+      await reviewBooking(selected[0], data.status, data.note);
+    } catch (e) {
+
+    } finally {
+      setIsOpenModal(false);
+      setModalType('');
+      reloadCurrentDocuments();
+    }
   };
 
   return (
@@ -574,19 +587,7 @@ export default function GeneralTable(props) {
       <Grid container spacing={gridSpacing}>
         <Grid item xs={12}>
           <Grid container justify="space-between">
-            <Grid item lg={4} md={6} xs={12}>
-              <Typography variant="h6">
-                {/* <Breadcrumb divider={false} isCard={false} hasSpacer={false}>
-                  {parentFolder && (
-                    <a href="#" onClick={handleBackToParentFolder}>
-                      ...
-                    </a>
-                  )}
-                  {selectedFolder && <Typography>{selectedFolder.name}</Typography>}
-                </Breadcrumb> */}
-              </Typography>
-            </Grid>
-            <Grid item lg={8} md={6} xs={12}>
+            <Grid item lg={12} md={6} xs={12}>
               <Grid container spacing={gridSpacing} justify="flex-end" alignItems="center">
                 <Grid item xs={12} md={6} lg={6}>
                   <div className={classes.search}>
@@ -606,7 +607,7 @@ export default function GeneralTable(props) {
                   </div>
                 </Grid>
                 {buttonSelectDate && (
-                  <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
+                  <Grid style={style.datePickerWrap} item xs={12} md={6} lg={6}>
                     <div style={style.datePickerLabel}>Chọn thời gian: </div>
                     <input
                       style={style.datePickerInput}
@@ -618,9 +619,12 @@ export default function GeneralTable(props) {
                 )}
                 {buttonSelectUniversity && (
                   <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
-                    <div style={style.datePickerLabel}>Chọn dự án:</div>
-                    <select style={style.datePickerInput}>
-                      <option>Tất cả</option>
+                    <div style={style.datePickerLabel}>Chọn dự án: </div>
+                    <select id="universityList" onChange={handleChangeUniversity} style={style.datePickerInput}>
+                      <option value="">Tất cả</option>
+                      {university?.map(item => (
+                        <option key={item.id} value={item.id}>{item.name}</option>
+                      ))}
                     </select>
                   </Grid>
                 )}
@@ -663,7 +667,7 @@ export default function GeneralTable(props) {
                   className={classes.table}
                   aria-labelledby="tableTitle"
                   size={'medium'}
-                  // aria-label="enhanced table"
+                // aria-label="enhanced table"
                 >
                   <EnhancedTableHead
                     classes={classes}
@@ -699,10 +703,18 @@ export default function GeneralTable(props) {
                             </TableCell>
                             {displayOptions.fullname && (
                               <TableCell align="left">
-                                <a href="#" onClick={(event) => openDetailDocument(event, row)}>
-                                  {row.fullname}
-                                </a>
-                                &nbsp;&nbsp;
+                                {tabs.length ? (
+                                  <>
+                                    <a href="#" onClick={(event) => openDetailDocument(event, row)}>
+                                      {row.fullname}
+                                    </a>
+                                    &nbsp;&nbsp;
+
+                                  </>
+                                ) : <>
+                                  {row.fullname} &nbsp;&nbsp;
+                                </>
+                                }
                               </TableCell>
                             )}
                             {displayOptions.university && (
@@ -711,7 +723,7 @@ export default function GeneralTable(props) {
                             {displayOptions.assess && (
                               <TableCell align="left">
                                 {new Array(5).fill(1)?.map((_, index) => (
-                                  <StarIcon key={index} color="primary" />
+                                  <StarIcon key={index} style={style.starIcon} />
                                 ))}
                               </TableCell>
                             )}
@@ -728,10 +740,22 @@ export default function GeneralTable(props) {
                               <TableCell align="left">{row.mentor_name || ''}</TableCell>
                             )}
                             {displayOptions.link && (
-                              <TableCell align="left">{row.link || ''}</TableCell>
+                              <TableCell align="left">{row.link_meeting || ''}</TableCell>
                             )}
                             {displayOptions.status && (
                               <TableCell align="left">{row.status}</TableCell>
+                            )}
+                            {displayOptions.rating && (
+                              <TableCell align="left">{row.rating}</TableCell>
+                            )}
+                            {displayOptions.total && (
+                              <TableCell align="left">{row.total}</TableCell>
+                            )}
+                            {displayOptions.reject && (
+                              <TableCell align="left">{row.reject}</TableCell>
+                            )}
+                            {displayOptions.uncomplete && (
+                              <TableCell align="left">{row.uncomplete}</TableCell>
                             )}
                             {displayOptions.note && (
                               <TableCell align="left">{row.status}</TableCell>

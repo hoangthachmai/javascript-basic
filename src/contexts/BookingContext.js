@@ -66,6 +66,28 @@ export const BookingProvider = ({ children }) => {
       });
   };
 
+  const getListUniversity = async () => {
+    return axiosInstance 
+      .post(vibEndpoints.get_list_university, { outputtype: 'RawJson' })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) {
+          const { data: { list: university } } = response;
+          return university;
+        } else return {};
+      });
+  }
+
+  const getFeedback = async (booking_id) => {
+    return axiosInstance
+      .post(vibEndpoints.get_feedback_detail, { outputtype: 'RawJson', booking_id })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) {
+          const { data: feedback } = response.data;
+          return feedback;
+        } else return {};
+      });
+  }
+
   return (
     <BookingContext.Provider
       value={{
@@ -74,6 +96,8 @@ export const BookingProvider = ({ children }) => {
         cancelBooking,
         reviewBooking,
         getMentorDetail,
+        getListUniversity,
+        getFeedback
       }}
     >
       {children}

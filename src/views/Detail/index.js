@@ -160,16 +160,20 @@ const useStyles = makeStyles((theme) => ({
   },
   feedbackStar: {
     transform: 'translateY(1px)',
+    color: '#4472C4',
+    fontSize: '20px'
   },
   timeNumberInput: {
-    width: '52px',
+    minWidth: '52px',
     height: '20px',
+    textAlign: 'center',
   },
   fontBold: {
     fontWeight: 'bold',
   },
-  fullWidth: {
+  feedbackTextInput: {
     width: '100%',
+    marginTop: '12px'
   },
 }));
 
@@ -222,18 +226,17 @@ const DetailDocumentDialog = () => {
   const { form_buttons: formButtons, name, tabs, disabled_fields } = useView();
 
   const dontHaveColumnSettings = !tabs || !tabs.length;
+  const tabHeadings = [
+    { id: 'mentee', label: 'Thông tin khách hàng' },
+    { id: 'mentor', label: 'Thông tin mentor' },
+    { id: 'meeting', label: 'Thông tin meeting' },
+    { id: 'feedback', label: 'Feedback' }
+  ];
   const tabDisplayOptions = {
-    info: dontHaveColumnSettings ? true : tabs.includes('info'),
-    content: dontHaveColumnSettings ? true : tabs.includes('content'),
-    related_news: dontHaveColumnSettings ? true : tabs.includes('related_news'),
-    seo: dontHaveColumnSettings ? true : tabs.includes('seo'),
-    answers: dontHaveColumnSettings ? true : tabs.includes('answers'),
-    personal_info: dontHaveColumnSettings ? true : tabs.includes('personal_info'),
-    assessment_result: dontHaveColumnSettings ? true : tabs.includes('assessment_result'),
-    datetime: dontHaveColumnSettings ? true : tabs.includes('datetime'),
-    related_consultant: dontHaveColumnSettings ? true : tabs.includes('related_consultant'),
-    booking: dontHaveColumnSettings ? true : tabs.includes('booking'),
-    consultant: dontHaveColumnSettings ? true : tabs.includes('consultant'),
+    mentee: tabs.includes('mentee'),
+    mentor: tabs.includes('mentor'),
+    meeting: tabs.includes('meeting'),
+    feedback: tabs.includes('feedback'),
   };
 
   const buttonSaveBooking = formButtons.find((button) => button.name === view.booking.detail.save);
@@ -245,7 +248,7 @@ const DetailDocumentDialog = () => {
     setTabIndex(newValue);
   };
 
-  const { updateBooking, getMentorDetail } = useBooking();
+  const { updateBooking, getMentorDetail, getFeedback } = useBooking();
 
   const { detailDocument: openDialog } = useSelector((state) => state.floatingMenu);
   const { projects } = useSelector((state) => state.project);
@@ -266,6 +269,12 @@ const DetailDocumentDialog = () => {
     time1: '',
     time2: '',
   });
+  const [feedback, setFeedback] = React.useState({
+    times: '',
+    comment: '',
+    assess_mentor: 0,
+    assess_service: 0
+  })
 
   useEffect(() => {
     if (!selectedDocument) return;
@@ -274,8 +283,18 @@ const DetailDocumentDialog = () => {
       ...selectedDocument,
       category_id: selectedDocument.category_id ? selectedDocument.category_id : '',
     });
-    getConsultantDetail(selectedDocument.mentor_id);
+    if (tabDisplayOptions.mentor) {
+      getConsultantDetail(selectedDocument.mentor_id);
+    }
+    if(tabDisplayOptions.feedback) {
+      getFeedbackDetail(selectedDocument.id);
+    }
   }, [selectedDocument]);
+
+  const getFeedbackDetail = async (id) => {
+    const data = await getFeedback(id);
+    setFeedback(data);
+  }
 
   const getConsultantDetail = async (id) => {
     const cons = await getMentorDetail(id);
@@ -347,309 +366,336 @@ const DetailDocumentDialog = () => {
                   aria-label="simple tabs example"
                   variant="scrollable"
                 >
-                  <Tab
-                    label={
-                      <Typography
-                        className={classes.capitalize}
-                        component="span"
-                        variant="subtitle1"
-                      >
-                        Thông tin khách hàng
-                      </Typography>
-                    }
-                    value={0}
-                    {...a11yProps(0)}
-                  />
-                  <Tab
-                    label={
-                      <Typography
-                        className={classes.capitalize}
-                        component="span"
-                        variant="subtitle1"
-                      >
-                        Thông tin mentor
-                      </Typography>
-                    }
-                    value={1}
-                    {...a11yProps(1)}
-                  />
-                  <Tab
-                    label={
-                      <Typography
-                        className={classes.capitalize}
-                        component="span"
-                        variant="subtitle1"
-                      >
-                        Thông tin meeting
-                      </Typography>
-                    }
-                    value={2}
-                    {...a11yProps(2)}
-                  />
-                  <Tab
-                    label={
-                      <Typography
-                        className={classes.capitalize}
-                        component="span"
-                        variant="subtitle1"
-                      >
-                        Feedback
-                      </Typography>
-                    }
-                    value={3}
-                    {...a11yProps(3)}
-                  />
+                  {tabDisplayOptions.mentee && (
+                    <Tab
+                      label={
+                        <Typography
+                          className={classes.capitalize}
+                          component="span"
+                          variant="subtitle1"
+                        >
+                          Thông tin khách hàng
+                        </Typography>
+                      }
+                      value={0}
+                      {...a11yProps(0)}
+                    />
+                  )}
+                  {tabDisplayOptions.mentor && (
+                    <Tab
+                      label={
+                        <Typography
+                          className={classes.capitalize}
+                          component="span"
+                          variant="subtitle1"
+                        >
+                          Thông tin mentor
+                        </Typography>
+                      }
+                      value={1}
+                      {...a11yProps(1)}
+                    />
+                  )}
+                  {tabDisplayOptions.meeting && (
+                    <Tab
+                      label={
+                        <Typography
+                          className={classes.capitalize}
+                          component="span"
+                          variant="subtitle1"
+                        >
+                          Thông tin meeting
+                        </Typography>
+                      }
+                      value={2}
+                      {...a11yProps(2)}
+                    />
+                  )}
+                  {tabDisplayOptions.feedback && (
+                    <Tab
+                      label={
+                        <Typography
+                          className={classes.capitalize}
+                          component="span"
+                          variant="subtitle1"
+                        >
+                          Feedback
+                        </Typography>
+                      }
+                      value={3}
+                      {...a11yProps(3)}
+                    />
+                  )}
                 </Tabs>
               </Grid>
               <Grid item xs={12}>
-                <TabPanel value={tabIndex} index={0}>
-                  <Grid container spacing={gridSpacing} alignItems="center">
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Họ và tên"
-                        variant="outlined"
-                        value={document.fullname}
-                      />
+                {tabDisplayOptions.mentee && (
+                  <TabPanel value={tabIndex} index={0}>
+                    <Grid container spacing={gridSpacing} alignItems="center">
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Họ và tên"
+                          variant="outlined"
+                          value={document.fullname}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          fullWidth
+                          label="Email"
+                          variant="outlined"
+                          value={document.email_address}
+                          onChange={handleEmailChange}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Họ và tên"
+                          variant="outlined"
+                          value={document.number_phone}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Trình độ học vấn"
+                          variant="outlined"
+                          value={document.education}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Điểm mạnh"
+                          variant="outlined"
+                          value={document.strength}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Điểm yếu"
+                          variant="outlined"
+                          value={document.weakness}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Ngành nghề"
+                          variant="outlined"
+                          value={document.career}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Nhu cầu tư vấn"
+                          variant="outlined"
+                          value={document.demand}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          multiline
+                          rows={1}
+                          disabled
+                          fullWidth
+                          label="Mã tư vân"
+                          variant="outlined"
+                          value={document.code}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          multiline
+                          rows={1}
+                          disabled
+                          fullWidth
+                          label="Câu hỏi cho mentor"
+                          variant="outlined"
+                          value={document.question}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
                     </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Email"
-                        variant="outlined"
-                        value={document.email_address}
-                        onChange={handleEmailChange}
-                      />
+                  </TabPanel>
+                )}
+                {tabDisplayOptions.mentor && (
+                  <TabPanel value={tabIndex} index={1}>
+                    <Grid container spacing={gridSpacing} alignItems="center">
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Họ và tên"
+                          variant="outlined"
+                          value={mentor.fullname}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Email"
+                          variant="outlined"
+                          value={mentor.email_address}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Số điện thoại"
+                          variant="outlined"
+                          value={mentor.number_phone}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}></Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Workday 1"
+                          variant="outlined"
+                          value={convertDateTime(mentor.date1, mentor.time1)}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Workday 1"
+                          variant="outlined"
+                          value={convertDateTime(mentor.date2, mentor.time2)}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
                     </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Họ và tên"
-                        variant="outlined"
-                        value={document.number_phone}
-                        InputLabelProps={{ shrink: true }}
-                      />
+                  </TabPanel>
+                )}
+                {tabDisplayOptions.meeting && (
+                  <TabPanel value={tabIndex} index={2}>
+                    <Grid container spacing={gridSpacing} alignItems="center">
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Họ và tên"
+                          variant="outlined"
+                          value={document.fullname}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Mentor"
+                          variant="outlined"
+                          value={mentor.fullname}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Lịch tư vấn"
+                          variant="outlined"
+                          value={document.schedule}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Link meeting"
+                          variant="outlined"
+                          value={document.link_meeting}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={6} md={6} xs={12}>
+                        <TextField
+                          disabled
+                          fullWidth
+                          label="Trạng thái"
+                          variant="outlined"
+                          value={document.status}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item lg={12} md={12} xs={12}>
+                        <TextField
+                          fullWidth
+                          label="Lý do chỉnh sửa"
+                          variant="outlined"
+                          // value={document.curent_job}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
                     </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Trình độ học vấn"
-                        variant="outlined"
-                        value={document.education}
-                        InputLabelProps={{ shrink: true }}
-                      />
+                  </TabPanel>
+                )}
+                {tabDisplayOptions.feedback && (
+                  <TabPanel value={tabIndex} index={3}>
+                    <Grid container spacing={gridSpacing} alignItems="center">
+                      <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
+                        <div>Đánh giá dịch vụ: </div>
+                        <div className={classes.feedbackStar}>
+                          {new Array(feedback.assess_service).fill(1)?.map((_, index) => (
+                            <StarIcon key={index} />
+                          ))}
+                        </div>
+                      </Grid>
+                      <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
+                        <div>Đánh giá Mentor: </div>
+                        <div className={classes.feedbackStar}>
+                          {new Array(feedback.assess_mentor).fill(1)?.map((_, index) => (
+                            <StarIcon key={index} />
+                          ))}
+                        </div>
+                      </Grid>
+                      <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
+                        <div>Đây là lần thứ mấy bạn tham gia dịch vụ hướng nghiệp của trường?</div>
+                        <div className={classes.timeNumberInput}>
+                          {feedback.times}
+                        </div>
+                      </Grid>
+                      <Grid item lg={12} md={12} xs={12}>
+                        <div className={classes.fontBold}>Ý kiến đánh giá và góp ý: </div>
+                        <OutlinedInput
+                          fullWidth
+                          className={classes.feedbackTextInput}
+                          defaultValue={feedback.comment}
+                          disabled
+                        />
+                      </Grid>
                     </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Điểm mạnh"
-                        variant="outlined"
-                        value={document.strength}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Điểm yếu"
-                        variant="outlined"
-                        value={document.weakness}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Ngành nghề"
-                        variant="outlined"
-                        value={document.career}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Nhu cầu tư vấn"
-                        variant="outlined"
-                        value={document.demand}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={12} md={12} xs={12}>
-                      <TextField
-                        multiline
-                        rows={3}
-                        disabled
-                        fullWidth
-                        label="Câu hỏi cho mentor"
-                        variant="outlined"
-                        value={document.notes}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                  </Grid>
-                </TabPanel>
-                <TabPanel value={tabIndex} index={1}>
-                  <Grid container spacing={gridSpacing} alignItems="center">
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Họ và tên"
-                        variant="outlined"
-                        value={mentor.fullname}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Email"
-                        variant="outlined"
-                        value={mentor.email_address}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Số điện thoại"
-                        variant="outlined"
-                        value={mentor.number_phone}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}></Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Workday 1"
-                        variant="outlined"
-                        value={convertDateTime(mentor.date1, mentor.time1)}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Workday 1"
-                        variant="outlined"
-                        value={convertDateTime(mentor.date2, mentor.time2)}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                  </Grid>
-                </TabPanel>
-                <TabPanel value={tabIndex} index={2}>
-                  <Grid container spacing={gridSpacing} alignItems="center">
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Họ và tên"
-                        variant="outlined"
-                        value={document.fullname}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Mentor"
-                        variant="outlined"
-                        value={mentor.fullname}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Lịch tư vấn"
-                        variant="outlined"
-                        value={document.schedule}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Link meeting"
-                        variant="outlined"
-                        value={document.link_meeting}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Trạng thái"
-                        variant="outlined"
-                        value={document.status}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={12} md={12} xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Lý do chỉnh sửa"
-                        variant="outlined"
-                        // value={document.curent_job}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                  </Grid>
-                </TabPanel>
-                <TabPanel value={tabIndex} index={3}>
-                  <Grid container spacing={gridSpacing} alignItems="center">
-                    <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
-                      <div>Đánh giá dịch vụ: </div>
-                      <div>
-                        {new Array(5).fill(1)?.map((_, index) => (
-                          <StarIcon key={index} color="primary" />
-                        ))}
-                      </div>
-                    </Grid>
-                    <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
-                      <div>Đánh giá Mentor: </div>
-                      <div className={classes.feedbackStar}>
-                        {new Array(5).fill(1)?.map((_, index) => (
-                          <StarIcon key={index} color="primary" />
-                        ))}
-                      </div>
-                    </Grid>
-                    <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
-                      <div>Đây là lần thứ mấy bạn tham gia dịch vụ hướng nghiệp của trường?</div>
-                      <OutlinedInput
-                        className={classes.timeNumberInput}
-                        defaultValue={4}
-                        disabled
-                      />
-                    </Grid>
-                    <Grid item lg={12} md={12} xs={12}>
-                      <div className={classes.fontBold}>Ý kiến đánh giá và góp ý: </div>
-                      <OutlinedInput
-                        className={classes.fullWidth}
-                        defaultValue={'Chất lượng tuyệt vời lắm!'}
-                        disabled
-                      />
-                    </Grid>
-                  </Grid>
-                </TabPanel>
+                  </TabPanel>
+                )}
               </Grid>
             </Grid>
           </DialogContent>

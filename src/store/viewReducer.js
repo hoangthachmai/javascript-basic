@@ -40,7 +40,7 @@ const viewReducer = (state = initialState, action) => {
           action.columns && Array.isArray(action.columns) && isListAction
             ? action.columns
             : state.columns,
-        tabs: action.tabs && Array.isArray(action.tabs) ? action.tabs : state.tabs,
+        tabs: action.tabs && Array.isArray(action.tabs) && isListAction ? action.tabs : isDetailAction ? state.tabs : [],
 
         form_buttons:
           action.form_buttons && Array.isArray(action.form_buttons) && isDetailAction
