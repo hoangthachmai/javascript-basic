@@ -12,7 +12,7 @@ import {
   Menu,
   InputBase,
   Checkbox,
-  Tooltip
+  Tooltip,
 } from '@material-ui/core';
 // import Breadcrumb from './../../component/Breadcrumb';
 import Modal from '../Table/Modal';
@@ -103,7 +103,13 @@ const headCells = [
   { id: 'rating', numeric: false, disablePadding: false, label: 'Đánh giá', maxWidth: 100 },
   { id: 'total', numeric: false, disablePadding: false, label: 'Tổng số', maxWidth: 100 },
   { id: 'reject', numeric: false, disablePadding: false, label: 'Từ chối', maxWidth: 100 },
-  { id: 'uncomplete', numeric: false, disablePadding: false, label: 'Chưa hoàn thành', maxWidth: 100 },
+  {
+    id: 'uncomplete',
+    numeric: false,
+    disablePadding: false,
+    label: 'Chưa hoàn thành',
+    maxWidth: 100,
+  },
   { id: 'note', numeric: false, disablePadding: false, label: 'Chú thích', maxWidth: 100 },
 ];
 
@@ -179,13 +185,13 @@ const useToolbarStyles = makeStyles((theme) => ({
   highlight:
     theme.palette.type === 'light'
       ? {
-        color: theme.palette.secondary.main,
-        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-      }
+          color: theme.palette.secondary.main,
+          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+        }
       : {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.secondary.dark,
-      },
+          color: theme.palette.text.primary,
+          backgroundColor: theme.palette.secondary.dark,
+        },
   title: {
     flex: '1 2 100%',
   },
@@ -196,18 +202,18 @@ const useToolbarStyles = makeStyles((theme) => ({
     minWidth: '40px',
     borderRadius: '50%',
     '&:hover': {
-      color: '#36f'
-    }
+      color: '#36f',
+    },
   },
   toolButtonIcon: {
     fontSize: '20px',
-    width: '20px'
+    width: '20px',
   },
   toolSearchWrap: {
     display: 'flex',
     alignItems: 'center',
     flex: 1,
-    padding: '8px 12px !important'
+    padding: '8px 12px !important',
   },
   toolSearchInput: {
     border: 'unset',
@@ -221,12 +227,12 @@ const useToolbarStyles = makeStyles((theme) => ({
     background: 'transparent',
     transform: 'translateY(-6px)',
     '&:hover': {
-      borderColor: '#000'
+      borderColor: '#000',
     },
     '&:focus': {
       borderColor: '#3467FF',
-      borderWidth: '2px'
-    }
+      borderWidth: '2px',
+    },
   },
   toolButtonSearch: {
     padding: '12px',
@@ -234,9 +240,9 @@ const useToolbarStyles = makeStyles((theme) => ({
     minWidth: '40px',
     borderRadius: '50%',
     '&:hover': {
-      color: '#FF413A'
-    }
-  }
+      color: '#FF413A',
+    },
+  },
 }));
 
 const EnhancedTableToolbar = (props) => {
@@ -248,7 +254,7 @@ const EnhancedTableToolbar = (props) => {
     buttonBookingHandled,
     handleCancelBooking,
     handleReviewBooking,
-    handlePressEnterToSearch
+    handlePressEnterToSearch,
   } = props;
 
   const [searchValue, setSearchValue] = React.useState('');
@@ -258,18 +264,17 @@ const EnhancedTableToolbar = (props) => {
     // setIsOpenSearch(!isOpenSearch);
     handlePressEnterToSearch('');
     setSearchValue('');
-  }
+  };
 
   const handleChangeSearch = (e) => {
     setSearchValue(e.target.value);
-  }
+  };
 
   const handleEnterSearch = (e) => {
     if (e.key === 'Enter' || e.keyCode === 13) {
-      handlePressEnterToSearch(searchValue)
+      handlePressEnterToSearch(searchValue);
     }
-  }
-
+  };
 
   return (
     <Toolbar
@@ -280,7 +285,12 @@ const EnhancedTableToolbar = (props) => {
       <Grid container justify="flex-end" spacing={gridSpacing}>
         <Grid item lg={6} md={6} xs={12} className={classes.toolSearchWrap}>
           {numSelected > 0 ? (
-            <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
+            <Typography
+              className={classes.title}
+              color="inherit"
+              variant="subtitle1"
+              component="div"
+            >
               {numSelected} bản ghi được chọn
             </Typography>
           ) : (
@@ -293,7 +303,7 @@ const EnhancedTableToolbar = (props) => {
                   onChange={handleChangeSearch}
                   onKeyUp={handleEnterSearch}
                 />
-                <Button className={classes.toolButtonSearch} onClick={handleCloseInput} >
+                <Button className={classes.toolButtonSearch} onClick={handleCloseInput}>
                   <ClearIcon className={classes.toolButtonIcon} />
                 </Button>
               </div>
@@ -309,7 +319,7 @@ const EnhancedTableToolbar = (props) => {
                     variant="contained"
                     color={buttonBookingHandled.style ? buttonBookingHandled.style : 'primary'}
                     style={{ background: '#FFC000', marginLeft: '8px' }}
-                    onClick={() => { }}
+                    onClick={() => {}}
                   >
                     {buttonBookingHandled.text}
                   </Button>
@@ -360,7 +370,6 @@ const EnhancedTableToolbar = (props) => {
                 <FilterListIcon className={classes.toolButtonIcon} />
               </Button>
             </Tooltip> */}
-
           </Grid>
         </Grid>
       </Grid>
@@ -375,36 +384,36 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles((theme) => ({
   root: {
     marginBottom: '56px',
-    boxShadow: 'unset'
+    boxShadow: 'unset',
   },
   paper: {
     width: '100%',
-    backgroundColor: '#f0f2f8'
+    backgroundColor: '#f0f2f8',
   },
   table: {
     minWidth: 750,
     borderSpacing: '0 10px',
     '& > thead': {
-      background: '#FFFFFF'
+      background: '#FFFFFF',
     },
     '& > thead > tr > th': {
-      background: 'unset'
+      background: 'unset',
     },
     '& > tbody > tr:hover': {
-      backgroundColor: '#36f !important'
+      backgroundColor: '#36f !important',
     },
     '& > tbody > tr:hover td': {
-      color: '#FFF'
+      color: '#FFF',
     },
     '& > tbody > tr:hover td span': {
-      color: '#FFF'
+      color: '#FFF',
     },
     '& > tbody > tr:hover td span': {
-      color: '#FFF'
+      color: '#FFF',
     },
     '& > tbody > tr:hover td svg': {
-      fill: '#FFF'
-    }
+      fill: '#FFF',
+    },
   },
   visuallyHidden: {
     border: 0,
@@ -455,12 +464,12 @@ const useStyles = makeStyles((theme) => ({
   },
   tableRow: {
     background: '#fff',
-    boxShadow: '0 2px 6px -1px rgb(0 0 0 / 10%)'
+    boxShadow: '0 2px 6px -1px rgb(0 0 0 / 10%)',
   },
   tableItemName: {
     fontWeight: 'bold',
-    cursor: 'pointer'
-  }
+    cursor: 'pointer',
+  },
 }));
 
 export default function GeneralTable(props) {
@@ -514,7 +523,9 @@ export default function GeneralTable(props) {
 
   const buttonSelectUniversity = selectedFolder.action === bookingActions.all_list;
   const buttonSelectSource = selectedFolder.action === bookingActions.handle_list;
-  const buttonSelectDate = selectedFolder.action === bookingActions.by_date_list || selectedFolder.action === bookingActions.by_men;
+  const buttonSelectDate =
+    selectedFolder.action === bookingActions.by_date_list ||
+    selectedFolder.action === bookingActions.by_men;
   const buttonSelectMentor = selectedFolder.action === bookingActions.completed_list;
 
   const reduxDocuments = useSelector((state) => state.task);
@@ -552,7 +563,7 @@ export default function GeneralTable(props) {
   const initListUniversity = async () => {
     const data = await getListUniversity();
     setUniversity(data);
-  }
+  };
 
   useEffect(() => {
     if (selectedProject && selectedFolder && url) {
@@ -577,7 +588,7 @@ export default function GeneralTable(props) {
     }
 
     if (selectedFolder.action === bookingActions.all_list) {
-      initListUniversity()
+      initListUniversity();
     }
   }, [selectedFolder]);
 
@@ -618,7 +629,7 @@ export default function GeneralTable(props) {
 
   const handleChangeUniversity = (e) => {
     fetchDocument({ university_id: e.target.value });
-  }
+  };
 
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
@@ -675,7 +686,6 @@ export default function GeneralTable(props) {
     try {
       await cancelBooking(selected[0], data.status, data.note);
     } catch (e) {
-
     } finally {
       setIsOpenModal(false);
       setModalType('');
@@ -687,7 +697,6 @@ export default function GeneralTable(props) {
     try {
       await reviewBooking(selected[0], data.status, data.note);
     } catch (e) {
-
     } finally {
       setIsOpenModal(false);
       setModalType('');
@@ -707,7 +716,7 @@ export default function GeneralTable(props) {
       />
       <Grid container spacing={gridSpacing} style={style.tableTitleWrap}>
         <Grid item xs={6}>
-          <div style={style.tableTitle} >{tableTitle}</div>
+          <div style={style.tableTitle}>{tableTitle}</div>
         </Grid>
         <Grid item xs={6}>
           <Grid container spacing={gridSpacing} justify="flex-end" alignItems="center">
@@ -725,10 +734,16 @@ export default function GeneralTable(props) {
             {buttonSelectUniversity && (
               <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
                 <div style={style.datePickerLabel}>Chọn trường: </div>
-                <select id="universityList" onChange={handleChangeUniversity} style={style.datePickerInput}>
+                <select
+                  id="universityList"
+                  onChange={handleChangeUniversity}
+                  style={style.datePickerInput}
+                >
                   <option value="">Tất cả</option>
-                  {university?.map(item => (
-                    <option key={item.id} value={item.id}>{item.name}</option>
+                  {university?.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
                   ))}
                 </select>
               </Grid>
@@ -770,7 +785,7 @@ export default function GeneralTable(props) {
                   className={classes.table}
                   aria-labelledby="tableTitle"
                   size={'medium'}
-                // aria-label="enhanced table"
+                  // aria-label="enhanced table"
                 >
                   <EnhancedTableHead
                     classes={classes}
@@ -809,20 +824,20 @@ export default function GeneralTable(props) {
                               <TableCell align="left">
                                 {tabs.length ? (
                                   <>
-                                    <span className={classes.tableItemName} onClick={(event) => openDetailDocument(event, row)}>
+                                    <span
+                                      className={classes.tableItemName}
+                                      onClick={(event) => openDetailDocument(event, row)}
+                                    >
                                       {row.fullname}
                                     </span>
                                     &nbsp;&nbsp;
                                   </>
                                 ) : (
                                   <>
-                                    <span className={classes.tableItemName}>
-                                      {row.fullname}
-                                    </span>
+                                    <span className={classes.tableItemName}>{row.fullname}</span>
                                     &nbsp;&nbsp;
                                   </>
-                                )
-                                }
+                                )}
                               </TableCell>
                             )}
                             {displayOptions.university && (
@@ -830,9 +845,12 @@ export default function GeneralTable(props) {
                             )}
                             {displayOptions.assess && (
                               <TableCell align="left">
-                                {new Array(row.assess || 0).fill(1)?.map((_, index) => (
-                                  <StarIcon key={index} style={style.starIcon} />
-                                ))}
+                                {(!isNaN(row.assess) && row.assess) > 0 && (
+                                  <div style={style.assessWrap}>
+                                    <span>{row.assess}</span>
+                                    <StarIcon style={style.starIcon} />
+                                  </div>
+                                )}
                               </TableCell>
                             )}
                             {displayOptions.email && (
@@ -848,7 +866,15 @@ export default function GeneralTable(props) {
                               <TableCell align="left">{row.mentor_name || ''}</TableCell>
                             )}
                             {displayOptions.link && (
-                              <TableCell align="left">{row.link_meeting || ''}</TableCell>
+                              <TableCell align="left">
+                                <a
+                                  style={style.meetingLink}
+                                  href={row.link_meeting || '#'}
+                                  target="_blank"
+                                >
+                                  {row.link_meeting || ''}
+                                </a>
+                              </TableCell>
                             )}
                             {displayOptions.status && (
                               <TableCell align="left">{row.status}</TableCell>
@@ -865,9 +891,7 @@ export default function GeneralTable(props) {
                             {displayOptions.uncomplete && (
                               <TableCell align="left">{row.uncomplete}</TableCell>
                             )}
-                            {displayOptions.note && (
-                              <TableCell align="left">{row.status}</TableCell>
-                            )}
+                            {displayOptions.note && <TableCell align="left">{row.note}</TableCell>}
                           </TableRow>
                         );
                       }

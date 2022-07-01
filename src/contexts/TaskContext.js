@@ -29,7 +29,7 @@ export const TaskProvider = ({ children }) => {
       search_text = '',
       from_date = '',
       to_date = '',
-      university_id = ''
+      university_id = '',
     } = paginateOption;
     axiosInstance
       .post(url, {

@@ -133,7 +133,7 @@ export default function BasicModal({
     setHelperText('');
     if (selectedBooking) {
       const noteList = JSON.parse(sessionStorage.getItem('bookingNote')) || {};
-      if(!noteList[selectedBooking]) noteList[selectedBooking] = {};
+      if (!noteList[selectedBooking]) noteList[selectedBooking] = {};
       noteList[selectedBooking][type] = formData.note;
       sessionStorage.setItem('bookingNote', JSON.stringify(noteList));
     }
@@ -147,10 +147,11 @@ export default function BasicModal({
   useEffect(() => {
     const noteList = JSON.parse(sessionStorage.getItem('bookingNote')) || {};
     if (selectedBooking) {
-      if(noteList[selectedBooking]) setFormData({ ...formData, note: noteList[selectedBooking][type] || '' });
+      if (noteList[selectedBooking])
+        setFormData({ ...formData, note: noteList[selectedBooking][type] || '' });
       else setFormData({ ...formData, note: '' });
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   return (
     <div>

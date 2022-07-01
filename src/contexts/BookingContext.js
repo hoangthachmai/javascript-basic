@@ -67,15 +67,17 @@ export const BookingProvider = ({ children }) => {
   };
 
   const getListUniversity = async () => {
-    return axiosInstance 
+    return axiosInstance
       .post(vibEndpoints.get_list_university, { outputtype: 'RawJson' })
       .then((response) => {
         if (response.status === 200 && response.data.return === 200) {
-          const { data: { list: university } } = response;
+          const {
+            data: { list: university },
+          } = response;
           return university;
         } else return {};
       });
-  }
+  };
 
   const getFeedback = async (booking_id) => {
     return axiosInstance
@@ -86,7 +88,7 @@ export const BookingProvider = ({ children }) => {
           return feedback;
         } else return {};
       });
-  }
+  };
 
   return (
     <BookingContext.Provider
@@ -97,7 +99,7 @@ export const BookingProvider = ({ children }) => {
         reviewBooking,
         getMentorDetail,
         getListUniversity,
-        getFeedback
+        getFeedback,
       }}
     >
       {children}

@@ -26,7 +26,7 @@ export const vibEndpoints = {
   review_booking: '/Primary/?FlowAlias=hnn_api_booking_review_booking&action=api',
 
   get_list_university: '/Primary/?FlowAlias=hnn_api_univ_get_all_university&action=api',
-  get_feedback_detail: '/Primary/?FlowAlias=hnn_api_booking_get_feedback_by_booking_id&action=api'
+  get_feedback_detail: '/Primary/?FlowAlias=hnn_api_booking_get_feedback_by_booking_id&action=api',
 };
 export const apiDomain = 'https://upload.truebpm.vn';
 // export const apiDomain = 'http://localhost:4000'

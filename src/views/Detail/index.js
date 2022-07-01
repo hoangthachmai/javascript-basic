@@ -160,20 +160,20 @@ const useStyles = makeStyles((theme) => ({
   feedbackStar: {
     transform: 'translateY(1px)',
     color: '#4472C4',
-    fontSize: '20px'
+    fontSize: '20px',
   },
   timeNumberInput: {
     minWidth: '52px',
     height: '20px',
     textAlign: 'center',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   fontBold: {
     fontWeight: 'bold',
   },
   feedbackTextInput: {
     width: '100%',
-    marginTop: '12px'
+    marginTop: '12px',
   },
 }));
 
@@ -230,7 +230,7 @@ const DetailDocumentDialog = () => {
     { id: 'mentee', label: 'Thông tin khách hàng' },
     { id: 'mentor', label: 'Thông tin mentor' },
     { id: 'meeting', label: 'Thông tin meeting' },
-    { id: 'feedback', label: 'Feedback' }
+    { id: 'feedback', label: 'Feedback' },
   ];
   const tabDisplayOptions = {
     mentee: tabs.includes('mentee'),
@@ -273,8 +273,8 @@ const DetailDocumentDialog = () => {
     times: '',
     comment: '',
     assess_mentor: 0,
-    assess_service: 0
-  })
+    assess_service: 0,
+  });
 
   useEffect(() => {
     if (!selectedDocument) return;
@@ -286,7 +286,7 @@ const DetailDocumentDialog = () => {
     if (tabDisplayOptions.mentor) {
       getConsultantDetail(selectedDocument.mentor_id);
     }
-    if(tabDisplayOptions.feedback) {
+    if (tabDisplayOptions.feedback) {
       getFeedbackDetail(selectedDocument.id);
     }
   }, [selectedDocument]);
@@ -294,7 +294,7 @@ const DetailDocumentDialog = () => {
   const getFeedbackDetail = async (id) => {
     const data = await getFeedback(id);
     setFeedback(data);
-  }
+  };
 
   const getConsultantDetail = async (id) => {
     const cons = await getMentorDetail(id);
@@ -680,9 +680,7 @@ const DetailDocumentDialog = () => {
                       </Grid>
                       <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
                         <div>Đây là lần thứ mấy bạn tham gia dịch vụ hướng nghiệp của trường?</div>
-                        <div className={classes.timeNumberInput}>
-                          {feedback.times}
-                        </div>
+                        <div className={classes.timeNumberInput}>{feedback.times}</div>
                       </Grid>
                       <Grid item lg={12} md={12} xs={12}>
                         <div className={classes.fontBold}>Ý kiến đánh giá và góp ý: </div>
