@@ -87,7 +87,7 @@ function getTodayAndTomorrow(date) {
 const headCells = [
   { id: 'fullname', numeric: false, disablePadding: false, label: 'Khách hàng', maxWidth: 150 },
   { id: 'university', numeric: false, disablePadding: false, label: 'Dự án', maxWidth: 100 },
-  { id: 'assess', numeric: false, disablePadding: false, label: 'Đánh giá', maxWidth: 150 },
+  { id: 'assess', numeric: true, disablePadding: false, label: 'Đánh giá', maxWidth: 150 },
   { id: 'email', numeric: false, disablePadding: false, label: 'Email', maxWidth: 100 },
   { id: 'number_phone', numeric: false, disablePadding: false, label: 'SĐT', maxWidth: 100 },
   {
@@ -137,6 +137,7 @@ function EnhancedTableHead(props) {
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{ 'aria-label': 'select all desserts' }}
+            style={{ position: 'relative !important' }}
           />
         </TableCell>
         {headCells.map(
@@ -147,7 +148,7 @@ function EnhancedTableHead(props) {
                 align={headCell.numeric ? 'right' : 'left'}
                 padding={headCell.disablePadding ? 'none' : 'default'}
                 sortDirection={orderBy === headCell.id ? order : false}
-                style={{ maxWidth: headCell.maxWidth }}
+                style={{ maxWidth: headCell.maxWidth, position: 'relative' }}
               >
                 <TableSortLabel
                   active={orderBy === headCell.id}
@@ -398,6 +399,7 @@ const useStyles = makeStyles((theme) => ({
     },
     '& > thead > tr > th': {
       background: 'unset',
+      position: 'relative !important'
     },
     '& > tbody > tr:hover': {
       backgroundColor: '#36f !important',
@@ -880,7 +882,14 @@ export default function GeneralTable(props) {
                               <TableCell align="left">{row.status}</TableCell>
                             )}
                             {displayOptions.rating && (
-                              <TableCell align="left">{row.rating}</TableCell>
+                              <TableCell align="left">
+                              {(!isNaN(row.rating) && row.rating) > 0 && (
+                                  <div style={style.assessWrap}>
+                                    <span>{row.rating}</span>
+                                    <StarIcon style={style.starIcon} />
+                                  </div>
+                                )}
+                              </TableCell>
                             )}
                             {displayOptions.total && (
                               <TableCell align="left">{row.total}</TableCell>

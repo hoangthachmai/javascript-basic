@@ -28,6 +28,7 @@ export const style = {
   },
   assessWrap: {
     display: 'flex',
+    justifyContent: 'center'
   },
   meetingLink: {
     color: 'unset',
