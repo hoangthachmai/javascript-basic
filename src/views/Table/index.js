@@ -108,7 +108,7 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: 'Chưa hoàn thành',
-    maxWidth: 100,
+    maxWidth: 150,
   },
   { id: 'note', numeric: false, disablePadding: false, label: 'Chú thích', maxWidth: 100 },
 ];
