@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -54,14 +54,15 @@ export default function BasicModal({
   type,
   handleCancel,
   handleReview,
+  selectedBooking,
   children,
   ...props
 }) {
-  const [formData, setFormData] = React.useState({
+  const [formData, setFormData] = useState({
     status: '',
     note: '',
   });
-  const [helperText, setHelperText] = React.useState('');
+  const [helperText, setHelperText] = useState('');
 
   const getTitle = () => {
     switch (type) {
@@ -130,12 +131,26 @@ export default function BasicModal({
 
   const handleCloseModal = () => {
     setHelperText('');
+    if (selectedBooking) {
+      const noteList = JSON.parse(sessionStorage.getItem('bookingNote')) || {};
+      if(!noteList[selectedBooking]) noteList[selectedBooking] = {};
+      noteList[selectedBooking][type] = formData.note;
+      sessionStorage.setItem('bookingNote', JSON.stringify(noteList));
+    }
     setFormData({
       status: '',
       note: '',
     });
     handleClose();
   };
+
+  useEffect(() => {
+    const noteList = JSON.parse(sessionStorage.getItem('bookingNote')) || {};
+    if (selectedBooking) {
+      if(noteList[selectedBooking]) setFormData({ ...formData, note: noteList[selectedBooking][type] || '' });
+      else setFormData({ ...formData, note: '' });
+    }
+  }, [isOpen])
 
   return (
     <div>
@@ -169,6 +184,8 @@ export default function BasicModal({
               {helperText && <div style={style.error}>{helperText}</div>}
               <TextField
                 fullWidth
+                multiline
+                rowsMax={5}
                 label="Ghi chú"
                 variant="outlined"
                 value={formData.note}

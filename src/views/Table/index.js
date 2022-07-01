@@ -12,10 +12,16 @@ import {
   Menu,
   InputBase,
   Checkbox,
+  Tooltip
 } from '@material-ui/core';
 // import Breadcrumb from './../../component/Breadcrumb';
 import Modal from '../Table/Modal';
 import StarIcon from '@material-ui/icons/Star';
+import SearchIcon from '@material-ui/icons/Search';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import ViewColumnIcon from '@material-ui/icons/ViewColumn';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import ClearIcon from '@material-ui/icons/Clear';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -41,26 +47,7 @@ import {
   CONFIRM_CHANGE,
 } from '../../store/actions';
 import useBooking from './../../hooks/useBooking';
-
-const style = {
-  datePickerWrap: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  datePickerLabel: {
-    marginRight: '12px',
-  },
-  datePickerInput: {
-    border: 'unset',
-    background: 'transparent',
-    outline: 'none',
-  },
-  starIcon: {
-    color: '#4472C4',
-    fontSize: '20px'
-  }
-};
+import { customClasses, style } from './style';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -186,8 +173,8 @@ EnhancedTableHead.propTypes = {
 
 const useToolbarStyles = makeStyles((theme) => ({
   root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
+    paddingLeft: theme.spacing(3),
+    paddingRight: theme.spacing(3),
   },
   highlight:
     theme.palette.type === 'light'
@@ -202,19 +189,87 @@ const useToolbarStyles = makeStyles((theme) => ({
   title: {
     flex: '1 2 100%',
   },
+  toolButton: {
+    margin: '0 4px',
+    padding: '12px',
+    color: 'rgba(0, 0, 0, 0.54)',
+    minWidth: '40px',
+    borderRadius: '50%',
+    '&:hover': {
+      color: '#36f'
+    }
+  },
+  toolButtonIcon: {
+    fontSize: '20px',
+    width: '20px'
+  },
+  toolSearchWrap: {
+    display: 'flex',
+    alignItems: 'center',
+    flex: 1,
+    padding: '8px 12px !important'
+  },
+  toolSearchInput: {
+    border: 'unset',
+    borderBottom: '1px solid rgb(18, 23, 30)',
+    color: '#12171e',
+    width: '100%',
+    outline: 'none',
+    fontSize: '14px',
+    marginLeft: '8px',
+    padding: '6px 0',
+    background: 'transparent',
+    transform: 'translateY(-6px)',
+    '&:hover': {
+      borderColor: '#000'
+    },
+    '&:focus': {
+      borderColor: '#3467FF',
+      borderWidth: '2px'
+    }
+  },
+  toolButtonSearch: {
+    padding: '12px',
+    color: 'rgba(0, 0, 0, 0.54)',
+    minWidth: '40px',
+    borderRadius: '50%',
+    '&:hover': {
+      color: '#FF413A'
+    }
+  }
 }));
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
   const {
     numSelected,
-    tableTitle,
     buttonBookingCancel,
     buttonBookingReview,
     buttonBookingHandled,
     handleCancelBooking,
     handleReviewBooking,
+    handlePressEnterToSearch
   } = props;
+
+  const [searchValue, setSearchValue] = React.useState('');
+  const [isOpenSearch, setIsOpenSearch] = React.useState(true);
+
+  const handleCloseInput = () => {
+    // setIsOpenSearch(!isOpenSearch);
+    handlePressEnterToSearch('');
+    setSearchValue('');
+  }
+
+  const handleChangeSearch = (e) => {
+    setSearchValue(e.target.value);
+  }
+
+  const handleEnterSearch = (e) => {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+      handlePressEnterToSearch(searchValue)
+    }
+  }
+
 
   return (
     <Toolbar
@@ -222,57 +277,92 @@ const EnhancedTableToolbar = (props) => {
         [classes.highlight]: numSelected > 0,
       })}
     >
-      {numSelected > 0 ? (
-        <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
-          {numSelected} bản ghi được chọn
-        </Typography>
-      ) : (
-        <Typography className={classes.title} variant="h3" id="tableTitle" component="div">
-          {tableTitle}
-        </Typography>
-      )}
-
       <Grid container justify="flex-end" spacing={gridSpacing}>
-        {
-          <>
-            {buttonBookingHandled && (
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color={buttonBookingHandled.style ? buttonBookingHandled.style : 'primary'}
-                  style={{ background: '#FFC000' }}
-                  onClick={() => { }}
-                >
-                  {buttonBookingHandled.text}
+        <Grid item lg={6} md={6} xs={12} className={classes.toolSearchWrap}>
+          {numSelected > 0 ? (
+            <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
+              {numSelected} bản ghi được chọn
+            </Typography>
+          ) : (
+            isOpenSearch && (
+              <div className={classes.toolSearchWrap}>
+                <SearchIcon />
+                <input
+                  className={classes.toolSearchInput}
+                  value={searchValue}
+                  onChange={handleChangeSearch}
+                  onKeyUp={handleEnterSearch}
+                />
+                <Button className={classes.toolButtonSearch} onClick={handleCloseInput} >
+                  <ClearIcon className={classes.toolButtonIcon} />
                 </Button>
-              </Grid>
-            )}
-            {buttonBookingCancel && (
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color={buttonBookingCancel.style ? buttonBookingCancel.style : 'primary'}
-                  style={{ background: '#FFC000' }}
-                  onClick={handleCancelBooking}
-                >
-                  {buttonBookingCancel.text}
-                </Button>
-              </Grid>
-            )}
-            {buttonBookingReview && (
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color={buttonBookingReview.style ? buttonBookingReview.style : 'primary'}
-                  style={{ background: '#FFC000' }}
-                  onClick={handleReviewBooking}
-                >
-                  {buttonBookingReview.text}
-                </Button>
-              </Grid>
-            )}
-          </>
-        }
+              </div>
+            )
+          )}
+        </Grid>
+        <Grid item lg={6} md={6} xs={12} className={classes.toolSearchWrap}>
+          <Grid container justify="flex-end">
+            <>
+              {buttonBookingHandled && (
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color={buttonBookingHandled.style ? buttonBookingHandled.style : 'primary'}
+                    style={{ background: '#FFC000', marginLeft: '8px' }}
+                    onClick={() => { }}
+                  >
+                    {buttonBookingHandled.text}
+                  </Button>
+                </Grid>
+              )}
+              {buttonBookingCancel && (
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color={buttonBookingCancel.style ? buttonBookingCancel.style : 'primary'}
+                    style={{ background: '#FFC000', marginLeft: '8px' }}
+                    onClick={handleCancelBooking}
+                  >
+                    {buttonBookingCancel.text}
+                  </Button>
+                </Grid>
+              )}
+              {buttonBookingReview && (
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color={buttonBookingReview.style ? buttonBookingReview.style : 'primary'}
+                    style={{ background: '#FFC000', marginLeft: '8px' }}
+                    onClick={handleReviewBooking}
+                  >
+                    {buttonBookingReview.text}
+                  </Button>
+                </Grid>
+              )}
+            </>
+            {/* <Tooltip title="Search">
+              <Button className={classes.toolButton} onClick={handleCloseInput} >
+                <SearchIcon className={classes.toolButtonIcon} />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Download">
+              <Button className={classes.toolButton}>
+                <CloudDownloadIcon className={classes.toolButtonIcon} />
+              </Button>
+            </Tooltip>
+            <Tooltip title="View Columns">
+              <Button className={classes.toolButton} >
+                <ViewColumnIcon className={classes.toolButtonIcon} />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Filter Table">
+              <Button className={classes.toolButton} >
+                <FilterListIcon className={classes.toolButtonIcon} />
+              </Button>
+            </Tooltip> */}
+
+          </Grid>
+        </Grid>
       </Grid>
     </Toolbar>
   );
@@ -285,12 +375,36 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles((theme) => ({
   root: {
     marginBottom: '56px',
+    boxShadow: 'unset'
   },
   paper: {
     width: '100%',
+    backgroundColor: '#f0f2f8'
   },
   table: {
     minWidth: 750,
+    borderSpacing: '0 10px',
+    '& > thead': {
+      background: '#FFFFFF'
+    },
+    '& > thead > tr > th': {
+      background: 'unset'
+    },
+    '& > tbody > tr:hover': {
+      backgroundColor: '#36f !important'
+    },
+    '& > tbody > tr:hover td': {
+      color: '#FFF'
+    },
+    '& > tbody > tr:hover td span': {
+      color: '#FFF'
+    },
+    '& > tbody > tr:hover td span': {
+      color: '#FFF'
+    },
+    '& > tbody > tr:hover td svg': {
+      fill: '#FFF'
+    }
   },
   visuallyHidden: {
     border: 0,
@@ -339,6 +453,14 @@ const useStyles = makeStyles((theme) => ({
     height: '40px',
     width: '60px',
   },
+  tableRow: {
+    background: '#fff',
+    boxShadow: '0 2px 6px -1px rgb(0 0 0 / 10%)'
+  },
+  tableItemName: {
+    fontWeight: 'bold',
+    cursor: 'pointer'
+  }
 }));
 
 export default function GeneralTable(props) {
@@ -485,10 +607,8 @@ export default function GeneralTable(props) {
     setSelected([]);
   };
 
-  const handlePressEnterToSearch = (event) => {
-    if (event.key === 'Enter') {
-      fetchDocument({ search_text: searchText });
-    }
+  const handlePressEnterToSearch = (text) => {
+    fetchDocument({ search_text: text });
   };
 
   const handleDatePickerChange = (e) => {
@@ -583,78 +703,61 @@ export default function GeneralTable(props) {
         type={modalType}
         handleCancel={handleCancelBooking}
         handleReview={handleReviewBooking}
+        selectedBooking={selected[0]}
       />
-      <Grid container spacing={gridSpacing}>
-        <Grid item xs={12}>
-          <Grid container justify="space-between">
-            <Grid item lg={12} md={6} xs={12}>
-              <Grid container spacing={gridSpacing} justify="flex-end" alignItems="center">
-                <Grid item xs={12} md={6} lg={6}>
-                  <div className={classes.search}>
-                    <div className={classes.searchIcon}>
-                      <SearchTwoToneIcon />
-                    </div>
-                    <InputBase
-                      placeholder="Tìm kiếm từ khoá...."
-                      classes={{
-                        root: classes.inputRoot,
-                        input: classes.inputInput,
-                      }}
-                      onChange={(event) => setSearchText(event.target.value)}
-                      onKeyDown={handlePressEnterToSearch}
-                      inputProps={{ 'aria-label': 'search' }}
-                    />
-                  </div>
-                </Grid>
-                {buttonSelectDate && (
-                  <Grid style={style.datePickerWrap} item xs={12} md={6} lg={6}>
-                    <div style={style.datePickerLabel}>Chọn thời gian: </div>
-                    <input
-                      style={style.datePickerInput}
-                      type="date"
-                      name="selected_date"
-                      onChange={handleDatePickerChange}
-                    />
-                  </Grid>
-                )}
-                {buttonSelectUniversity && (
-                  <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
-                    <div style={style.datePickerLabel}>Chọn dự án: </div>
-                    <select id="universityList" onChange={handleChangeUniversity} style={style.datePickerInput}>
-                      <option value="">Tất cả</option>
-                      {university?.map(item => (
-                        <option key={item.id} value={item.id}>{item.name}</option>
-                      ))}
-                    </select>
-                  </Grid>
-                )}
-                {buttonSelectMentor && (
-                  <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
-                    <div style={style.datePickerLabel}>Chọn Mentor: </div>
-                    <select style={style.datePickerInput}>
-                      <option>Tất cả</option>
-                    </select>
-                  </Grid>
-                )}
-                {buttonSelectSource && (
-                  <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
-                    <div style={style.datePickerLabel}>Chọn nguồn: </div>
-                    <select style={style.datePickerInput}>
-                      <option>Tất cả</option>
-                    </select>
-                  </Grid>
-                )}
+      <Grid container spacing={gridSpacing} style={style.tableTitleWrap}>
+        <Grid item xs={6}>
+          <div style={style.tableTitle} >{tableTitle}</div>
+        </Grid>
+        <Grid item xs={6}>
+          <Grid container spacing={gridSpacing} justify="flex-end" alignItems="center">
+            {buttonSelectDate && (
+              <Grid style={style.datePickerWrap} item xs={12} md={6} lg={6}>
+                <div style={style.datePickerLabel}>Chọn thời gian: </div>
+                <input
+                  style={style.datePickerInput}
+                  type="date"
+                  name="selected_date"
+                  onChange={handleDatePickerChange}
+                />
               </Grid>
-            </Grid>
+            )}
+            {buttonSelectUniversity && (
+              <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
+                <div style={style.datePickerLabel}>Chọn trường: </div>
+                <select id="universityList" onChange={handleChangeUniversity} style={style.datePickerInput}>
+                  <option value="">Tất cả</option>
+                  {university?.map(item => (
+                    <option key={item.id} value={item.id}>{item.name}</option>
+                  ))}
+                </select>
+              </Grid>
+            )}
+            {buttonSelectMentor && (
+              <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
+                <div style={style.datePickerLabel}>Chọn Mentor: </div>
+                <select style={style.datePickerInput}>
+                  <option>Tất cả</option>
+                </select>
+              </Grid>
+            )}
+            {buttonSelectSource && (
+              <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
+                <div style={style.datePickerLabel}>Chọn nguồn: </div>
+                <select style={style.datePickerInput}>
+                  <option>Tất cả</option>
+                </select>
+              </Grid>
+            )}
           </Grid>
         </Grid>
         <Grid item xs={12}>
           <Card className={classes.root}>
-            <Divider />
             <Paper className={classes.paper}>
               <EnhancedTableToolbar
                 numSelected={selected.length}
                 tableTitle={tableTitle}
+                handlePressEnterToSearch={handlePressEnterToSearch}
                 buttonBookingCancel={buttonBookingCancel}
                 buttonBookingReview={buttonBookingReview}
                 buttonBookingHandled={buttonBookingHandled}
@@ -687,6 +790,7 @@ export default function GeneralTable(props) {
 
                         return (
                           <TableRow
+                            className={classes.tableRow}
                             hover
                             onClick={(event) => handleClick(event, row.id)}
                             role="checkbox"
@@ -705,15 +809,19 @@ export default function GeneralTable(props) {
                               <TableCell align="left">
                                 {tabs.length ? (
                                   <>
-                                    <a href="#" onClick={(event) => openDetailDocument(event, row)}>
+                                    <span className={classes.tableItemName} onClick={(event) => openDetailDocument(event, row)}>
                                       {row.fullname}
-                                    </a>
+                                    </span>
                                     &nbsp;&nbsp;
-
                                   </>
-                                ) : <>
-                                  {row.fullname} &nbsp;&nbsp;
-                                </>
+                                ) : (
+                                  <>
+                                    <span className={classes.tableItemName}>
+                                      {row.fullname}
+                                    </span>
+                                    &nbsp;&nbsp;
+                                  </>
+                                )
                                 }
                               </TableCell>
                             )}
@@ -722,7 +830,7 @@ export default function GeneralTable(props) {
                             )}
                             {displayOptions.assess && (
                               <TableCell align="left">
-                                {new Array(5).fill(1)?.map((_, index) => (
+                                {new Array(row.assess || 0).fill(1)?.map((_, index) => (
                                   <StarIcon key={index} style={style.starIcon} />
                                 ))}
                               </TableCell>

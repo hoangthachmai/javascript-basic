@@ -155,7 +155,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     '& > div:first-child': {
       marginRight: '12px',
-      fontWeight: 'bold',
     },
   },
   feedbackStar: {
@@ -167,6 +166,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '52px',
     height: '20px',
     textAlign: 'center',
+    fontWeight: 'bold'
   },
   fontBold: {
     fontWeight: 'bold',
