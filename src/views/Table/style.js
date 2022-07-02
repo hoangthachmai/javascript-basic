@@ -21,6 +21,7 @@ export const style = {
     marginTop: '20px',
     paddingBottom: '16px',
     borderBottom: '1px solid rgba(0 ,0, 0, 0.12)',
+    display: 'flex',
   },
   tableTitle: {
     fontSize: '24px',
@@ -33,6 +34,14 @@ export const style = {
   meetingLink: {
     color: 'unset',
     textDecoration: 'none !important',
+  },
+  ratingWrap: {
+    display: 'flex',
+  },
+  statusWrap: {
+    padding: '12px',
+    color: '#fff',
+    borderRadius: '24px'
   },
 };
 

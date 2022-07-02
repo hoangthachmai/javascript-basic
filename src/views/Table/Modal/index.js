@@ -151,7 +151,7 @@ export default function BasicModal({
         setFormData({ ...formData, note: noteList[selectedBooking][type] || '' });
       else setFormData({ ...formData, note: '' });
     }
-  }, [isOpen]);
+  }, [isOpen, type, selectedBooking]);
 
   return (
     <div>

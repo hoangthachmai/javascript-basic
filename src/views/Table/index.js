@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -6,19 +6,15 @@ import {
   Grid,
   Card,
   Button,
-  Divider,
-  MenuItem,
-  FormControl,
-  Menu,
-  InputBase,
   Checkbox,
   Tooltip,
 } from '@material-ui/core';
 // import Breadcrumb from './../../component/Breadcrumb';
 import Modal from '../Table/Modal';
+import DoneAllIcon from '@material-ui/icons/DoneAll'
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import StarIcon from '@material-ui/icons/Star';
 import SearchIcon from '@material-ui/icons/Search';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -30,21 +26,25 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
-import SearchTwoToneIcon from '@material-ui/icons/SearchTwoTone';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 import { bookingActions, gridSpacing, view } from '../../store/constant';
 import { useSelector, useDispatch } from 'react-redux';
 import useTask from './../../hooks/useTask';
 import useConfirmPopup from './../../hooks/useConfirmPopup';
 import useView from './../../hooks/useView';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import useOnClickOutSide from './../../hooks/useClickOutSide';
+
 import {
   FLOATING_MENU_CHANGE,
   DOCUMENT_CHANGE,
   TASK_CHANGE,
-  CONFIRM_CHANGE,
 } from '../../store/actions';
 import useBooking from './../../hooks/useBooking';
 import { customClasses, style } from './style';
@@ -85,19 +85,20 @@ function getTodayAndTomorrow(date) {
 }
 
 const headCells = [
+  { id: 'id', numeric: false, disablePadding: false, label: 'Mã đăng ký', maxWidth: 150 },
   { id: 'fullname', numeric: false, disablePadding: false, label: 'Khách hàng', maxWidth: 150 },
-  { id: 'university', numeric: false, disablePadding: false, label: 'Dự án', maxWidth: 100 },
+  { id: 'university_name', numeric: false, disablePadding: false, label: 'Trường', maxWidth: 100 },
   { id: 'assess', numeric: true, disablePadding: false, label: 'Đánh giá', maxWidth: 150 },
-  { id: 'email', numeric: false, disablePadding: false, label: 'Email', maxWidth: 100 },
+  { id: 'email_address', numeric: false, disablePadding: false, label: 'Email', maxWidth: 100 },
   { id: 'number_phone', numeric: false, disablePadding: false, label: 'SĐT', maxWidth: 100 },
   {
-    id: 'consultation_day',
+    id: 'schedule',
     numeric: false,
     disablePadding: false,
     label: 'Lịch tư vấn',
     maxWidth: 100,
   },
-  { id: 'mentor', numeric: false, disablePadding: false, label: 'Mentor', maxWidth: 100 },
+  { id: 'mentor_name', numeric: false, disablePadding: false, label: 'Mentor', maxWidth: 100 },
   { id: 'link', numeric: false, disablePadding: false, label: 'Link', maxWidth: 100 },
   { id: 'status', numeric: false, disablePadding: false, label: 'Trạng thái', maxWidth: 100 },
   { id: 'rating', numeric: false, disablePadding: false, label: 'Đánh giá', maxWidth: 100 },
@@ -111,6 +112,7 @@ const headCells = [
     maxWidth: 150,
   },
   { id: 'note', numeric: false, disablePadding: false, label: 'Chú thích', maxWidth: 100 },
+  { id: 'menuButtons', numeric: false, disablePadding: false, label: '', maxWidth: 150 },
 ];
 
 function EnhancedTableHead(props) {
@@ -150,18 +152,23 @@ function EnhancedTableHead(props) {
                 sortDirection={orderBy === headCell.id ? order : false}
                 style={{ maxWidth: headCell.maxWidth, position: 'relative' }}
               >
-                <TableSortLabel
-                  active={orderBy === headCell.id}
-                  direction={orderBy === headCell.id ? order : 'asc'}
-                  onClick={createSortHandler(headCell.id)}
-                >
-                  {headCell.label}
-                  {orderBy === headCell.id ? (
-                    <span className={classes.visuallyHidden}>
-                      {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                    </span>
-                  ) : null}
-                </TableSortLabel>
+                {headCell.id === 'menuButtons' ? (
+                  <></>
+                ) : (
+                  <TableSortLabel
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : 'asc'}
+                    onClick={createSortHandler(headCell.id)}
+                  >
+                    {headCell.label}
+                    {orderBy === headCell.id ? (
+                      <span className={classes.visuallyHidden}>
+                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                      </span>
+                    ) : null}
+                  </TableSortLabel>
+                )}
+
               </TableCell>
             )
         )}
@@ -186,15 +193,18 @@ const useToolbarStyles = makeStyles((theme) => ({
   highlight:
     theme.palette.type === 'light'
       ? {
-          color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-        }
+        color: theme.palette.secondary.main,
+        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+      }
       : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
-        },
+        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.secondary.dark,
+      },
   title: {
     flex: '1 2 100%',
+  },
+  toolButtonWrap: {
+    position: 'relative',
   },
   toolButton: {
     margin: '0 4px',
@@ -205,6 +215,9 @@ const useToolbarStyles = makeStyles((theme) => ({
     '&:hover': {
       color: '#36f',
     },
+  },
+  toolButtonActive: {
+    color: '#36f',
   },
   toolButtonIcon: {
     fontSize: '20px',
@@ -244,26 +257,124 @@ const useToolbarStyles = makeStyles((theme) => ({
       color: '#FF413A',
     },
   },
+  toolColumn: {
+    zIndex: '9999',
+    position: 'absolute',
+    top: '32px',
+    right: 0,
+    minWidth: '200px',
+    background: '#FFFFFF',
+    transform: 'translateX(60px)',
+    padding: '4px 12px 0 24px',
+    boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)',
+    borderRadius: '10px',
+  },
+  toolColumnTitle: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    '& > div': {
+      fontWeight: 500
+    }
+  },
+  toolColumnBody: {
+    paddingRight: '12px',
+    marginLeft: '-12px',
+    maxHeight: '190px',
+    overflowY: 'scroll',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    }
+  },
+  toolColumnNameWrap: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  toolFilter: {
+    transform: 'unset',
+    minWidth: '380px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
+  },
+  toolFilterTitle: {
+    justifyCentent: 'space-between'
+  },
+  toolFilterTitleBlock: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  toolFilterBody: {
+    maxHeight: 'unset',
+    minHeight: '180px',
+    marginTop: '16px',
+    marginLeft: 'unset',
+    flex: 1
+  },
+  toolResetButton: {
+    borderRadius: 'unset',
+    fontSize: '12px',
+    padding: '6px 8px',
+    marginLeft: '16px',
+    '&:hover': {
+      color: '#36f',
+    },
+  },
+  toolFilterItem: {
+    width: '100%',
+    padding: '16px 0'
+  }
 }));
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
   const {
     numSelected,
-    buttonBookingCancel,
-    buttonBookingReview,
-    buttonBookingHandled,
-    handleCancelBooking,
-    handleReviewBooking,
     handlePressEnterToSearch,
+    handleShowColumn,
+    handleFilterChange,
+    displayOptions,
+    getListUniversity,
+    data
   } = props;
 
+  const filterRef = useRef(null);
+  // useOnClickOutSide(filterRef, () => {
+  //   setIsOpenFilter(false);
+  // });
+
+  const [columnNames, setColumnNames] = React.useState();
   const [searchValue, setSearchValue] = React.useState('');
-  const [isOpenSearch, setIsOpenSearch] = React.useState(true);
+  const [isOpenSearch, setIsOpenSearch] = React.useState(false);
+  const [isOpenShowColumn, setIsOpenShowColumn] = React.useState(false);
+  const [isOpenFilter, setIsOpenFilter] = React.useState(false);
+  const [universityList, setUniversityList] = React.useState([]);
+  const [statusList] = React.useState([
+    {
+      id: 'Đang diễn ra',
+      name: 'Đang diễn ra'
+    },
+    {
+      id: 'Khách hàng chưa xác nhận',
+      name: 'Khách hàng chưa xác nhận'
+    },
+    {
+      id: 'Meeting gián đoạn',
+      name: 'Meeting gián đoạn'
+    },
+    {
+      id: 'Đã hoàn thành',
+      name: 'Đã hoàn thành'
+    }
+  ])
+  const [filter, setFilter] = React.useState({
+    university_id: '',
+    status: ''
+  })
 
   const handleCloseInput = () => {
-    // setIsOpenSearch(!isOpenSearch);
-    handlePressEnterToSearch('');
+    if (isOpenSearch) handlePressEnterToSearch('');
+    setIsOpenSearch(!isOpenSearch);
     setSearchValue('');
   };
 
@@ -276,6 +387,55 @@ const EnhancedTableToolbar = (props) => {
       handlePressEnterToSearch(searchValue);
     }
   };
+
+  const handleResetFilter = () => {
+    setFilter({
+      university_id: '',
+      status: ''
+    });
+    handleFilterChange({
+      university_id: '',
+      status: ''
+    })
+  }
+
+  const handleChangeColumnName = (index, id) => {
+    const newColumnNames = JSON.parse(JSON.stringify(columnNames));
+    const newState = !newColumnNames[index].isSelected;
+    newColumnNames[index].isSelected = newState;
+    handleShowColumn(id, newState);
+    setColumnNames(pre => newColumnNames);
+  }
+
+  const handleChangeFilter = (event) => {
+    const newFilter = { ...filter, [event.target.name]: event.target.value }
+    setFilter(newFilter);
+    handleFilterChange(newFilter);
+  }
+
+  useEffect(() => {
+    async function initUniversityList() {
+      const data = await getListUniversity();
+      setUniversityList(data);
+    }
+    initUniversityList();
+  }, []);
+
+  useEffect(() => {
+    if (data.length) {
+      const keysData = Object.keys(data[0]);
+      const newColumnNames = headCells.reduce((pre, { id, label }) => {
+        if (keysData.includes(id)) {
+          return [...pre, { id, label, isSelected: displayOptions[id] }];
+        } else return pre;
+      }, [])
+      setColumnNames(newColumnNames);
+      return;
+    }
+    setColumnNames(headCells.reduce((pre, { id, label }) => {
+      return (id !== 'menuButtons' && displayOptions[id]) ? [...pre, { id, label, isSelected: displayOptions[id] }] : pre;
+    }, []))
+  }, [displayOptions, data])
 
   return (
     <Toolbar
@@ -313,64 +473,109 @@ const EnhancedTableToolbar = (props) => {
         </Grid>
         <Grid item lg={6} md={6} xs={12} className={classes.toolSearchWrap}>
           <Grid container justify="flex-end">
-            <>
-              {buttonBookingHandled && (
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color={buttonBookingHandled.style ? buttonBookingHandled.style : 'primary'}
-                    style={{ background: '#FFC000', marginLeft: '8px' }}
-                    onClick={() => {}}
-                  >
-                    {buttonBookingHandled.text}
-                  </Button>
-                </Grid>
-              )}
-              {buttonBookingCancel && (
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color={buttonBookingCancel.style ? buttonBookingCancel.style : 'primary'}
-                    style={{ background: '#FFC000', marginLeft: '8px' }}
-                    onClick={handleCancelBooking}
-                  >
-                    {buttonBookingCancel.text}
-                  </Button>
-                </Grid>
-              )}
-              {buttonBookingReview && (
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color={buttonBookingReview.style ? buttonBookingReview.style : 'primary'}
-                    style={{ background: '#FFC000', marginLeft: '8px' }}
-                    onClick={handleReviewBooking}
-                  >
-                    {buttonBookingReview.text}
-                  </Button>
-                </Grid>
-              )}
-            </>
-            {/* <Tooltip title="Search">
-              <Button className={classes.toolButton} onClick={handleCloseInput} >
+            <Tooltip title="Search">
+              <Button className={`${classes.toolButton} ${isOpenSearch ? classes.toolButtonActive : ''}`} onClick={handleCloseInput} >
                 <SearchIcon className={classes.toolButtonIcon} />
               </Button>
             </Tooltip>
-            <Tooltip title="Download">
-              <Button className={classes.toolButton}>
-                <CloudDownloadIcon className={classes.toolButtonIcon} />
-              </Button>
-            </Tooltip>
-            <Tooltip title="View Columns">
-              <Button className={classes.toolButton} >
-                <ViewColumnIcon className={classes.toolButtonIcon} />
-              </Button>
-            </Tooltip>
-            <Tooltip title="Filter Table">
-              <Button className={classes.toolButton} >
-                <FilterListIcon className={classes.toolButtonIcon} />
-              </Button>
-            </Tooltip> */}
+            <ClickAwayListener onClickAway={() => setIsOpenShowColumn(false)}>
+              <div className={classes.toolButtonWrap}>
+                <Tooltip title="View Columns">
+                  <Button className={`${classes.toolButton} ${isOpenShowColumn ? classes.toolButtonActive : ''}`} onClick={() => setIsOpenShowColumn(!isOpenShowColumn)} >
+                    <ViewColumnIcon className={classes.toolButtonIcon} />
+                  </Button>
+                </Tooltip>
+                {isOpenShowColumn && (
+                  <div className={classes.toolColumn}>
+                    <div className={classes.toolColumnTitle}>
+                      <div>Show Columns</div>
+                      <Button className={classes.toolButtonSearch} onClick={() => setIsOpenShowColumn(false)}>
+                        <ClearIcon className={classes.toolButtonIcon} />
+                      </Button>
+                    </div>
+                    <div className={classes.toolColumnBody} >
+                      {columnNames.map((columnName, index) => (
+                        <div key={columnName.id} className={classes.toolColumnNameWrap}>
+                          <Checkbox
+                            checked={columnName.isSelected}
+                            onChange={() => handleChangeColumnName(index, columnName.id)}
+                            style={{ position: 'relative !important' }}
+                          />
+                          <span>{columnName.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </ClickAwayListener>
+            <div ref={filterRef} className={classes.toolButtonWrap}>
+                <Tooltip title="Filter Table">
+                  <Button className={classes.toolButton} onClick={() => setIsOpenFilter(!isOpenFilter)}>
+                    <FilterListIcon className={classes.toolButtonIcon} />
+                  </Button>
+                </Tooltip>
+                {isOpenFilter && (
+                  <div className={`${classes.toolColumn} ${classes.toolFilter}`}>
+                    <div className={`${classes.toolColumnTitle} ${classes.toolFilterTitle}`}>
+                      <div className={classes.toolFilterTitleBlock}>
+                        <div>Filters</div>
+                        <Button
+                          className={`${classes.toolButtonSearch} ${classes.toolResetButton}`}
+                          onClick={handleResetFilter}
+                        >
+                          Reset
+                        </Button>
+                      </div>
+                      <Button className={classes.toolButtonSearch} onClick={() => setIsOpenFilter(false)}>
+                        <ClearIcon className={classes.toolButtonIcon} />
+                      </Button>
+                    </div>
+                    <div className={`${classes.toolColumnBody} ${classes.toolFilterBody}`} >
+                      <div className={classes.toolFilterItem}>
+                        <FormControl fullWidth>
+                          <InputLabel shrink id="university-label">
+                            Trường
+                          </InputLabel>
+                          <Select
+                            labelId="university-label"
+                            id="univeristy_id"
+                            onChange={handleChangeFilter}
+                            displayEmpty
+                            name="university_id"
+                            value={filter.university_id}
+                          >
+                            <MenuItem value="">Tất cả</MenuItem>
+                            {universityList?.map((university, index) => (
+                              <MenuItem key={index} value={university.id}>{university.name}</MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </div>
+                      <div className={classes.toolFilterItem}>
+                        <FormControl fullWidth>
+                          <InputLabel shrink id="status-label">
+                            Trạng thái
+                          </InputLabel>
+                          <Select
+                            labelId="status-label"
+                            id="status_id"
+                            onChange={handleChangeFilter}
+                            displayEmpty
+                            name="status"
+                            value={filter.status}
+                          >
+                            <MenuItem value="">Tất cả</MenuItem>
+                            {statusList?.map((status, index) => (
+                              <MenuItem key={index} value={status.id}>{status.name}</MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
           </Grid>
         </Grid>
       </Grid>
@@ -384,12 +589,14 @@ EnhancedTableToolbar.propTypes = {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginBottom: '56px',
     boxShadow: 'unset',
+    height: '100%'
   },
   paper: {
     width: '100%',
     backgroundColor: '#f0f2f8',
+    paddingBottom: '56px',
+    minHeight: '320px'
   },
   table: {
     minWidth: 750,
@@ -472,6 +679,52 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     cursor: 'pointer',
   },
+  tableItemID: {
+    display: 'flex',
+    flexDirection: 'column',
+    cursor: 'pointer',
+  },
+  handleButtonWrap: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  handleButton: {
+    height: '34px',
+    width: '34px',
+    margin: '0 4px',
+    padding: '12px',
+    color: '#FFFFFF',
+    minWidth: '34px',
+    borderRadius: '50%',
+    background: '#36f',
+    boxShadow: '0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%)',
+    '&:hover': {
+      background: '#0043a9',
+    },
+  },
+  handleButtonCancel: {
+    background: '#425466',
+    '&:hover': {
+      background: '#272f33',
+    },
+  },
+  handleButtonIcon: {
+    fontSize: '20px',
+    width: '20px',
+  },
+  waitingStatus: {
+    background: 'rgba(47, 210, 17, 0.8) !important'
+  },
+  handleStatus: {
+    background: 'rgba(235, 246, 34, 0.8) !important',
+    color: '#000000 !important'
+  },
+  cancelStatus: {
+    background: 'rgba(246, 52, 11, 0.8) !important'
+  },
+  completedStatus: {
+    background: '#36f',
+  }
 }));
 
 export default function GeneralTable(props) {
@@ -479,24 +732,29 @@ export default function GeneralTable(props) {
   const dispatch = useDispatch();
   const { setConfirmPopup } = useConfirmPopup();
   const { menu_buttons: menuButtons, columns: tableColumns, tabs } = useView();
+  const [displayOptions, setDisplayOptions] = React.useState({});
+  const { flattenFolders, selectedFolder } = useSelector((state) => state.folder);
 
-  const dontHaveColumnSettings = !tableColumns || !tableColumns.length;
-  const displayOptions = {
-    fullname: dontHaveColumnSettings ? true : tableColumns.includes('fullname'),
-    university: dontHaveColumnSettings ? true : tableColumns.includes('university'),
-    assess: dontHaveColumnSettings ? true : tableColumns.includes('assess'),
-    email: dontHaveColumnSettings ? true : tableColumns.includes('email'),
-    number_phone: dontHaveColumnSettings ? true : tableColumns.includes('number_phone'),
-    consultation_day: dontHaveColumnSettings ? true : tableColumns.includes('consultation_day'),
-    link: dontHaveColumnSettings ? true : tableColumns.includes('link'),
-    status: dontHaveColumnSettings ? true : tableColumns.includes('status'),
-    mentor: dontHaveColumnSettings ? true : tableColumns.includes('mentor'),
-    rating: dontHaveColumnSettings ? true : tableColumns.includes('rating'),
-    total: dontHaveColumnSettings ? true : tableColumns.includes('total'),
-    reject: dontHaveColumnSettings ? true : tableColumns.includes('reject'),
-    uncomplete: dontHaveColumnSettings ? true : tableColumns.includes('uncomplete'),
-    note: dontHaveColumnSettings ? true : tableColumns.includes('note'),
-  };
+  useEffect(() => {
+    setDisplayOptions({
+      id: selectedFolder.action !== bookingActions.by_mentor_list,
+      fullname: tableColumns.includes('fullname'),
+      university_name: tableColumns.includes('university'),
+      assess: tableColumns.includes('assess'),
+      email_address: tableColumns.includes('email'),
+      number_phone: tableColumns.includes('number_phone'),
+      schedule: tableColumns.includes('consultation_day'),
+      link: false,
+      status: tableColumns.includes('status'),
+      mentor_name: tableColumns.includes('mentor'),
+      rating: tableColumns.includes('rating'),
+      total: tableColumns.includes('total'),
+      reject: tableColumns.includes('reject'),
+      uncomplete: tableColumns.includes('uncomplete'),
+      note: tableColumns.includes('note'),
+      menuButtons: !!menuButtons.length || false
+    })
+  }, [tableColumns, selectedFolder])
 
   const buttonBookingCancel = menuButtons.find(
     (button) => button.name === view.booking.list.cancel
@@ -515,19 +773,17 @@ export default function GeneralTable(props) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
-  const [searchText, setSearchText] = React.useState('');
   const [university, setUniversity] = React.useState(null);
-  const { url, documentType, categories = [], tableTitle, showPreviewUrl = true } = props;
+  const { url, documentType, tableTitle, showPreviewUrl = true } = props;
 
   const { projects } = useSelector((state) => state.project);
   const selectedProject = projects.find((project) => project.selected);
-  const { flattenFolders, selectedFolder } = useSelector((state) => state.folder);
 
   const buttonSelectUniversity = selectedFolder.action === bookingActions.all_list;
   const buttonSelectSource = selectedFolder.action === bookingActions.handle_list;
   const buttonSelectDate =
     selectedFolder.action === bookingActions.by_date_list ||
-    selectedFolder.action === bookingActions.by_men;
+    selectedFolder.action === bookingActions.by_mentor_list;
   const buttonSelectMentor = selectedFolder.action === bookingActions.completed_list;
 
   const reduxDocuments = useSelector((state) => state.task);
@@ -544,6 +800,7 @@ export default function GeneralTable(props) {
     project_id,
     from_date = '',
     to_date = '',
+    status = ''
   } = reduxDocuments[documentType] || {};
 
   const defaultQueries = {
@@ -556,6 +813,7 @@ export default function GeneralTable(props) {
     from_date: getTodayAndTomorrow(Date.now()).today,
     to_date: getTodayAndTomorrow(Date.now()).tomorrow,
     university_id: '',
+    status: ''
   };
 
   const { getDocuments } = useTask();
@@ -678,8 +936,8 @@ export default function GeneralTable(props) {
     fetchDocument({ page: 1 });
   };
 
-  const handleOpenModal = (type) => {
-    if (selected.length === 0) return;
+  const handleOpenModal = (type, booking) => {
+    setSelected(pre => [...new Set([booking, ...pre])]);
     setIsOpenModal(true);
     setModalType(type);
   };
@@ -706,6 +964,29 @@ export default function GeneralTable(props) {
     }
   };
 
+  const handleShowColumn = (id, newState) => {
+    setDisplayOptions(pre => ({ ...pre, [id]: newState }))
+  }
+
+  const handleFilterChange = (data) => {
+    fetchDocument(data);
+  }
+
+  const getStatusType = () => {
+    switch (selectedFolder.action) {
+      case bookingActions.all_list:
+        return 'waitingStatus';
+      case bookingActions.handle_list:
+        return 'handleStatus';
+      case bookingActions.cancel_list:
+        return 'cancelStatus';
+      case bookingActions.completed_list:
+        return 'completedStatus';
+      default:
+        return 'completedStatus';
+    }
+  }
+
   return (
     <React.Fragment>
       <Modal
@@ -716,56 +997,58 @@ export default function GeneralTable(props) {
         handleReview={handleReviewBooking}
         selectedBooking={selected[0]}
       />
-      <Grid container spacing={gridSpacing} style={style.tableTitleWrap}>
-        <Grid item xs={6}>
-          <div style={style.tableTitle}>{tableTitle}</div>
-        </Grid>
-        <Grid item xs={6}>
-          <Grid container spacing={gridSpacing} justify="flex-end" alignItems="center">
-            {buttonSelectDate && (
-              <Grid style={style.datePickerWrap} item xs={12} md={6} lg={6}>
-                <div style={style.datePickerLabel}>Chọn thời gian: </div>
-                <input
-                  style={style.datePickerInput}
-                  type="date"
-                  name="selected_date"
-                  onChange={handleDatePickerChange}
-                />
-              </Grid>
-            )}
-            {buttonSelectUniversity && (
-              <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
-                <div style={style.datePickerLabel}>Chọn trường: </div>
-                <select
-                  id="universityList"
-                  onChange={handleChangeUniversity}
-                  style={style.datePickerInput}
-                >
-                  <option value="">Tất cả</option>
-                  {university?.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </Grid>
-            )}
-            {buttonSelectMentor && (
-              <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
-                <div style={style.datePickerLabel}>Chọn Mentor: </div>
-                <select style={style.datePickerInput}>
-                  <option>Tất cả</option>
-                </select>
-              </Grid>
-            )}
-            {buttonSelectSource && (
-              <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
-                <div style={style.datePickerLabel}>Chọn nguồn: </div>
-                <select style={style.datePickerInput}>
-                  <option>Tất cả</option>
-                </select>
-              </Grid>
-            )}
+      <Grid container spacing={gridSpacing}>
+        <Grid item xs={12} style={style.tableTitleWrap}>
+          <Grid item xs={6}>
+            <div style={style.tableTitle}>{tableTitle}</div>
+          </Grid>
+          <Grid item xs={6}>
+            <Grid container spacing={gridSpacing} justify="flex-end" alignItems="center">
+              {buttonSelectDate && (
+                <Grid style={style.datePickerWrap} item xs={12} md={6} lg={6}>
+                  <div style={style.datePickerLabel}>Chọn thời gian: </div>
+                  <input
+                    style={style.datePickerInput}
+                    type="date"
+                    name="selected_date"
+                    onChange={handleDatePickerChange}
+                  />
+                </Grid>
+              )}
+              {buttonSelectUniversity && (
+                <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
+                  <div style={style.datePickerLabel}>Chọn trường: </div>
+                  <select
+                    id="universityList"
+                    onChange={handleChangeUniversity}
+                    style={style.datePickerInput}
+                  >
+                    <option value="">Tất cả</option>
+                    {university?.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </Grid>
+              )}
+              {buttonSelectMentor && (
+                <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
+                  <div style={style.datePickerLabel}>Chọn Mentor: </div>
+                  <select style={style.datePickerInput}>
+                    <option>Tất cả</option>
+                  </select>
+                </Grid>
+              )}
+              {buttonSelectSource && (
+                <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
+                  <div style={style.datePickerLabel}>Chọn nguồn: </div>
+                  <select style={style.datePickerInput}>
+                    <option>Tất cả</option>
+                  </select>
+                </Grid>
+              )}
+            </Grid>
           </Grid>
         </Grid>
         <Grid item xs={12}>
@@ -775,11 +1058,11 @@ export default function GeneralTable(props) {
                 numSelected={selected.length}
                 tableTitle={tableTitle}
                 handlePressEnterToSearch={handlePressEnterToSearch}
-                buttonBookingCancel={buttonBookingCancel}
-                buttonBookingReview={buttonBookingReview}
-                buttonBookingHandled={buttonBookingHandled}
-                handleCancelBooking={() => handleOpenModal('cancel')}
-                handleReviewBooking={() => handleOpenModal('review')}
+                handleFilterChange={handleFilterChange}
+                handleShowColumn={handleShowColumn}
+                displayOptions={displayOptions}
+                data={stableSort(documents || [], getComparator(order, orderBy))}
+                getListUniversity={getListUniversity}
               />
               <TableContainer>
                 <Table
@@ -787,7 +1070,7 @@ export default function GeneralTable(props) {
                   className={classes.table}
                   aria-labelledby="tableTitle"
                   size={'medium'}
-                  // aria-label="enhanced table"
+                // aria-label="enhanced table"
                 >
                   <EnhancedTableHead
                     classes={classes}
@@ -804,13 +1087,10 @@ export default function GeneralTable(props) {
                       (row, index) => {
                         const isItemSelected = isSelected(row.id);
                         const labelId = `enhanced-table-checkbox-${index}`;
-
                         return (
                           <TableRow
                             className={classes.tableRow}
                             hover
-                            onClick={(event) => handleClick(event, row.id)}
-                            role="checkbox"
                             aria-checked={isItemSelected}
                             tabIndex={-1}
                             key={row.id}
@@ -818,10 +1098,33 @@ export default function GeneralTable(props) {
                           >
                             <TableCell padding="checkbox">
                               <Checkbox
+                                onClick={(event) => handleClick(event, row.id)}
                                 checked={isItemSelected}
                                 inputProps={{ 'aria-labelledby': labelId }}
                               />
                             </TableCell>
+                            {displayOptions.id && (
+                              <TableCell align="left">
+                                {tabs.length ? (
+                                  <>
+                                    <div
+                                      className={classes.tableItemID}
+                                      onClick={(event) => openDetailDocument(event, row)}
+                                    >
+                                      <div>{row.id}</div>
+                                      <div>{row.schedule}</div>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className={classes.tableItemID}>
+                                      <div>{row.id}</div>
+                                      <div>{row.schedule}</div>
+                                    </div>
+                                  </>
+                                )}
+                              </TableCell>
+                            )}
                             {displayOptions.fullname && (
                               <TableCell align="left">
                                 {tabs.length ? (
@@ -842,7 +1145,7 @@ export default function GeneralTable(props) {
                                 )}
                               </TableCell>
                             )}
-                            {displayOptions.university && (
+                            {displayOptions.university_name && (
                               <TableCell align="left">{row.university_name || ''}</TableCell>
                             )}
                             {displayOptions.assess && (
@@ -855,16 +1158,16 @@ export default function GeneralTable(props) {
                                 )}
                               </TableCell>
                             )}
-                            {displayOptions.email && (
+                            {displayOptions.email_address && (
                               <TableCell align="left">{row.email_address || ''}</TableCell>
                             )}
                             {displayOptions.number_phone && (
                               <TableCell align="left">{row.number_phone || ''}</TableCell>
                             )}
-                            {displayOptions.consultation_day && (
+                            {displayOptions.schedule && (
                               <TableCell align="left">{row.schedule || ''}</TableCell>
                             )}
-                            {displayOptions.mentor && (
+                            {displayOptions.mentor_name && (
                               <TableCell align="left">{row.mentor_name || ''}</TableCell>
                             )}
                             {displayOptions.link && (
@@ -879,12 +1182,16 @@ export default function GeneralTable(props) {
                               </TableCell>
                             )}
                             {displayOptions.status && (
-                              <TableCell align="left">{row.status}</TableCell>
+                              <TableCell align="left">
+                                <span style={style.statusWrap} className={classes[getStatusType()]}>
+                                  {row.status}
+                                </span>
+                              </TableCell>
                             )}
                             {displayOptions.rating && (
                               <TableCell align="left">
-                              {(!isNaN(row.rating) && row.rating) > 0 && (
-                                  <div style={style.assessWrap}>
+                                {(!isNaN(row.rating) && row.rating) > 0 && (
+                                  <div style={style.ratingWrap}>
                                     <span>{row.rating}</span>
                                     <StarIcon style={style.starIcon} />
                                   </div>
@@ -901,6 +1208,36 @@ export default function GeneralTable(props) {
                               <TableCell align="left">{row.uncomplete}</TableCell>
                             )}
                             {displayOptions.note && <TableCell align="left">{row.note}</TableCell>}
+                            {displayOptions.menuButtons && (
+                              <TableCell align="left">
+                                <div className={classes.handleButtonWrap}>
+                                  {buttonBookingHandled && (
+                                    <Tooltip title={buttonBookingHandled.text}>
+                                      <Button className={classes.handleButton} onClick={() => { }} >
+                                        <DoneAllIcon className={classes.handleButtonIcon} />
+                                      </Button>
+                                    </Tooltip>
+                                  )}
+                                  {buttonBookingReview && (
+                                    <Tooltip title={buttonBookingReview.text}>
+                                      <Button className={classes.handleButton} onClick={() => handleOpenModal('review', row.id)} >
+                                        <DoneAllIcon className={classes.handleButtonIcon} />
+                                      </Button>
+                                    </Tooltip>
+                                  )}
+                                  {buttonBookingCancel && (
+                                    <Tooltip title={buttonBookingCancel.text}>
+                                      <Button
+                                        className={`${classes.handleButton} ${classes.handleButtonCancel}`}
+                                        onClick={() => handleOpenModal('cancel', row.id)}
+                                      >
+                                        <DeleteOutlineIcon className={classes.handleButtonIcon} />
+                                      </Button>
+                                    </Tooltip>
+                                  )}
+                                </div>
+                              </TableCell>
+                            )}
                           </TableRow>
                         );
                       }
