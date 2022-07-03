@@ -1116,44 +1116,26 @@ export default function GeneralTable(props) {
                             </TableCell>
                             {displayOptions.id && (
                               <TableCell align="left">
-                                {tabs.length ? (
-                                  <>
-                                    <div
-                                      className={classes.tableItemID}
-                                      onClick={(event) => openDetailDocument(event, row)}
-                                    >
-                                      <div>{row.id}</div>
-                                      <div>{row.schedule}</div>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <>
-                                    <div className={classes.tableItemID}>
-                                      <div>{row.id}</div>
-                                      <div>{row.schedule}</div>
-                                    </div>
-                                  </>
-                                )}
+                                <div
+                                  className={classes.tableItemID}
+                                  onClick={(event) => openDetailDocument(event, row)}
+                                >
+                                  <div>{row.id}</div>
+                                  <div>{row.schedule}</div>
+                                </div>
                               </TableCell>
                             )}
                             {displayOptions.fullname && (
                               <TableCell align="left">
-                                {tabs.length ? (
-                                  <>
-                                    <span
-                                      className={classes.tableItemName}
-                                      onClick={(event) => openDetailDocument(event, row)}
-                                    >
-                                      {row.fullname}
-                                    </span>
-                                    &nbsp;&nbsp;
-                                  </>
-                                ) : (
-                                  <>
-                                    <span className={classes.tableItemName}>{row.fullname}</span>
-                                    &nbsp;&nbsp;
-                                  </>
-                                )}
+                                <>
+                                  <span
+                                    className={classes.tableItemName}
+                                    onClick={(event) => openDetailDocument(event, row)}
+                                  >
+                                    {row.fullname}
+                                  </span>
+                                  &nbsp;&nbsp;
+                                </>
                               </TableCell>
                             )}
                             {displayOptions.university_name && (
