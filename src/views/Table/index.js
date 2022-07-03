@@ -365,6 +365,10 @@ const EnhancedTableToolbar = (props) => {
     {
       id: 'Đã hoàn thành',
       name: 'Đã hoàn thành'
+    },
+    {
+      id: 'Chờ khách hàng',
+      name: 'Chờ khách hàng'
     }
   ])
   const [filter, setFilter] = React.useState({
@@ -1002,7 +1006,7 @@ export default function GeneralTable(props) {
           <Grid item xs={6}>
             <div style={style.tableTitle}>{tableTitle}</div>
           </Grid>
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <Grid container spacing={gridSpacing} justify="flex-end" alignItems="center">
               {buttonSelectDate && (
                 <Grid style={style.datePickerWrap} item xs={12} md={6} lg={6}>
@@ -1048,8 +1052,8 @@ export default function GeneralTable(props) {
                   </select>
                 </Grid>
               )}
-            </Grid>
-          </Grid>
+            </Grid> */}
+          {/* </Grid> */}
         </Grid>
         <Grid item xs={12}>
           <Card className={classes.root}>
