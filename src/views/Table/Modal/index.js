@@ -19,32 +19,51 @@ const style = {
     minWidth: 400,
     boxShadow: 24,
     background: '#FFFFFF',
-    padding: '16px 32px',
     borderRadius: '15px',
   },
   title: {
+    padding: '16px 32px 20px',
     fontSize: '18px',
     textAlign: 'center',
     marginBottom: '20px',
+    fontWeight: 'bold',
+    borderBottom: '1px solid #ddd',
+  },
+  body: {
+    padding: '0 32px',
   },
   form: {
     width: '100%',
   },
-  input: {
+  noteLabel: {
     marginTop: '20px',
+    fontWeight: 'bold',
   },
+  input: {},
   buttonWrap: {
     marginTop: '12px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: '0 32px 16px',
   },
   button: {
     margin: '0 12px',
     background: '#FFC000',
   },
+  closeButton: {
+    margin: '0 12px',
+    background: '#465169',
+  },
+  submitButton: {
+    margin: '0 12px',
+    background: '#612AFF',
+  },
   error: {
     color: 'red',
+  },
+  formlabel: {
+    fontWeight: 'bold',
   },
 };
 
@@ -67,9 +86,9 @@ export default function BasicModal({
   const getTitle = () => {
     switch (type) {
       case 'cancel':
-        return 'Lý do huỷ đăng ký';
+        return 'Lý do huỷ đăng ký:';
       case 'review':
-        return 'Kết quả buổI đăng ký';
+        return 'Kết quả buổi đăng ký:';
     }
   };
 
@@ -163,9 +182,10 @@ export default function BasicModal({
       >
         <Box style={style.box}>
           <div id="modal-modal-title" style={style.title} variant="h6" component="h2">
-            {getTitle()}
+            {type === 'review' ? 'Xử lý' : 'Huỷ đăng ký'}
           </div>
-          <div id="modal-modal-description" sx={{ mt: 2 }}>
+          <div id="modal-modal-description" style={style.body}>
+            <div style={style.formlabel}>{getTitle()}</div>
             <FormControl style={style.form}>
               <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
@@ -183,11 +203,11 @@ export default function BasicModal({
                 ))}
               </RadioGroup>
               {helperText && <div style={style.error}>{helperText}</div>}
+              <div style={style.noteLabel}>Ghi chú:</div>
               <TextField
                 fullWidth
                 multiline
                 rowsMax={5}
-                label="Ghi chú"
                 variant="outlined"
                 value={formData.note}
                 name="note"
@@ -200,7 +220,7 @@ export default function BasicModal({
               <Button
                 type="button"
                 variant="contained"
-                style={style.button}
+                style={style.closeButton}
                 onClick={handleCloseModal}
               >
                 Đóng
@@ -209,7 +229,7 @@ export default function BasicModal({
                 <Button
                   type="submit"
                   variant="contained"
-                  style={style.button}
+                  style={style.submitButton}
                   onClick={handleSubmit}
                 >
                   Huỷ
@@ -219,7 +239,7 @@ export default function BasicModal({
                 <Button
                   type="submit"
                   variant="contained"
-                  style={style.button}
+                  style={style.submitButton}
                   onClick={handleSubmit}
                 >
                   Chọn

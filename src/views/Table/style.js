@@ -29,7 +29,7 @@ export const style = {
   },
   assessWrap: {
     display: 'flex',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   meetingLink: {
     color: 'unset',
@@ -41,7 +41,7 @@ export const style = {
   statusWrap: {
     padding: '12px',
     color: '#fff',
-    borderRadius: '24px'
+    borderRadius: '24px',
   },
 };
 

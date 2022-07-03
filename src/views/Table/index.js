@@ -2,16 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
-import {
-  Grid,
-  Card,
-  Button,
-  Checkbox,
-  Tooltip,
-} from '@material-ui/core';
+import { Grid, Card, Button, Checkbox, Tooltip } from '@material-ui/core';
 // import Breadcrumb from './../../component/Breadcrumb';
 import Modal from '../Table/Modal';
-import DoneAllIcon from '@material-ui/icons/DoneAll'
+import CachedIcon from '@material-ui/icons/Cached';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import StarIcon from '@material-ui/icons/Star';
 import SearchIcon from '@material-ui/icons/Search';
@@ -41,11 +36,7 @@ import useView from './../../hooks/useView';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import useOnClickOutSide from './../../hooks/useClickOutSide';
 
-import {
-  FLOATING_MENU_CHANGE,
-  DOCUMENT_CHANGE,
-  TASK_CHANGE,
-} from '../../store/actions';
+import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE } from '../../store/actions';
 import useBooking from './../../hooks/useBooking';
 import { customClasses, style } from './style';
 
@@ -168,7 +159,6 @@ function EnhancedTableHead(props) {
                     ) : null}
                   </TableSortLabel>
                 )}
-
               </TableCell>
             )
         )}
@@ -193,13 +183,13 @@ const useToolbarStyles = makeStyles((theme) => ({
   highlight:
     theme.palette.type === 'light'
       ? {
-        color: theme.palette.secondary.main,
-        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-      }
+          color: theme.palette.secondary.main,
+          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+        }
       : {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.secondary.dark,
-      },
+          color: theme.palette.text.primary,
+          backgroundColor: theme.palette.secondary.dark,
+        },
   title: {
     flex: '1 2 100%',
   },
@@ -266,7 +256,8 @@ const useToolbarStyles = makeStyles((theme) => ({
     background: '#FFFFFF',
     transform: 'translateX(60px)',
     padding: '4px 12px 0 24px',
-    boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)',
+    boxShadow:
+      '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)',
     borderRadius: '10px',
   },
   toolColumnTitle: {
@@ -274,8 +265,8 @@ const useToolbarStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     '& > div': {
-      fontWeight: 500
-    }
+      fontWeight: 500,
+    },
   },
   toolColumnBody: {
     paddingRight: '12px',
@@ -284,7 +275,7 @@ const useToolbarStyles = makeStyles((theme) => ({
     overflowY: 'scroll',
     '&::-webkit-scrollbar': {
       display: 'none',
-    }
+    },
   },
   toolColumnNameWrap: {
     display: 'flex',
@@ -295,21 +286,21 @@ const useToolbarStyles = makeStyles((theme) => ({
     minWidth: '380px',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   toolFilterTitle: {
-    justifyCentent: 'space-between'
+    justifyCentent: 'space-between',
   },
   toolFilterTitleBlock: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   toolFilterBody: {
     maxHeight: 'unset',
     minHeight: '180px',
     marginTop: '16px',
     marginLeft: 'unset',
-    flex: 1
+    flex: 1,
   },
   toolResetButton: {
     borderRadius: 'unset',
@@ -322,8 +313,8 @@ const useToolbarStyles = makeStyles((theme) => ({
   },
   toolFilterItem: {
     width: '100%',
-    padding: '16px 0'
-  }
+    padding: '16px 0',
+  },
 }));
 
 const EnhancedTableToolbar = (props) => {
@@ -335,7 +326,7 @@ const EnhancedTableToolbar = (props) => {
     handleFilterChange,
     displayOptions,
     getListUniversity,
-    data
+    data,
   } = props;
 
   const filterRef = useRef(null);
@@ -344,7 +335,6 @@ const EnhancedTableToolbar = (props) => {
   // });
 
   const [columnNames, setColumnNames] = React.useState();
-  const [searchValue, setSearchValue] = React.useState('');
   const [isOpenSearch, setIsOpenSearch] = React.useState(false);
   const [isOpenShowColumn, setIsOpenShowColumn] = React.useState(false);
   const [isOpenFilter, setIsOpenFilter] = React.useState(false);
@@ -352,70 +342,72 @@ const EnhancedTableToolbar = (props) => {
   const [statusList] = React.useState([
     {
       id: 'Đang diễn ra',
-      name: 'Đang diễn ra'
+      name: 'Đang diễn ra',
     },
     {
       id: 'Khách hàng chưa xác nhận',
-      name: 'Khách hàng chưa xác nhận'
+      name: 'Khách hàng chưa xác nhận',
     },
     {
       id: 'Meeting gián đoạn',
-      name: 'Meeting gián đoạn'
+      name: 'Meeting gián đoạn',
     },
     {
       id: 'Đã hoàn thành',
-      name: 'Đã hoàn thành'
+      name: 'Đã hoàn thành',
     },
     {
       id: 'Chờ khách hàng',
-      name: 'Chờ khách hàng'
-    }
-  ])
+      name: 'Chờ khách hàng',
+    },
+  ]);
   const [filter, setFilter] = React.useState({
     university_id: '',
-    status: ''
-  })
+    status: '',
+    search_text: '',
+  });
 
   const handleCloseInput = () => {
-    if (isOpenSearch) handlePressEnterToSearch('');
+    if (isOpenSearch) handleFilterChange({ ...filter, search_text: '' });
     setIsOpenSearch(!isOpenSearch);
-    setSearchValue('');
   };
 
   const handleChangeSearch = (e) => {
-    setSearchValue(e.target.value);
+    setFilter({ ...filter, search_text: e.target.value });
   };
 
   const handleEnterSearch = (e) => {
     if (e.key === 'Enter' || e.keyCode === 13) {
-      handlePressEnterToSearch(searchValue);
+      handleFilterChange(filter);
     }
   };
 
   const handleResetFilter = () => {
-    setFilter({
+    setFilter((pre) => ({
+      ...pre,
       university_id: '',
-      status: ''
-    });
+      status: '',
+    }));
     handleFilterChange({
+      ...filter,
       university_id: '',
-      status: ''
-    })
-  }
+      status: '',
+    });
+  };
 
   const handleChangeColumnName = (index, id) => {
     const newColumnNames = JSON.parse(JSON.stringify(columnNames));
     const newState = !newColumnNames[index].isSelected;
     newColumnNames[index].isSelected = newState;
     handleShowColumn(id, newState);
-    setColumnNames(pre => newColumnNames);
-  }
+    setColumnNames((pre) => newColumnNames);
+  };
 
   const handleChangeFilter = (event) => {
-    const newFilter = { ...filter, [event.target.name]: event.target.value }
+    const newFilter = { ...filter, [event.target.name]: event.target.value };
     setFilter(newFilter);
     handleFilterChange(newFilter);
-  }
+  };
 
   useEffect(() => {
     async function initUniversityList() {
@@ -432,14 +424,18 @@ const EnhancedTableToolbar = (props) => {
         if (keysData.includes(id)) {
           return [...pre, { id, label, isSelected: displayOptions[id] }];
         } else return pre;
-      }, [])
+      }, []);
       setColumnNames(newColumnNames);
       return;
     }
-    setColumnNames(headCells.reduce((pre, { id, label }) => {
-      return (id !== 'menuButtons' && displayOptions[id]) ? [...pre, { id, label, isSelected: displayOptions[id] }] : pre;
-    }, []))
-  }, [displayOptions, data])
+    setColumnNames(
+      headCells.reduce((pre, { id, label }) => {
+        return id !== 'menuButtons' && displayOptions[id]
+          ? [...pre, { id, label, isSelected: displayOptions[id] }]
+          : pre;
+      }, [])
+    );
+  }, [displayOptions, data]);
 
   return (
     <Toolbar
@@ -464,7 +460,7 @@ const EnhancedTableToolbar = (props) => {
                 <SearchIcon />
                 <input
                   className={classes.toolSearchInput}
-                  value={searchValue}
+                  value={filter.search_text}
                   onChange={handleChangeSearch}
                   onKeyUp={handleEnterSearch}
                 />
@@ -478,14 +474,22 @@ const EnhancedTableToolbar = (props) => {
         <Grid item lg={6} md={6} xs={12} className={classes.toolSearchWrap}>
           <Grid container justify="flex-end">
             <Tooltip title="Search">
-              <Button className={`${classes.toolButton} ${isOpenSearch ? classes.toolButtonActive : ''}`} onClick={handleCloseInput} >
+              <Button
+                className={`${classes.toolButton} ${isOpenSearch ? classes.toolButtonActive : ''}`}
+                onClick={handleCloseInput}
+              >
                 <SearchIcon className={classes.toolButtonIcon} />
               </Button>
             </Tooltip>
             <ClickAwayListener onClickAway={() => setIsOpenShowColumn(false)}>
               <div className={classes.toolButtonWrap}>
                 <Tooltip title="View Columns">
-                  <Button className={`${classes.toolButton} ${isOpenShowColumn ? classes.toolButtonActive : ''}`} onClick={() => setIsOpenShowColumn(!isOpenShowColumn)} >
+                  <Button
+                    className={`${classes.toolButton} ${
+                      isOpenShowColumn ? classes.toolButtonActive : ''
+                    }`}
+                    onClick={() => setIsOpenShowColumn(!isOpenShowColumn)}
+                  >
                     <ViewColumnIcon className={classes.toolButtonIcon} />
                   </Button>
                 </Tooltip>
@@ -493,11 +497,14 @@ const EnhancedTableToolbar = (props) => {
                   <div className={classes.toolColumn}>
                     <div className={classes.toolColumnTitle}>
                       <div>Show Columns</div>
-                      <Button className={classes.toolButtonSearch} onClick={() => setIsOpenShowColumn(false)}>
+                      <Button
+                        className={classes.toolButtonSearch}
+                        onClick={() => setIsOpenShowColumn(false)}
+                      >
                         <ClearIcon className={classes.toolButtonIcon} />
                       </Button>
                     </div>
-                    <div className={classes.toolColumnBody} >
+                    <div className={classes.toolColumnBody}>
                       {columnNames.map((columnName, index) => (
                         <div key={columnName.id} className={classes.toolColumnNameWrap}>
                           <Checkbox
@@ -514,72 +521,82 @@ const EnhancedTableToolbar = (props) => {
               </div>
             </ClickAwayListener>
             <div ref={filterRef} className={classes.toolButtonWrap}>
-                <Tooltip title="Filter Table">
-                  <Button className={classes.toolButton} onClick={() => setIsOpenFilter(!isOpenFilter)}>
-                    <FilterListIcon className={classes.toolButtonIcon} />
-                  </Button>
-                </Tooltip>
-                {isOpenFilter && (
-                  <div className={`${classes.toolColumn} ${classes.toolFilter}`}>
-                    <div className={`${classes.toolColumnTitle} ${classes.toolFilterTitle}`}>
-                      <div className={classes.toolFilterTitleBlock}>
-                        <div>Filters</div>
-                        <Button
-                          className={`${classes.toolButtonSearch} ${classes.toolResetButton}`}
-                          onClick={handleResetFilter}
-                        >
-                          Reset
-                        </Button>
-                      </div>
-                      <Button className={classes.toolButtonSearch} onClick={() => setIsOpenFilter(false)}>
-                        <ClearIcon className={classes.toolButtonIcon} />
+              <Tooltip title="Filter Table">
+                <Button
+                  className={classes.toolButton}
+                  onClick={() => setIsOpenFilter(!isOpenFilter)}
+                >
+                  <FilterListIcon className={classes.toolButtonIcon} />
+                </Button>
+              </Tooltip>
+              {isOpenFilter && (
+                <div className={`${classes.toolColumn} ${classes.toolFilter}`}>
+                  <div className={`${classes.toolColumnTitle} ${classes.toolFilterTitle}`}>
+                    <div className={classes.toolFilterTitleBlock}>
+                      <div>Filters</div>
+                      <Button
+                        className={`${classes.toolButtonSearch} ${classes.toolResetButton}`}
+                        onClick={handleResetFilter}
+                      >
+                        Reset
                       </Button>
                     </div>
-                    <div className={`${classes.toolColumnBody} ${classes.toolFilterBody}`} >
-                      <div className={classes.toolFilterItem}>
-                        <FormControl fullWidth>
-                          <InputLabel shrink id="university-label">
-                            Trường
-                          </InputLabel>
-                          <Select
-                            labelId="university-label"
-                            id="univeristy_id"
-                            onChange={handleChangeFilter}
-                            displayEmpty
-                            name="university_id"
-                            value={filter.university_id}
-                          >
-                            <MenuItem value="">Tất cả</MenuItem>
-                            {universityList?.map((university, index) => (
-                              <MenuItem key={index} value={university.id}>{university.name}</MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </div>
-                      <div className={classes.toolFilterItem}>
-                        <FormControl fullWidth>
-                          <InputLabel shrink id="status-label">
-                            Trạng thái
-                          </InputLabel>
-                          <Select
-                            labelId="status-label"
-                            id="status_id"
-                            onChange={handleChangeFilter}
-                            displayEmpty
-                            name="status"
-                            value={filter.status}
-                          >
-                            <MenuItem value="">Tất cả</MenuItem>
-                            {statusList?.map((status, index) => (
-                              <MenuItem key={index} value={status.id}>{status.name}</MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </div>
+                    <Button
+                      className={classes.toolButtonSearch}
+                      onClick={() => setIsOpenFilter(false)}
+                    >
+                      <ClearIcon className={classes.toolButtonIcon} />
+                    </Button>
+                  </div>
+                  <div className={`${classes.toolColumnBody} ${classes.toolFilterBody}`}>
+                    <div className={classes.toolFilterItem}>
+                      <FormControl fullWidth>
+                        <InputLabel shrink id="university-label">
+                          Trường
+                        </InputLabel>
+                        <Select
+                          labelId="university-label"
+                          id="univeristy_id"
+                          onChange={handleChangeFilter}
+                          displayEmpty
+                          name="university_id"
+                          value={filter.university_id}
+                        >
+                          <MenuItem value="">Tất cả</MenuItem>
+                          {universityList?.map((university, index) => (
+                            <MenuItem key={index} value={university.id}>
+                              {university.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className={classes.toolFilterItem}>
+                      <FormControl fullWidth>
+                        <InputLabel shrink id="status-label">
+                          Trạng thái
+                        </InputLabel>
+                        <Select
+                          labelId="status-label"
+                          id="status_id"
+                          onChange={handleChangeFilter}
+                          displayEmpty
+                          name="status"
+                          value={filter.status}
+                        >
+                          <MenuItem value="">Tất cả</MenuItem>
+                          {statusList?.map((status, index) => (
+                            <MenuItem key={index} value={status.id}>
+                              {status.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+            </div>
           </Grid>
         </Grid>
       </Grid>
@@ -594,13 +611,13 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles((theme) => ({
   root: {
     boxShadow: 'unset',
-    height: '100%'
+    height: '100%',
   },
   paper: {
     width: '100%',
     backgroundColor: '#f0f2f8',
     paddingBottom: '56px',
-    minHeight: '320px'
+    minHeight: '320px',
   },
   table: {
     minWidth: 750,
@@ -610,7 +627,7 @@ const useStyles = makeStyles((theme) => ({
     },
     '& > thead > tr > th': {
       background: 'unset',
-      position: 'relative !important'
+      position: 'relative !important',
     },
     '& > tbody > tr:hover': {
       backgroundColor: '#36f !important',
@@ -690,7 +707,7 @@ const useStyles = makeStyles((theme) => ({
   },
   handleButtonWrap: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   handleButton: {
     height: '34px',
@@ -701,7 +718,8 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '34px',
     borderRadius: '50%',
     background: '#36f',
-    boxShadow: '0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%)',
+    boxShadow:
+      '0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%)',
     '&:hover': {
       background: '#0043a9',
     },
@@ -717,18 +735,18 @@ const useStyles = makeStyles((theme) => ({
     width: '20px',
   },
   waitingStatus: {
-    background: 'rgba(47, 210, 17, 0.8) !important'
+    background: 'rgba(47, 210, 17, 0.8) !important',
   },
   handleStatus: {
-    background: 'rgba(235, 246, 34, 0.8) !important',
-    color: '#000000 !important'
+    background: 'rgb(255 168 8 / 80%) !important',
+    color: '#000000 !important',
   },
   cancelStatus: {
-    background: 'rgba(246, 52, 11, 0.8) !important'
+    background: 'rgb(171 0 0 / 80%) !important',
   },
   completedStatus: {
     background: '#36f',
-  }
+  },
 }));
 
 export default function GeneralTable(props) {
@@ -756,9 +774,9 @@ export default function GeneralTable(props) {
       reject: tableColumns.includes('reject'),
       uncomplete: tableColumns.includes('uncomplete'),
       note: tableColumns.includes('note'),
-      menuButtons: !!menuButtons.length || false
-    })
-  }, [tableColumns, selectedFolder])
+      menuButtons: !!menuButtons.length || false,
+    });
+  }, [tableColumns, selectedFolder]);
 
   const buttonBookingCancel = menuButtons.find(
     (button) => button.name === view.booking.list.cancel
@@ -804,7 +822,7 @@ export default function GeneralTable(props) {
     project_id,
     from_date = '',
     to_date = '',
-    status = ''
+    status = '',
   } = reduxDocuments[documentType] || {};
 
   const defaultQueries = {
@@ -817,12 +835,18 @@ export default function GeneralTable(props) {
     from_date: getTodayAndTomorrow(Date.now()).today,
     to_date: getTodayAndTomorrow(Date.now()).tomorrow,
     university_id: '',
-    status: ''
+    status: '',
   };
 
   const { getDocuments } = useTask();
 
-  const { getBookingDetail, cancelBooking, reviewBooking, getListUniversity } = useBooking();
+  const {
+    getBookingDetail,
+    cancelBooking,
+    reviewBooking,
+    setCompletedBooking,
+    getListUniversity,
+  } = useBooking();
 
   const initListUniversity = async () => {
     const data = await getListUniversity();
@@ -941,7 +965,7 @@ export default function GeneralTable(props) {
   };
 
   const handleOpenModal = (type, booking) => {
-    setSelected(pre => [...new Set([booking, ...pre])]);
+    setSelected((pre) => [...new Set([booking, ...pre])]);
     setIsOpenModal(true);
     setModalType(type);
   };
@@ -968,13 +992,24 @@ export default function GeneralTable(props) {
     }
   };
 
+  const handleSetCompletedBooking = async (id) => {
+    try {
+      await setCompletedBooking(id);
+    } catch (e) {
+    } finally {
+      setIsOpenModal(false);
+      setModalType('');
+      reloadCurrentDocuments();
+    }
+  };
+
   const handleShowColumn = (id, newState) => {
-    setDisplayOptions(pre => ({ ...pre, [id]: newState }))
-  }
+    setDisplayOptions((pre) => ({ ...pre, [id]: newState }));
+  };
 
   const handleFilterChange = (data) => {
     fetchDocument(data);
-  }
+  };
 
   const getStatusType = () => {
     switch (selectedFolder.action) {
@@ -989,7 +1024,7 @@ export default function GeneralTable(props) {
       default:
         return 'completedStatus';
     }
-  }
+  };
 
   return (
     <React.Fragment>
@@ -1006,54 +1041,6 @@ export default function GeneralTable(props) {
           <Grid item xs={6}>
             <div style={style.tableTitle}>{tableTitle}</div>
           </Grid>
-          {/* <Grid item xs={6}>
-            <Grid container spacing={gridSpacing} justify="flex-end" alignItems="center">
-              {buttonSelectDate && (
-                <Grid style={style.datePickerWrap} item xs={12} md={6} lg={6}>
-                  <div style={style.datePickerLabel}>Chọn thời gian: </div>
-                  <input
-                    style={style.datePickerInput}
-                    type="date"
-                    name="selected_date"
-                    onChange={handleDatePickerChange}
-                  />
-                </Grid>
-              )}
-              {buttonSelectUniversity && (
-                <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
-                  <div style={style.datePickerLabel}>Chọn trường: </div>
-                  <select
-                    id="universityList"
-                    onChange={handleChangeUniversity}
-                    style={style.datePickerInput}
-                  >
-                    <option value="">Tất cả</option>
-                    {university?.map((item) => (
-                      <option key={item.id} value={item.id}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </select>
-                </Grid>
-              )}
-              {buttonSelectMentor && (
-                <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
-                  <div style={style.datePickerLabel}>Chọn Mentor: </div>
-                  <select style={style.datePickerInput}>
-                    <option>Tất cả</option>
-                  </select>
-                </Grid>
-              )}
-              {buttonSelectSource && (
-                <Grid style={style.datePickerWrap} item xs={12} md={2} lg={6}>
-                  <div style={style.datePickerLabel}>Chọn nguồn: </div>
-                  <select style={style.datePickerInput}>
-                    <option>Tất cả</option>
-                  </select>
-                </Grid>
-              )}
-            </Grid> */}
-          {/* </Grid> */}
         </Grid>
         <Grid item xs={12}>
           <Card className={classes.root}>
@@ -1074,7 +1061,7 @@ export default function GeneralTable(props) {
                   className={classes.table}
                   aria-labelledby="tableTitle"
                   size={'medium'}
-                // aria-label="enhanced table"
+                  // aria-label="enhanced table"
                 >
                   <EnhancedTableHead
                     classes={classes}
@@ -1217,14 +1204,20 @@ export default function GeneralTable(props) {
                                 <div className={classes.handleButtonWrap}>
                                   {buttonBookingHandled && (
                                     <Tooltip title={buttonBookingHandled.text}>
-                                      <Button className={classes.handleButton} onClick={() => { }} >
+                                      <Button
+                                        className={classes.handleButton}
+                                        onClick={() => handleSetCompletedBooking(row.id)}
+                                      >
                                         <DoneAllIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}
                                   {buttonBookingReview && (
                                     <Tooltip title={buttonBookingReview.text}>
-                                      <Button className={classes.handleButton} onClick={() => handleOpenModal('review', row.id)} >
+                                      <Button
+                                        className={classes.handleButton}
+                                        onClick={() => handleOpenModal('review', row.id)}
+                                      >
                                         <DoneAllIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>

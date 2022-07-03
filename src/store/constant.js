@@ -24,6 +24,7 @@ export const vibEndpoints = {
   update_booking: '/Primary/?FlowAlias=hnn_api_booking_update_booking_information&action=api',
   cancel_booking: '/Primary/?FlowAlias=hnn_api_booking_cancel_booking&action=api',
   review_booking: '/Primary/?FlowAlias=hnn_api_booking_review_booking&action=api',
+  set_completed_state: '/Primary/?FlowAlias=hnn_api_booking_set_completed_state',
 
   get_list_university: '/Primary/?FlowAlias=hnn_api_univ_get_all_university&action=api',
   get_feedback_detail: '/Primary/?FlowAlias=hnn_api_booking_get_feedback_by_booking_id&action=api',

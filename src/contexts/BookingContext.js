@@ -55,6 +55,19 @@ export const BookingProvider = ({ children }) => {
       });
   };
 
+  const setCompletedBooking = async (id, action = null) => {
+    return axiosInstance
+      .post(vibEndpoints.set_completed_state, {
+        outputtype: 'RawJson',
+        id: id,
+        action: action,
+      })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) return true;
+        return false;
+      });
+  };
+
   const getMentorDetail = async (id) => {
     return axiosInstance
       .post(vibEndpoints.get_mentor_detail, { outputtype: 'RawJson', id })
@@ -97,6 +110,7 @@ export const BookingProvider = ({ children }) => {
         updateBooking,
         cancelBooking,
         reviewBooking,
+        setCompletedBooking,
         getMentorDetail,
         getListUniversity,
         getFeedback,
