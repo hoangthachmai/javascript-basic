@@ -183,13 +183,13 @@ const useToolbarStyles = makeStyles((theme) => ({
   highlight:
     theme.palette.type === 'light'
       ? {
-          color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-        }
+        color: theme.palette.secondary.main,
+        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+      }
       : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
-        },
+        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.secondary.dark,
+      },
   title: {
     flex: '1 2 100%',
   },
@@ -409,6 +409,19 @@ const EnhancedTableToolbar = (props) => {
     handleFilterChange(newFilter);
   };
 
+  const handleRefresh = () => {
+    handleFilterChange({
+      university_id: '',
+      status: '',
+      search_text: '',
+    });
+    setFilter({
+      university_id: '',
+      status: '',
+      search_text: '',
+    })
+  }
+
   useEffect(() => {
     async function initUniversityList() {
       const data = await getListUniversity();
@@ -485,9 +498,8 @@ const EnhancedTableToolbar = (props) => {
               <div className={classes.toolButtonWrap}>
                 <Tooltip title="View Columns">
                   <Button
-                    className={`${classes.toolButton} ${
-                      isOpenShowColumn ? classes.toolButtonActive : ''
-                    }`}
+                    className={`${classes.toolButton} ${isOpenShowColumn ? classes.toolButtonActive : ''
+                      }`}
                     onClick={() => setIsOpenShowColumn(!isOpenShowColumn)}
                   >
                     <ViewColumnIcon className={classes.toolButtonIcon} />
@@ -597,6 +609,14 @@ const EnhancedTableToolbar = (props) => {
                 </div>
               )}
             </div>
+            <Tooltip title="Refresh">
+              <Button
+                className={`${classes.toolButton} ${isOpenSearch ? classes.toolButtonActive : ''}`}
+                onClick={handleRefresh}
+              >
+                <CachedIcon className={classes.toolButtonIcon} />
+              </Button>
+            </Tooltip>
           </Grid>
         </Grid>
       </Grid>
@@ -1061,7 +1081,7 @@ export default function GeneralTable(props) {
                   className={classes.table}
                   aria-labelledby="tableTitle"
                   size={'medium'}
-                  // aria-label="enhanced table"
+                // aria-label="enhanced table"
                 >
                   <EnhancedTableHead
                     classes={classes}
