@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Grid,
   Button,
@@ -7,175 +7,36 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
-  OutlinedInput,
-  TextareaAutosize,
   Tabs,
   Box,
   Typography,
   Tab,
-  Link,
+  Select,
+  FormControl,
+  MenuItem,
+  TextField
 } from '@material-ui/core';
+import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
+import RemoveRedEyeTwoToneIcon from '@material-ui/icons/RemoveRedEyeTwoTone';
+import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
+import DescriptionTwoToneIcon from '@material-ui/icons/DescriptionTwoTone';
+import AssignmentReturnedTwoToneIcon from '@material-ui/icons/AssignmentReturnedTwoTone';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import LocalMallOutlinedIcon from '@material-ui/icons/LocalMallOutlined';
+import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import StarIcon from '@material-ui/icons/Star';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
 import { gridSpacing, view } from '../../store/constant.js';
 import { FLOATING_MENU_CHANGE } from '../../store/actions.js';
 import useView from './../../hooks/useView';
 import useBooking from './../../hooks/useBooking';
 import ConfirmSaveDialog from './ConfirmSaveDialog';
-
-const useStyles = makeStyles((theme) => ({
-  useradddialog: {
-    '&>div:nth-child(3)': {
-      justifyContent: 'flex-end',
-      '&>div': {
-        margin: '0px',
-        borderRadius: '0px',
-        minWidth: '900px',
-        maxWidth: '900px',
-        maxHeight: '100%',
-        overflowY: 'hidden',
-        [theme.breakpoints.down('md')]: {
-          minWidth: '100%',
-          maxWidth: '100%',
-        },
-        [theme.breakpoints.down('xs')]: {
-          minWidth: '100%',
-          maxWidth: '100%',
-        },
-      },
-    },
-  },
-  icon: {
-    width: '80px',
-    height: '80px',
-    [theme.breakpoints.down('xs')]: {
-      width: '40px',
-      height: '40px',
-    },
-  },
-  text: {
-    minHeight: '3.2em',
-    maxHeight: '3.2em',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-  },
-  folderContainer: {
-    margin: '0 10px 20px',
-    border: '1px solid gray',
-    position: 'relative',
-  },
-  selectedIcon: {
-    width: '35px',
-    height: '35px',
-    color: '#4295f5',
-    position: 'absolute',
-    top: '-15px',
-    left: '-15px',
-  },
-  selectedIconNotselected: {
-    width: '35px',
-    height: '35px',
-    color: '#637487',
-    position: 'absolute',
-    top: '-15px',
-    left: '-15px',
-  },
-  description: {
-    border: '1px rgba(0, 0, 0, 0.23) solid',
-    borderRadius: '4px',
-    padding: '10px',
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    marginLeft: 0,
-    width: '100%',
-  },
-  presentImage: {
-    height: '80px',
-    width: '110px',
-  },
-  button: {
-    margin: theme.spacing(0.5, 0),
-    background: '##FFC000',
-  },
-  listSelectedNews: {
-    minHeight: '300px',
-    maxHeight: '600px',
-  },
-  imageNotice: {
-    margin: theme.spacing(0, 0),
-  },
-  tableTitle: {
-    textAlign: 'center!important',
-    fontSize: '1.25rem',
-
-    marginBottom: '0.5rem',
-    marginTop: '0.5rem',
-    fontWeight: '500',
-    lineHeight: '1.2',
-  },
-  table: {
-    border: '1px solid #dee2e6',
-    width: '100%',
-    marginBottom: '1rem',
-    color: '#212529',
-    borderCollapse: 'collapse',
-  },
-  th: {
-    borderBottomWidth: '2px',
-    verticalAlign: 'bottom',
-    borderBottom: '2px solid #dee2e6',
-    border: '1px solid #dee2e6',
-    padding: '0.75rem',
-    verticalAlign: 'top',
-    borderTop: '1px solid #dee2e6',
-    textAlign: 'center',
-  },
-  td: {
-    border: '1px solid #dee2e6',
-    padding: '0.75rem',
-    verticalAlign: 'top',
-    borderTop: '1px solid #dee2e6',
-    textAlign: 'center',
-  },
-  pb: {
-    paddingBottom: '12px',
-  },
-  pl: {
-    paddingLeft: '12px',
-  },
-  pr: {
-    paddingRight: '12px',
-  },
-  feedbackAssess: {
-    display: 'flex',
-    alignItems: 'center',
-    '& > div:first-child': {
-      marginRight: '12px',
-    },
-  },
-  feedbackStar: {
-    transform: 'translateY(1px)',
-    color: '#4472C4',
-    fontSize: '20px',
-  },
-  timeNumberInput: {
-    minWidth: '52px',
-    height: '20px',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  fontBold: {
-    fontWeight: 'bold',
-  },
-  feedbackTextInput: {
-    width: '100%',
-    marginTop: '12px',
-  },
-}));
+import EditModal from './EditModal';
+import { style } from './style';
+import useStyles from './classes'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -183,6 +44,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
+
   return (
     <div
       role="tabpanel"
@@ -208,6 +70,8 @@ function a11yProps(index) {
   };
 }
 
+const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
 const labelDay = {
   Monday: 'Thứ 2',
   Tuesday: 'Thứ 3',
@@ -221,17 +85,31 @@ const labelDay = {
 const DetailDocumentDialog = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [editProfile, setEditProfile] = useState(null);
+  const [editMentor, setEditMentor] = useState(null);
+
   const [tabIndex, setTabIndex] = React.useState(0);
   const [isOpenConfirmSaveDialog, setIsOpenConfirmSaveDialog] = React.useState(false);
+  const initNoteSelectionList = {
+    1: {
+      id: 1,
+      label: 'Khách quen'
+    },
+    2: {
+      id: 2,
+      label: 'Phụ huynh tham gia'
+    },
+    3: {
+      id: 3,
+      label: 'Tư vấn nhóm'
+    }
+  }
+  const [noteSelectionList, setNoteSelectionList] = useState(initNoteSelectionList);
+  const [selectedNote, setSelectedNote] = useState("");
+  const [selectedNoteList, setSelectedNoteList] = useState([]);
+
   const { form_buttons: formButtons, name, tabs, disabled_fields } = useView();
 
-  const dontHaveColumnSettings = !tabs || !tabs.length;
-  const tabHeadings = [
-    { id: 'mentee', label: 'Thông tin khách hàng' },
-    { id: 'mentor', label: 'Thông tin mentor' },
-    { id: 'meeting', label: 'Thông tin meeting' },
-    { id: 'feedback', label: 'Feedback' },
-  ];
   const tabDisplayOptions = {
     mentee: tabs.includes('mentee'),
     mentor: tabs.includes('mentor'),
@@ -242,9 +120,6 @@ const DetailDocumentDialog = () => {
   const buttonSaveBooking = formButtons.find((button) => button.name === view.booking.detail.save);
 
   const handleChangeTab = (event, newValue) => {
-    // if (newValue !== 0 ) {
-    //   getConsultantDetail();
-    // }
     setTabIndex(newValue);
   };
 
@@ -291,12 +166,12 @@ const DetailDocumentDialog = () => {
 
   const getFeedbackDetail = async (id) => {
     const data = await getFeedback(id);
-    setFeedback(data);
+    setFeedback({ ...feedback, ...data });
   };
 
   const getConsultantDetail = async (id) => {
     const cons = await getMentorDetail(id);
-    setMentor(cons);
+    setMentor({ ...mentor, ...cons });
   };
 
   const handleCloseDialog = () => {
@@ -305,15 +180,20 @@ const DetailDocumentDialog = () => {
   };
 
   const handleSaveBooking = async (is_send_email) => {
-    const { email_address, number_phone, ...rest } = document;
-    setIsOpenConfirmSaveDialog(false);
-    await updateBooking({
-      ...rest,
-      is_send_email,
-      outputtype: 'RawJson',
-      email: email_address,
-      phone: number_phone,
-    });
+    try {
+      const { email_address, number_phone, ...rest } = document;
+      await updateBooking({
+        ...rest,
+        is_send_email,
+        outputtype: 'RawJson',
+        email: email_address,
+        phone: number_phone,
+      });
+    } catch (error) {
+      console.log('error update booking', error)
+    } finally {
+      setIsOpenConfirmSaveDialog(false);
+    }
   };
 
   const handleEmailChange = (e) => {
@@ -322,24 +202,90 @@ const DetailDocumentDialog = () => {
     setDocument({ ...document, email_address: newEmail });
   };
 
+  const handleChangeNoteSelection = (e) => {
+    setSelectedNoteList([...selectedNoteList, e.target.value]);
+    const newSelectionList = JSON.parse(JSON.stringify(noteSelectionList));
+    delete newSelectionList[e.target.value];
+    setNoteSelectionList(newSelectionList);
+    setSelectedNote("");
+  }
+
+  const handleRemoveSelectedNote = (id) => {
+    const newSelectedNoteList = selectedNoteList.filter(item => item !== id);
+    setSelectedNoteList(newSelectedNoteList);
+    setNoteSelectionList({ ...noteSelectionList, [id]: initNoteSelectionList[id] })
+  }
+
   const setDocumentToDefault = async () => {
     setTabIndex(0);
     setMentor({});
   };
 
   const convertDateTime = (date, time) => {
-    if (!date && !time) return;
+    if (!date && !time) return { date: '', time: '' };
     const hour = time.split('-');
-    return labelDay[date] + ' ' + hour[0] + 'h-' + hour[1] + 'h';
+    return { date: labelDay[date], time: hour[0] + 'h - ' + hour[1] + 'h' };
   };
+
+  const getDayOfWeek = (date) => {
+    if (!date) return '';
+    const dateArr = date.split('/');
+    const newDate = new Date(dateArr[2], dateArr[1], dateArr[0]);
+    return labelDay[weekday[newDate.getDay()]];
+  }
+
+  const handleCloseEditModal = () => {
+    setEditProfile(null);
+    setEditMentor(null);
+  }
+
+  const handleClickEditButton = (type) => {
+    if (type === 'profile') {
+      setEditProfile(document);
+      setEditMentor(null);
+    } else if (type === 'mentor') {
+      setEditProfile(null);
+      setEditMentor(mentor);
+    }
+  }
+
+  const handleSaveEdit = async (data) => {
+    try {
+      if (editProfile) {
+        await updateBooking({
+          ...document,
+          ...data,
+          phone: document.number_phone,
+          is_send_email: false,
+          outputtype: 'RawJson',
+        });
+        setDocument({...document, email_address: data.email})
+      }
+    } catch (error) {
+      console.log('error', error)
+    } finally {
+      handleCloseEditModal()
+    }
+  }
 
   return (
     <React.Fragment>
-      <ConfirmSaveDialog
-        isOpen={isOpenConfirmSaveDialog}
-        handleClose={() => setIsOpenConfirmSaveDialog(false)}
-        handleSubmit={handleSaveBooking}
-      />
+      {isOpenConfirmSaveDialog && (
+        <ConfirmSaveDialog
+          isOpen={isOpenConfirmSaveDialog}
+          handleClose={() => setIsOpenConfirmSaveDialog(false)}
+          handleSubmit={handleSaveBooking}
+        />
+      )}
+      {(editProfile || editMentor) && (
+        <EditModal
+          isOpen={editProfile || editMentor}
+          profile={editProfile}
+          mentor={editMentor}
+          handleClose={handleCloseEditModal}
+          handleSubmit={handleSaveEdit}
+        />
+      )}
       <Grid container>
         <Dialog
           open={openDialog || false}
@@ -348,9 +294,9 @@ const DetailDocumentDialog = () => {
           onClose={handleCloseDialog}
           className={classes.useradddialog}
         >
-          <DialogTitle>
-            <Grid item xs={12}>
-              Chi tiết đăng ký tư vấn
+          <DialogTitle style={{ background: '#F1F1F9 !important', }}>
+            <Grid item xs={12} style={{ textTransform: 'uppercase' }}>
+              Chi tiết đăng ký
             </Grid>
           </DialogTitle>
           <DialogContent>
@@ -365,347 +311,354 @@ const DetailDocumentDialog = () => {
                   variant="scrollable"
                 >
                   <Tab
+                    className={classes.unUpperCase}
                     label={
                       <Typography
-                        className={classes.capitalize}
+                        className={classes.tabLabels}
                         component="span"
                         variant="subtitle1"
                       >
-                        Thông tin khách hàng
+                        <AccountCircleOutlinedIcon className={`${tabIndex === 0 ? classes.tabActiveIcon : ''}`} />
+                        Chi tiết đăng ký
                       </Typography>
                     }
                     value={0}
                     {...a11yProps(0)}
                   />
-
                   <Tab
+                    className={classes.unUpperCase}
                     label={
                       <Typography
-                        className={classes.capitalize}
+                        className={classes.tabLabels}
                         component="span"
                         variant="subtitle1"
                       >
-                        Thông tin mentor
+                        <DescriptionOutlinedIcon className={`${tabIndex === 1 ? classes.tabActiveIcon : ''}`} />
+                        Lịch sử thay đổi
                       </Typography>
                     }
                     value={1}
                     {...a11yProps(1)}
                   />
-
-                  <Tab
-                    label={
-                      <Typography
-                        className={classes.capitalize}
-                        component="span"
-                        variant="subtitle1"
-                      >
-                        Thông tin meeting
-                      </Typography>
-                    }
-                    value={2}
-                    {...a11yProps(2)}
-                  />
-                  {tabDisplayOptions.feedback && (
-                    <Tab
-                      label={
-                        <Typography
-                          className={classes.capitalize}
-                          component="span"
-                          variant="subtitle1"
-                        >
-                          Feedback
-                        </Typography>
-                      }
-                      value={3}
-                      {...a11yProps(3)}
-                    />
-                  )}
                 </Tabs>
               </Grid>
               <Grid item xs={12}>
                 <TabPanel value={tabIndex} index={0}>
-                  <Grid container spacing={gridSpacing} alignItems="center">
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Họ và tên"
-                        variant="outlined"
-                        value={document.fullname}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Email"
-                        variant="outlined"
-                        value={document.email_address}
-                        onChange={handleEmailChange}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Họ và tên"
-                        variant="outlined"
-                        value={document.number_phone}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Trình độ học vấn"
-                        variant="outlined"
-                        value={document.education}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Điểm mạnh"
-                        variant="outlined"
-                        value={document.strength}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Điểm yếu"
-                        variant="outlined"
-                        value={document.weakness}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Ngành nghề"
-                        variant="outlined"
-                        value={document.career}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Nhu cầu tư vấn"
-                        variant="outlined"
-                        value={document.demand}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        multiline
-                        rows={1}
-                        disabled
-                        fullWidth
-                        label="Mã tư vân"
-                        variant="outlined"
-                        value={document.code}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        multiline
-                        rows={1}
-                        disabled
-                        fullWidth
-                        label="Câu hỏi cho mentor"
-                        variant="outlined"
-                        value={document.question}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                  </Grid>
-                </TabPanel>
+                  <Grid container spacing={gridSpacing}>
+                    <Grid item lg={7} md={7} xs={12}>
+                      <div className={classes.tabItem}>
+                        <div className={classes.tabItemTitle}>
+                          <div className={classes.tabItemLabel}>
+                            <AccountCircleOutlinedIcon />
+                            <span>Thông tin khách hàng</span>
+                          </div>
+                          <div className={classes.tabItemEdit} onClick={() => handleClickEditButton('profile')}>
+                            <EditOutlinedIcon />
+                            <span>Chỉnh sửa</span>
+                          </div>
+                        </div>
+                        <div className={classes.tabItemBody}>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4} >
+                              <span className={classes.tabItemLabelField}>Họ và tên:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document.fullname}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Email:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document.email_address}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>SĐT:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document.number_phone}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Trình độ học vấn:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document.education}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Điểm mạnh:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document.strength}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Điểm yếu:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document.weakness}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Ngành nghề:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document.career}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Nhu cầu tư vấn:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document.demand}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Mã tư vấn:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document.id}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Trường:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document.university_name}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Câu hỏi cho mentor:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document.question}
+                            </Grid>
+                          </Grid>
+                        </div>
+                      </div>
+                      <div className={classes.tabItem}>
+                        <div className={classes.tabItemTitle}>
+                          <div className={classes.tabItemLabel}>
+                            <AccountCircleOutlinedIcon />
+                            <span>Thông tin Mentor</span>
+                          </div>
+                          <div className={classes.tabItemEdit} onClick={() => handleClickEditButton('mentor')}>
+                            <EditOutlinedIcon />
+                            <span>Chỉnh sửa</span>
+                          </div>
+                        </div>
+                        <div className={classes.tabItemBody}>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4} >
+                              <span className={classes.tabItemLabelField}>Họ và tên:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {mentor?.fullname}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Email:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {mentor.email_address}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>SĐT:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {mentor.number_phone}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Chuyên ngành:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {mentor.career}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Title:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {mentor.title}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItem} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <div className={classes.mentorDateTimeWrap}>
+                                <LocalMallOutlinedIcon style={style.mentorDateTimeIcon} />
+                                <div className={classes.mentorDateTime}>
+                                  <div>{(convertDateTime(mentor.date1, mentor.time1))?.date}</div>
+                                  <div>{(convertDateTime(mentor.date1, mentor.time1))?.time}</div>
+                                </div>
+                              </div>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              <div className={classes.mentorDateTimeWrap}>
+                                <LocalMallOutlinedIcon style={style.mentorDateTimeIcon} />
+                                <div className={classes.mentorDateTime}>
+                                  <div>{(convertDateTime(mentor.date1, mentor.time2))?.date}</div>
+                                  <div>{(convertDateTime(mentor.date1, mentor.time2))?.time}</div>
+                                </div>
+                              </div>
+                            </Grid>
+                          </Grid>
 
-                <TabPanel value={tabIndex} index={1}>
-                  <Grid container spacing={gridSpacing} alignItems="center">
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Họ và tên"
-                        variant="outlined"
-                        value={mentor.fullname}
-                        InputLabelProps={{ shrink: true }}
-                      />
+                        </div>
+                      </div>
                     </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Email"
-                        variant="outlined"
-                        value={mentor.email_address}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Số điện thoại"
-                        variant="outlined"
-                        value={mentor.number_phone}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}></Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Workday 1"
-                        variant="outlined"
-                        value={convertDateTime(mentor.date1, mentor.time1)}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Workday 1"
-                        variant="outlined"
-                        value={convertDateTime(mentor.date2, mentor.time2)}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                  </Grid>
-                </TabPanel>
-
-                <TabPanel value={tabIndex} index={2}>
-                  <Grid container spacing={gridSpacing} alignItems="center">
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Họ và tên"
-                        variant="outlined"
-                        value={document.fullname}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Mentor"
-                        variant="outlined"
-                        value={mentor.fullname}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Lịch tư vấn"
-                        variant="outlined"
-                        value={document.schedule}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Link meeting"
-                        variant="outlined"
-                        value={document.link_meeting}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} md={6} xs={12}>
-                      <TextField
-                        disabled
-                        fullWidth
-                        label="Trạng thái"
-                        variant="outlined"
-                        value={document.status}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item lg={12} md={12} xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Lý do chỉnh sửa"
-                        variant="outlined"
-                        // value={document.curent_job}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                  </Grid>
-                </TabPanel>
-                {tabDisplayOptions.feedback && (
-                  <TabPanel value={tabIndex} index={3}>
-                    <Grid container spacing={gridSpacing} alignItems="center">
-                      <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
-                        <div>Đánh giá dịch vụ: </div>
-                        <div className={classes.feedbackStar}>
-                          {new Array(feedback.assess_service).fill(1)?.map((_, index) => (
-                            <StarIcon key={index} />
+                    <Grid item lg={5} md={5} xs={12}>
+                      <div className={classes.tabItem}>
+                        <div className={classes.tabItemNoteSection}>
+                          <div className={classes.tabItemNoteTitleWrap}>
+                            <div>{getDayOfWeek(document?.schedule?.split(' ')[0])} ngày {document?.schedule?.split(' ')[0]}</div>
+                            <div>{document.status}</div>
+                          </div>
+                          <div className={classes.tabItemNoteHour}>
+                            {document?.schedule?.split(' ')[1]}
+                          </div>
+                          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/640px-Google_Calendar_icon_%282020%29.svg.png" />
+                        </div>
+                      </div>
+                      <div className={classes.tabItem}>
+                        <div className={classes.tabItemNoteSelection}>
+                          <div className={classes.tabItemNoteSelectionLabel}>Lưu ý: </div>
+                          <FormControl fullWidth>
+                            <Select
+                              id="note_id"
+                              onChange={handleChangeNoteSelection}
+                              displayEmpty
+                              name="note"
+                              value={selectedNote}
+                            >
+                              {Object.values(noteSelectionList)?.map((note, index) => (
+                                <MenuItem key={index} value={note.id}>
+                                  {note.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </div>
+                        <div className={classes.selectedNoteListSection}>
+                          {selectedNoteList.map((id) => (
+                            <div key={id} className={classes.selectedNoteItem}>
+                              <div>{initNoteSelectionList[id].label}</div>
+                              <CloseOutlinedIcon onClick={() => handleRemoveSelectedNote(id)} style={style.selectedItemCloseIcon} />
+                            </div>
                           ))}
                         </div>
-                      </Grid>
-                      <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
-                        <div>Đánh giá Mentor: </div>
-                        <div className={classes.feedbackStar}>
-                          {new Array(feedback.assess_mentor).fill(1)?.map((_, index) => (
-                            <StarIcon key={index} />
-                          ))}
+                        <div className={`${classes.tabItemNoteSelection} ${classes.tabItemNoteInputWrap}`}>
+                          <div className={classes.tabItemNoteSelectionLabel}>Ghi chú: </div>
+                          <TextField
+                            fullWidth
+                            multiline
+                            rows={4}
+                            rowsMax={4}
+                            variant="outlined"
+                            name="note"
+                            onChange={() => { }}
+                            InputLabelProps={{ shrink: true }}
+                            className={classes.tabItemNoteInput}
+                          />
                         </div>
-                      </Grid>
-                      <Grid className={classes.feedbackAssess} item lg={12} md={12} xs={12}>
-                        <div>Đây là lần thứ mấy bạn tham gia dịch vụ hướng nghiệp của trường?</div>
-                        <div className={classes.timeNumberInput}>{feedback.times}</div>
-                      </Grid>
-                      <Grid item lg={12} md={12} xs={12}>
-                        <div className={classes.fontBold}>Ý kiến đánh giá và góp ý: </div>
-                        <OutlinedInput
-                          fullWidth
-                          className={classes.feedbackTextInput}
-                          defaultValue={feedback.comment}
-                          disabled
-                        />
-                      </Grid>
+                      </div>
+                      <div className={classes.tabItem}>
+                        <div className={classes.tabItemAssessSection}>
+                          <div className={classes.tabItemAssessTitle}>
+                            Đánh giá
+                            <img className={classes.tabItemAssessCup} src="https://icons-for-free.com/download-icon-champion+cup+trophy+icon-1320166580183052831_256.png" />
+                          </div>
+                          <Grid container spacing={gridSpacing} className={classes.tabAssessItemWrap}>
+                            <Grid item lg={6} md={6} xs={12} className={classes.tabAssessItem}>
+                              <RemoveRedEyeTwoToneIcon style={style.tabAssessItemIconEye} />
+                              <div className={classes.tabAssessItemLabel}>
+                                <div className={classes.tabAssessItemStarWrap}>
+                                  {new Array(5).fill(1).map((star, index) => (
+                                    index < feedback.assess_service ?
+                                      <StarIcon style={style.tabAssessItemStar} key={index} /> :
+                                      <StarBorderOutlinedIcon style={style.tabAssessItemStar} key={index} />
+                                  ))}
+                                </div>
+                                <div>Đánh giá dịch vụ</div>
+                              </div>
+                            </Grid>
+                            <Grid item lg={6} md={6} xs={12} className={classes.tabAssessItem}>
+                              <PeopleAltTwoToneIcon style={style.tabAssessItemIconPeople} />
+                              <div className={classes.tabAssessItemLabel}>
+                                <div className={classes.tabAssessItemStarWrap}>
+                                  {new Array(5).fill(1).map((star, index) => (
+                                    index < feedback.assess_mentor ?
+                                      <StarIcon key={index} style={style.tabAssessItemStar} /> :
+                                      <StarBorderOutlinedIcon key={index} style={style.tabAssessItemStar} />
+                                  ))}
+                                </div>
+                                <div>Đánh giá Mentor</div>
+                              </div>
+                            </Grid>
+                            <Grid item lg={6} md={6} xs={12} className={classes.tabAssessItem}>
+                              <DescriptionTwoToneIcon style={style.tabAssessItemIconDesc} />
+                              <div className={classes.tabAssessItemLabel}>Ý kiến đánh giá:</div>
+                            </Grid>
+                            <Grid item lg={6} md={6} xs={12} className={classes.tabAssessItem}>
+                              <AssignmentReturnedTwoToneIcon style={style.tabAssessItemIconAssignment} />
+                              <div className={classes.tabAssessItemLabel}>{feedback.times}</div>
+                            </Grid>
+                            <Grid item lg={12} md={12} xs={12}>
+                              <TextField
+                                disabled
+                                fullWidth
+                                multiline
+                                rows={3}
+                                rowsMax={3}
+                                variant="outlined"
+                                name="note"
+                                InputLabelProps={{ shrink: true }}
+                                className={classes.tabItemNoteInput}
+                                defaultValue={feedback.comment}
+                              />
+                            </Grid>
+                          </Grid>
+                        </div>
+                      </div>
                     </Grid>
-                  </TabPanel>
-                )}
+                  </Grid>
+                </TabPanel>
               </Grid>
             </Grid>
           </DialogContent>
           <DialogActions>
             <Grid container justify="space-between">
               <Grid item>
-                {/* {buttonBackBooking && ( */}
                 <Button
                   variant="contained"
-                  style={{ background: '#FFC000' }}
+                  style={{ background: 'rgb(70, 81, 105)', }}
                   onClick={handleCloseDialog}
                 >
-                  {/* {buttonBackBooking.text} */} Đóng
+                  Đóng
                 </Button>
-                {/* )} */}
               </Grid>
               {buttonSaveBooking && (
                 <Grid item>
                   <Button
-                    disabled={!enableSaveButton}
                     variant="contained"
-                    style={{ background: '#FFC000' }}
+                    style={{ background: 'rgb(97, 42, 255)' }}
                     onClick={() => setIsOpenConfirmSaveDialog(true)}
                   >
                     {buttonSaveBooking.text}

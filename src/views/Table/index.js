@@ -1046,6 +1046,18 @@ export default function GeneralTable(props) {
     }
   };
 
+  const formatDateTime = (datetime) => {
+    if(datetime) {
+      const date = new Date(datetime);
+      return date.getDate() 
+      +  "/" + (date.getMonth() + 1) 
+      + "/"+ date.getFullYear() 
+      + " " +  (date.getHours() < 10 ? "0" + date.getHours() : date.getHours())
+      + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
+    }
+    return ""
+  }
+
   return (
     <React.Fragment>
       <Modal
@@ -1121,7 +1133,7 @@ export default function GeneralTable(props) {
                                   onClick={(event) => openDetailDocument(event, row)}
                                 >
                                   <div>{row.id}</div>
-                                  <div>{row.schedule}</div>
+                                  <div>{formatDateTime(row.created_date)}</div>
                                 </div>
                               </TableCell>
                             )}
@@ -1204,7 +1216,7 @@ export default function GeneralTable(props) {
                             {displayOptions.menuButtons && (
                               <TableCell align="left">
                                 <div className={classes.handleButtonWrap}>
-                                  {buttonBookingHandled && (
+                                  {(buttonBookingHandled && row.is_can_completed) && (
                                     <Tooltip title={buttonBookingHandled.text}>
                                       <Button
                                         className={classes.handleButton}
@@ -1224,7 +1236,7 @@ export default function GeneralTable(props) {
                                       </Button>
                                     </Tooltip>
                                   )}
-                                  {buttonBookingCancel && (
+                                  {(buttonBookingCancel && row.is_can_cancel) && (
                                     <Tooltip title={buttonBookingCancel.text}>
                                       <Button
                                         className={`${classes.handleButton} ${classes.handleButtonCancel}`}

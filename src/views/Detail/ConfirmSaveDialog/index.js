@@ -24,10 +24,14 @@ const style = {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  button: {
+  buttonCancel: {
     margin: '0 12px',
-    background: '#FFC000',
+    background: 'rgb(70, 81, 105)',
   },
+  buttonSubmit: {
+    margin: '0 12px',
+    background: 'rgb(97, 42, 255)',
+  }
 };
 
 export default function ConfirmSaveDialog({ isOpen, handleClose, handleSubmit }) {
@@ -48,7 +52,7 @@ export default function ConfirmSaveDialog({ isOpen, handleClose, handleSubmit })
               <Button
                 type="button"
                 variant="contained"
-                style={style.button}
+                style={style.buttonSubmit}
                 onClick={() => handleSubmit(true)}
               >
                 Có
@@ -56,7 +60,7 @@ export default function ConfirmSaveDialog({ isOpen, handleClose, handleSubmit })
               <Button
                 type="button"
                 variant="contained"
-                style={style.button}
+                style={style.buttonCancel}
                 onClick={() => handleSubmit(true)}
               >
                 Không
