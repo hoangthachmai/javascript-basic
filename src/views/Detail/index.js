@@ -430,12 +430,12 @@ const DetailDocumentDialog = () => {
                               {document.career}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItemInfo} alignItems="center">
+                          <Grid container className={classes.gridItemInfo}>
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Nhu cầu tư vấn:</span>
                             </Grid>
                             <Grid item lg={8} md={8} xs={8}>
-                              {document.demand}
+                              {document.demand}, Cơ hội nghề nghiệp, Phù hợp bản thân, Bằng cấp
                             </Grid>
                           </Grid>
                           <Grid container className={classes.gridItemInfo} alignItems="center">
@@ -454,7 +454,7 @@ const DetailDocumentDialog = () => {
                               {document.university_name}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItemInfo} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} style={{ paddingBottom: '0' }} alignItems="center">
                             <Grid item lg={12} md={12} xs={12}>
                               <span className={classes.tabItemLabelField}>Câu hỏi cho mentor:</span>
                             </Grid>
@@ -594,6 +594,7 @@ const DetailDocumentDialog = () => {
                           </div>
                           <a href={document?.link_meeting || '#'} target="_blank">
                             <img src="https://play-lh.googleusercontent.com/GBYSf20osBl2CRHbjGOyaOG5kQ3G4xbRau-dzScU9ozuXQJtnUZPkR3IqEDOo5OiVgU" />
+                            <div>Tham gia meeting</div>
                           </a>
                         </div>
                       </div>

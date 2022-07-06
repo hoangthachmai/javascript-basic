@@ -258,6 +258,14 @@ const useStyles = makeStyles((theme) => ({
     background: '#612AFF',
     color: '#ffffff',
     borderRadius: '8px',
+    '& > a': {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      color: '#FFFFFF',
+      textDecoration: 'none',
+      fontWeight: 500,
+    },
     '& > a > img': {
       width: '50px',
       marginLeft: '8px'
@@ -318,7 +326,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'baseline',
     paddingTop: '8px',
-    paddingBottom: '32px'
+    paddingBottom: '16px'
   },
   tabItemNoteInput: {
     marginTop: '8px'
