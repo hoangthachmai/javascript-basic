@@ -102,6 +102,14 @@ const DetailDocumentDialog = () => {
     3: {
       id: 3,
       label: 'Tư vấn nhóm'
+    },
+    4: {
+      id: 4,
+      label: 'Khách VIP'
+    },
+    5: {
+      id: 5,
+      label: 'Khách mời đặc biệt'
     }
   }
   const [noteSelectionList, setNoteSelectionList] = useState(initNoteSelectionList);
@@ -259,7 +267,7 @@ const DetailDocumentDialog = () => {
           is_send_email: false,
           outputtype: 'RawJson',
         });
-        setDocument({...document, email_address: data.email})
+        setDocument({ ...document, email_address: data.email })
       }
     } catch (error) {
       console.log('error', error)
@@ -294,13 +302,13 @@ const DetailDocumentDialog = () => {
           onClose={handleCloseDialog}
           className={classes.useradddialog}
         >
-          <DialogTitle style={{ background: '#F1F1F9 !important', }}>
+          <DialogTitle className={classes.dialogTitle}>
             <Grid item xs={12} style={{ textTransform: 'uppercase' }}>
               Chi tiết đăng ký
             </Grid>
           </DialogTitle>
-          <DialogContent>
-            <Grid container spacing={gridSpacing}>
+          <DialogContent className={classes.dialogContent}>
+            <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Tabs
                   value={tabIndex}
@@ -344,8 +352,8 @@ const DetailDocumentDialog = () => {
               </Grid>
               <Grid item xs={12}>
                 <TabPanel value={tabIndex} index={0}>
-                  <Grid container spacing={gridSpacing}>
-                    <Grid item lg={7} md={7} xs={12}>
+                  <Grid container spacing={1}>
+                    <Grid item lg={4} md={4} xs={12}>
                       <div className={classes.tabItem}>
                         <div className={classes.tabItemTitle}>
                           <div className={classes.tabItemLabel}>
@@ -358,7 +366,15 @@ const DetailDocumentDialog = () => {
                           </div>
                         </div>
                         <div className={classes.tabItemBody}>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4} >
+                              <span className={classes.tabItemLabelField}>Mã đăng ký:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              {document?.code}
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4} >
                               <span className={classes.tabItemLabelField}>Họ và tên:</span>
                             </Grid>
@@ -366,7 +382,7 @@ const DetailDocumentDialog = () => {
                               {document.fullname}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Email:</span>
                             </Grid>
@@ -374,7 +390,7 @@ const DetailDocumentDialog = () => {
                               {document.email_address}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>SĐT:</span>
                             </Grid>
@@ -382,7 +398,7 @@ const DetailDocumentDialog = () => {
                               {document.number_phone}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Trình độ học vấn:</span>
                             </Grid>
@@ -390,7 +406,7 @@ const DetailDocumentDialog = () => {
                               {document.education}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Điểm mạnh:</span>
                             </Grid>
@@ -398,7 +414,7 @@ const DetailDocumentDialog = () => {
                               {document.strength}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Điểm yếu:</span>
                             </Grid>
@@ -406,7 +422,7 @@ const DetailDocumentDialog = () => {
                               {document.weakness}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Ngành nghề:</span>
                             </Grid>
@@ -414,7 +430,7 @@ const DetailDocumentDialog = () => {
                               {document.career}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Nhu cầu tư vấn:</span>
                             </Grid>
@@ -422,7 +438,7 @@ const DetailDocumentDialog = () => {
                               {document.demand}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Mã tư vấn:</span>
                             </Grid>
@@ -430,7 +446,7 @@ const DetailDocumentDialog = () => {
                               {document.id}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Trường:</span>
                             </Grid>
@@ -438,16 +454,29 @@ const DetailDocumentDialog = () => {
                               {document.university_name}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
-                            <Grid item lg={4} md={4} xs={4}>
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
+                            <Grid item lg={12} md={12} xs={12}>
                               <span className={classes.tabItemLabelField}>Câu hỏi cho mentor:</span>
                             </Grid>
-                            <Grid item lg={8} md={8} xs={8}>
-                              {document.question}
+                            <Grid item lg={12} md={12} xs={12}>
+                              <TextField
+                                disabled
+                                fullWidth
+                                multiline
+                                rows={3}
+                                rowsMax={3}
+                                variant="outlined"
+                                name="note"
+                                InputLabelProps={{ shrink: true }}
+                                className={classes.tabItemNoteInput}
+                                defaultValue={document.question}
+                              />
                             </Grid>
                           </Grid>
                         </div>
                       </div>
+                    </Grid>
+                    <Grid item lg={4} md={4} xs={12}>
                       <div className={classes.tabItem}>
                         <div className={classes.tabItemTitle}>
                           <div className={classes.tabItemLabel}>
@@ -460,7 +489,7 @@ const DetailDocumentDialog = () => {
                           </div>
                         </div>
                         <div className={classes.tabItemBody}>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4} >
                               <span className={classes.tabItemLabelField}>Họ và tên:</span>
                             </Grid>
@@ -468,7 +497,7 @@ const DetailDocumentDialog = () => {
                               {mentor?.fullname}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Email:</span>
                             </Grid>
@@ -476,7 +505,7 @@ const DetailDocumentDialog = () => {
                               {mentor.email_address}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>SĐT:</span>
                             </Grid>
@@ -484,99 +513,14 @@ const DetailDocumentDialog = () => {
                               {mentor.number_phone}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
-                              <span className={classes.tabItemLabelField}>Chuyên ngành:</span>
+                              <span className={classes.tabItemLabelField}>Nghề nghiệp:</span>
                             </Grid>
                             <Grid item lg={8} md={8} xs={8}>
                               {mentor.career}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
-                            <Grid item lg={4} md={4} xs={4}>
-                              <span className={classes.tabItemLabelField}>Title:</span>
-                            </Grid>
-                            <Grid item lg={8} md={8} xs={8}>
-                              {mentor.title}
-                            </Grid>
-                          </Grid>
-                          <Grid container className={classes.gridItem} alignItems="center">
-                            <Grid item lg={4} md={4} xs={4}>
-                              <div className={classes.mentorDateTimeWrap}>
-                                <LocalMallOutlinedIcon style={style.mentorDateTimeIcon} />
-                                <div className={classes.mentorDateTime}>
-                                  <div>{(convertDateTime(mentor.date1, mentor.time1))?.date}</div>
-                                  <div>{(convertDateTime(mentor.date1, mentor.time1))?.time}</div>
-                                </div>
-                              </div>
-                            </Grid>
-                            <Grid item lg={8} md={8} xs={8}>
-                              <div className={classes.mentorDateTimeWrap}>
-                                <LocalMallOutlinedIcon style={style.mentorDateTimeIcon} />
-                                <div className={classes.mentorDateTime}>
-                                  <div>{(convertDateTime(mentor.date1, mentor.time2))?.date}</div>
-                                  <div>{(convertDateTime(mentor.date1, mentor.time2))?.time}</div>
-                                </div>
-                              </div>
-                            </Grid>
-                          </Grid>
-
-                        </div>
-                      </div>
-                    </Grid>
-                    <Grid item lg={5} md={5} xs={12}>
-                      <div className={classes.tabItem}>
-                        <div className={classes.tabItemNoteSection}>
-                          <div className={classes.tabItemNoteTitleWrap}>
-                            <div>{getDayOfWeek(document?.schedule?.split(' ')[0])} ngày {document?.schedule?.split(' ')[0]}</div>
-                            <div>{document.status}</div>
-                          </div>
-                          <div className={classes.tabItemNoteHour}>
-                            {document?.schedule?.split(' ')[1]}
-                          </div>
-                          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/640px-Google_Calendar_icon_%282020%29.svg.png" />
-                        </div>
-                      </div>
-                      <div className={classes.tabItem}>
-                        <div className={classes.tabItemNoteSelection}>
-                          <div className={classes.tabItemNoteSelectionLabel}>Lưu ý: </div>
-                          <FormControl fullWidth>
-                            <Select
-                              id="note_id"
-                              onChange={handleChangeNoteSelection}
-                              displayEmpty
-                              name="note"
-                              value={selectedNote}
-                            >
-                              {Object.values(noteSelectionList)?.map((note, index) => (
-                                <MenuItem key={index} value={note.id}>
-                                  {note.label}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </div>
-                        <div className={classes.selectedNoteListSection}>
-                          {selectedNoteList.map((id) => (
-                            <div key={id} className={classes.selectedNoteItem}>
-                              <div>{initNoteSelectionList[id].label}</div>
-                              <CloseOutlinedIcon onClick={() => handleRemoveSelectedNote(id)} style={style.selectedItemCloseIcon} />
-                            </div>
-                          ))}
-                        </div>
-                        <div className={`${classes.tabItemNoteSelection} ${classes.tabItemNoteInputWrap}`}>
-                          <div className={classes.tabItemNoteSelectionLabel}>Ghi chú: </div>
-                          <TextField
-                            fullWidth
-                            multiline
-                            rows={4}
-                            rowsMax={4}
-                            variant="outlined"
-                            name="note"
-                            onChange={() => { }}
-                            InputLabelProps={{ shrink: true }}
-                            className={classes.tabItemNoteInput}
-                          />
                         </div>
                       </div>
                       <div className={classes.tabItem}>
@@ -625,8 +569,8 @@ const DetailDocumentDialog = () => {
                                 disabled
                                 fullWidth
                                 multiline
-                                rows={3}
-                                rowsMax={3}
+                                rows={4}
+                                rowsMax={4}
                                 variant="outlined"
                                 name="note"
                                 InputLabelProps={{ shrink: true }}
@@ -637,6 +581,65 @@ const DetailDocumentDialog = () => {
                           </Grid>
                         </div>
                       </div>
+                    </Grid>
+                    <Grid item lg={4} md={4} xs={12}>
+                      <div className={classes.tabItem}>
+                        <div className={classes.tabItemNoteSection}>
+                          <div className={classes.tabItemNoteTitleWrap}>
+                            <div>{getDayOfWeek(document?.schedule?.split(' ')[0])} ngày {document?.schedule?.split(' ')[0]}</div>
+                            <div>{document.status}</div>
+                          </div>
+                          <div className={classes.tabItemNoteHour}>
+                            {document?.schedule?.split(' ')[1]}
+                          </div>
+                          <a href={document?.link_meeting || '#'} target="_blank">
+                            <img src="https://play-lh.googleusercontent.com/GBYSf20osBl2CRHbjGOyaOG5kQ3G4xbRau-dzScU9ozuXQJtnUZPkR3IqEDOo5OiVgU" />
+                          </a>
+                        </div>
+                      </div>
+                      <div className={classes.tabItem}>
+                        <div className={classes.tabItemNoteSelection}>
+                          <div className={classes.tabItemNoteSelectionLabel}>Lưu ý: </div>
+                          <FormControl fullWidth>
+                            <Select
+                              id="note_id"
+                              onChange={handleChangeNoteSelection}
+                              displayEmpty
+                              name="note"
+                              value={selectedNote}
+                            >
+                              {Object.values(noteSelectionList)?.map((note, index) => (
+                                <MenuItem key={index} value={note.id}>
+                                  {note.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </div>
+                        <div className={classes.selectedNoteListSection}>
+                          {selectedNoteList.map((id) => (
+                            <div key={id} className={classes.selectedNoteItem}>
+                              <div>{initNoteSelectionList[id].label}</div>
+                              <CloseOutlinedIcon onClick={() => handleRemoveSelectedNote(id)} style={style.selectedItemCloseIcon} />
+                            </div>
+                          ))}
+                        </div>
+                        <div className={`${classes.tabItemNoteSelection} ${classes.tabItemNoteInputWrap}`}>
+                          <div className={classes.tabItemNoteSelectionLabel}>Ghi chú: </div>
+                          <TextField
+                            fullWidth
+                            multiline
+                            rows={4}
+                            rowsMax={4}
+                            variant="outlined"
+                            name="note"
+                            onChange={() => { }}
+                            InputLabelProps={{ shrink: true }}
+                            className={classes.tabItemNoteInput}
+                          />
+                        </div>
+                      </div>
+
                     </Grid>
                   </Grid>
                 </TabPanel>

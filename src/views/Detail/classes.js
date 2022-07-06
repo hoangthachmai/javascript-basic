@@ -19,6 +19,21 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: 'unset'
     },
   },
+  dialogTitle: {
+    background: '#F1F1F9 !important',
+    padding: '8px 24px',
+
+  },
+  dialogContent: {
+    padding: '0 24px',
+    overflowY: 'hidden'
+  },
+  gridItemInfo: {
+    padding: '0 12px 10px',
+    [theme.breakpoints.down('xs')]: {
+      padding: '8px 0'
+    },
+  },
   gridItem: {
     padding: '0 12px 12px',
     [theme.breakpoints.down('xs')]: {
@@ -32,8 +47,8 @@ const useStyles = makeStyles((theme) => ({
         background: '#f1f1f9',
         margin: '0px',
         borderRadius: '0px',
-        maxWidth: 'calc(100vw - 320px)',
-        minWidth: 'calc(100vw - 320px)',
+        maxWidth: '90vw',
+        minWidth: '90vw',
         maxHeight: '100%',
         overflowY: 'hidden',
         [theme.breakpoints.down('md')]: {
@@ -190,7 +205,7 @@ const useStyles = makeStyles((theme) => ({
   tabItem: {
     background: '#FFFFFF',
     borderRadius: '8px',
-    marginBottom: '16px',
+    marginBottom: '8px',
     boxShadow: 'rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px'
   },
   tabItemTitle: {
@@ -243,19 +258,19 @@ const useStyles = makeStyles((theme) => ({
     background: '#612AFF',
     color: '#ffffff',
     borderRadius: '8px',
-    '& > img': {
-      width: '60px',
+    '& > a > img': {
+      width: '50px',
       marginLeft: '8px'
     }
   },
   tabItemNoteTitleWrap: {
     '& div:first-child': {
-      fontSize: '20px',
+      fontSize: '16px',
       fontWeight: 'bold'
     }
   },
   tabItemNoteHour: {
-    fontSize: '20px',
+    fontSize: '18px',
     fontWeight: 'bold'
   },
   tabItemNoteSelection: {
@@ -273,7 +288,22 @@ const useStyles = makeStyles((theme) => ({
     padding: '16px',
     display: 'flex',
     alignItems: 'center',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    widht: '100%',
+    '&::-webkit-scrollbar': {
+      height: '8px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#f1f1f1',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#888',
+    },
+    [theme.breakpoints.down('xs')]: {
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+    }
   },
   selectedNoteItem: {
     display: 'flex',
@@ -287,8 +317,8 @@ const useStyles = makeStyles((theme) => ({
   tabItemNoteInputWrap: {
     flexDirection: 'column',
     alignItems: 'baseline',
-    marginTop: '20px',
-    paddingBottom: '16px'
+    paddingTop: '8px',
+    paddingBottom: '32px'
   },
   tabItemNoteInput: {
     marginTop: '8px'
@@ -298,15 +328,15 @@ const useStyles = makeStyles((theme) => ({
   },
   tabItemAssessTitle: {
     overflow: 'hidden',
-    height: '92px',
-    padding: '16px',
+    height: '78px',
+    padding: '8px 16px',
     background: '#EBAB01',
     borderTopLeftRadius: '8px',
     borderTopRightRadius: '8px',
     textAlign: 'center',
     position: 'relative',
-    fontSize: '20px',
-    lineHeight: '60px',
+    fontSize: '24px',
+    lineHeight: '58px',
     fontWeight: 'bold',
     color: '#FFF'
   },
