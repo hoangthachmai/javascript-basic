@@ -6,7 +6,7 @@ import ProfileSection from './ProfileSection';
 import NotificationSection from './NotificationSection';
 import CompanySelectionSection from './CompanySelectionSection';
 import { drawerWidth, gridSpacing } from './../../../store/constant';
-import logo from '../../../assets/svgs/logo.svg';
+import logo from '../../../assets/svgs/logo.png';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -31,8 +31,8 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.5rem',
   },
   logoSize: {
-    width: '80px',
-    height: '100%',
+    width: '100%',
+    height: '45px',
   },
 }));
 
@@ -49,7 +49,7 @@ const Header = (props) => {
               <Hidden smDown>
                 <Grid item>
                   <Box mt={0.5}>
-                    <img src={logo} alt="Logo" />
+                    <img src={logo} alt="Logo" className={classes.logoSize} />
                   </Box>
                 </Grid>
               </Hidden>

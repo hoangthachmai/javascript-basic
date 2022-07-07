@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Card, CardContent, Typography, makeStyles, Grid } from '@material-ui/core';
 import JWTLogin from './JWTLogin';
 
-import Logo from './../../assets/svgs/logo-black.svg';
+import Logo from './../../assets/svgs/logo_green.png';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,6 +37,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(1),
   },
+  logoSize: {
+    width: '100%',
+    height: '50px',
+  },
 }));
 
 const Login = () => {
@@ -60,7 +64,7 @@ const Login = () => {
                   </Grid>
                   <Grid item>
                     <RouterLink to="/" className={classes.icon}>
-                      <img alt="Auth method" src={Logo} />
+                      <img alt="Auth method" src={Logo} className={classes.logoSize} />
                     </RouterLink>
                   </Grid>
                 </Grid>
