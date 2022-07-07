@@ -47,7 +47,7 @@ export const BookingProvider = ({ children }) => {
         outputtype: 'RawJson',
         id: id,
         action: action,
-        note: note,
+       
       })
       .then((response) => {
         if (response.status === 200 && response.data.return === 200) return true;
@@ -61,6 +61,19 @@ export const BookingProvider = ({ children }) => {
         outputtype: 'RawJson',
         id: id,
         action: action,
+      })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) return true;
+        return false;
+      });
+  };
+  
+  const setNoteBooking = async (id, note) => {
+    return axiosInstance
+      .post(vibEndpoints.set_note_booking, {
+        outputtype: 'RawJson',
+        id: id,
+        note: note,
       })
       .then((response) => {
         if (response.status === 200 && response.data.return === 200) return true;
@@ -110,6 +123,7 @@ export const BookingProvider = ({ children }) => {
         updateBooking,
         cancelBooking,
         reviewBooking,
+        setNoteBooking,
         setCompletedBooking,
         getMentorDetail,
         getListUniversity,

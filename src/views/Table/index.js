@@ -8,6 +8,8 @@ import Modal from '../Table/Modal';
 import CachedIcon from '@material-ui/icons/Cached';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import NoteAddSharpIcon from '@material-ui/icons/NoteAddSharp';
+import VideocamIcon from '@material-ui/icons/Videocam';
 import StarIcon from '@material-ui/icons/Star';
 import SearchIcon from '@material-ui/icons/Search';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
@@ -35,7 +37,8 @@ import useConfirmPopup from './../../hooks/useConfirmPopup';
 import useView from './../../hooks/useView';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import useOnClickOutSide from './../../hooks/useClickOutSide';
-
+import NoteModal from './NoteModal';
+import DuoIcon from '@material-ui/icons/Duo';
 import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE } from '../../store/actions';
 import useBooking from './../../hooks/useBooking';
 import { customClasses, style } from './style';
@@ -750,10 +753,32 @@ const useStyles = makeStyles((theme) => ({
       background: '#272f33',
     },
   },
+  handleButtonMeeting: {
+    background: '#30bc41',
+    '&:hover': {
+      background: '#30bc41',
+    },
+  },
+  handleButtonNote: {
+    background: '#425466',
+    '&:hover': {
+      background: '#272f33',
+    },
+  },
   handleButtonIcon: {
     fontSize: '20px',
     width: '20px',
   },
+  noteButtonIcon: {
+
+  },
+  handleButtonIconMeeting: {
+    fontSize: '20px',
+    width: '20px',
+    marginLeft: '-5px',
+    marginTop: '-20px',
+  },
+
   waitingStatus: {
     background: 'rgba(47, 210, 17, 0.8) !important',
   },
@@ -805,16 +830,26 @@ export default function GeneralTable(props) {
   const buttonBookingReview = menuButtons.find(
     (button) => button.name === view.booking.list.review
   );
+  
+  const buttonBookingMeeting = menuButtons.find(
+    (button) => button.name === view.booking.list.meeting
+  );
 
   const buttonBookingHandled = menuButtons.find(
     (button) => button.name === view.booking.list.handled
   );
 
+  const buttonBookingNote = menuButtons.find(
+    (button) => button.name === view.booking.list.note
+  );
+
+  const [isOpenModalNote, setIsOpenModalNote] = React.useState(false);
   const [isOpenModal, setIsOpenModal] = React.useState(false);
   const [modalType, setModalType] = React.useState('');
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
+  const [selectedRecord, setSelectedRecord] = React.useState({});
   const [university, setUniversity] = React.useState(null);
   const { url, documentType, tableTitle, showPreviewUrl = true } = props;
 
@@ -864,6 +899,7 @@ export default function GeneralTable(props) {
     getBookingDetail,
     cancelBooking,
     reviewBooking,
+    setNoteBooking,
     setCompletedBooking,
     getListUniversity,
   } = useBooking();
@@ -985,9 +1021,14 @@ export default function GeneralTable(props) {
   };
 
   const handleOpenModal = (type, booking) => {
-    setSelected((pre) => [...new Set([booking, ...pre])]);
-    setIsOpenModal(true);
-    setModalType(type);
+    setSelected((pre) => [...new Set([booking.id, ...pre])]);
+    setSelectedRecord(booking);
+    if (type === 'note') {
+      setIsOpenModalNote(true);
+    } else {
+      setIsOpenModal(true);
+      setModalType(type);
+    }
   };
 
   const handleCancelBooking = async (data) => {
@@ -1012,6 +1053,12 @@ export default function GeneralTable(props) {
     }
   };
 
+  const handleMeetingBooking  = (booking) => {
+    setSelected((pre) => [...new Set([booking.id, ...pre])]);
+    setSelectedRecord(booking);
+    console.log("Link",booking.link_meeting)
+  };
+
   const handleSetCompletedBooking = async (id) => {
     try {
       await setCompletedBooking(id);
@@ -1019,6 +1066,17 @@ export default function GeneralTable(props) {
     } finally {
       setIsOpenModal(false);
       setModalType('');
+      reloadCurrentDocuments();
+    }
+  };
+
+  const handleNoteBooking = async (note) => {
+    try {
+      console.log('note', note)
+      await setNoteBooking(selected[0], note);
+    } catch (e) {
+    } finally {
+      setIsOpenModalNote(false);
       reloadCurrentDocuments();
     }
   };
@@ -1047,19 +1105,27 @@ export default function GeneralTable(props) {
   };
 
   const formatDateTime = (datetime) => {
-    if(datetime) {
+    if (datetime) {
       const date = new Date(datetime);
-      return date.getDate() 
-      +  "/" + (date.getMonth() + 1) 
-      + "/"+ date.getFullYear() 
-      + " " +  (date.getHours() < 10 ? "0" + date.getHours() : date.getHours())
-      + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
+      return date.getDate()
+        + "/" + (date.getMonth() + 1)
+        + "/" + date.getFullYear()
+        + " " + (date.getHours() < 10 ? "0" + date.getHours() : date.getHours())
+        + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
     }
     return ""
   }
 
   return (
     <React.Fragment>
+      {isOpenModalNote && (
+        <NoteModal
+          isOpen={isOpenModalNote}
+          handleClose={() => setIsOpenModalNote(false)}
+          handleSubmit={handleNoteBooking}
+          selectedBooking={selectedRecord}
+        />
+      )}
       <Modal
         isOpen={isOpenModal}
         handleClose={() => setIsOpenModal(false)}
@@ -1216,6 +1282,16 @@ export default function GeneralTable(props) {
                             {displayOptions.menuButtons && (
                               <TableCell align="left">
                                 <div className={classes.handleButtonWrap}>
+                                {buttonBookingNote && (
+                                    <Tooltip title={buttonBookingNote.text}>
+                                      <Button
+                                          className={`${classes.handleButton} `}
+                                          onClick={() => handleOpenModal('note', row)}
+                                      >
+                                        <NoteAddSharpIcon className={classes.noteButtonIcon} />
+                                      </Button>
+                                    </Tooltip>
+                                  )}
                                   {(buttonBookingHandled && row.is_can_completed) && (
                                     <Tooltip title={buttonBookingHandled.text}>
                                       <Button
@@ -1230,9 +1306,24 @@ export default function GeneralTable(props) {
                                     <Tooltip title={buttonBookingReview.text}>
                                       <Button
                                         className={classes.handleButton}
-                                        onClick={() => handleOpenModal('review', row.id)}
+                                        onClick={() => handleOpenModal('review', row)}
                                       >
                                         <DoneAllIcon className={classes.handleButtonIcon} />
+                                      </Button>
+                                    </Tooltip>
+                                  )}
+                                 
+                                    {(buttonBookingMeeting && row.link_meeting!==null) && (
+                                    <Tooltip title={buttonBookingMeeting.text}>
+                                      <Button
+                                        className={`${classes.handleButton} ${classes.handleButtonMeeting}`}
+                                   
+                                      >
+                                      <a href={row.link_meeting} 
+                                       className={`${classes.handleButton} ${classes.handleButtonMeeting}`}
+                                       target="_blank">
+                                      <DuoIcon className={classes.handleButtonIconMeeting} />
+                                      </a>
                                       </Button>
                                     </Tooltip>
                                   )}
@@ -1240,7 +1331,7 @@ export default function GeneralTable(props) {
                                     <Tooltip title={buttonBookingCancel.text}>
                                       <Button
                                         className={`${classes.handleButton} ${classes.handleButtonCancel}`}
-                                        onClick={() => handleOpenModal('cancel', row.id)}
+                                        onClick={() => handleOpenModal('cancel', row)}
                                       >
                                         <DeleteOutlineIcon className={classes.handleButtonIcon} />
                                       </Button>

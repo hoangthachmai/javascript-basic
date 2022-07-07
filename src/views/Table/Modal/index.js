@@ -149,18 +149,9 @@ export default function BasicModal({
   };
 
   const handleCloseModal = () => {
-    setHelperText('');
-    if (selectedBooking) {
-      const noteList = JSON.parse(sessionStorage.getItem('bookingNote')) || {};
-      if (!noteList[selectedBooking]) noteList[selectedBooking] = {};
-      noteList[selectedBooking][type] = formData.note;
-      sessionStorage.setItem('bookingNote', JSON.stringify(noteList));
-    }
-    setFormData({
-      status: '',
-      note: '',
-    });
+    
     handleClose();
+    
   };
 
   useEffect(() => {
@@ -203,18 +194,7 @@ export default function BasicModal({
                 ))}
               </RadioGroup>
               {helperText && <div style={style.error}>{helperText}</div>}
-              <div style={style.noteLabel}>Ghi chú:</div>
-              <TextField
-                fullWidth
-                multiline
-                rowsMax={5}
-                variant="outlined"
-                value={formData.note}
-                name="note"
-                onChange={handleChange}
-                InputLabelProps={{ shrink: true }}
-                style={style.input}
-              />
+           
             </FormControl>
             <div style={style.buttonWrap}>
               <Button
