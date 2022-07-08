@@ -371,7 +371,7 @@ const DetailDocumentDialog = () => {
                               <span className={classes.tabItemLabelField}>Mã đăng ký:</span>
                             </Grid>
                             <Grid item lg={8} md={8} xs={8}>
-                              {document?.code}
+                              {document?.id}
                             </Grid>
                           </Grid>
                           <Grid container className={classes.gridItemInfo} alignItems="center">
@@ -443,7 +443,7 @@ const DetailDocumentDialog = () => {
                               <span className={classes.tabItemLabelField}>Mã tư vấn:</span>
                             </Grid>
                             <Grid item lg={8} md={8} xs={8}>
-                              {document.id}
+                              {document.code}
                             </Grid>
                           </Grid>
                           <Grid container className={classes.gridItemInfo} alignItems="center">
