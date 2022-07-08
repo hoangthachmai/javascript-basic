@@ -1292,7 +1292,7 @@ export default function GeneralTable(props) {
                                       </Button>
                                     </Tooltip>
                                   )}
-                                  {(buttonBookingHandled && row.is_can_completed) && (
+                                  {buttonBookingHandled && (
                                     <Tooltip title={buttonBookingHandled.text}>
                                       <Button
                                         className={classes.handleButton}
@@ -1302,7 +1302,7 @@ export default function GeneralTable(props) {
                                       </Button>
                                     </Tooltip>
                                   )}
-                                  {buttonBookingReview && (
+                                  {(buttonBookingReview && row.is_can_completed) && (
                                     <Tooltip title={buttonBookingReview.text}>
                                       <Button
                                         className={classes.handleButton}
