@@ -42,6 +42,7 @@ export const style = {
     padding: '12px',
     color: '#fff',
     borderRadius: '24px',
+    background: '#36f'
   },
 };
 

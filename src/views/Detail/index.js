@@ -16,6 +16,7 @@ import {
   MenuItem,
   TextField
 } from '@material-ui/core';
+import ClearIcon from '@material-ui/icons/Clear';
 import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
 import RemoveRedEyeTwoToneIcon from '@material-ui/icons/RemoveRedEyeTwoTone';
 import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
@@ -116,7 +117,7 @@ const DetailDocumentDialog = () => {
   const [selectedNote, setSelectedNote] = useState("");
   const [selectedNoteList, setSelectedNoteList] = useState([]);
 
-  const { form_buttons: formButtons, name, tabs, disabled_fields } = useView();
+  const { form_buttons: formButtons, tabs, } = useView();
 
   const tabDisplayOptions = {
     mentee: tabs.includes('mentee'),
@@ -131,7 +132,7 @@ const DetailDocumentDialog = () => {
     setTabIndex(newValue);
   };
 
-  const { updateBooking, getMentorDetail, getFeedback } = useBooking();
+  const { updateBooking, getMentorDetail, getFeedback, updateBookingMentor } = useBooking();
 
   const { detailDocument: openDialog } = useSelector((state) => state.floatingMenu);
   const { projects } = useSelector((state) => state.project);
@@ -263,16 +264,25 @@ const DetailDocumentDialog = () => {
         await updateBooking({
           ...document,
           ...data,
-          phone: document.number_phone,
           is_send_email: false,
           outputtype: 'RawJson',
         });
-        setDocument({ ...document, email_address: data.email })
+        setDocument({ ...document, email_address: data.email, number_phone: data.phone, ...data })
+      } else if(editMentor) {
+        await updateBookingMentor(document.id, data);
+        await getConsultantDetail(data.mentor_id);
       }
     } catch (error) {
       console.log('error', error)
     } finally {
       handleCloseEditModal()
+    }
+  }
+
+  const handleEditModalGoBack = (to) => {
+    if(to === 'profile') {
+      setEditProfile(document);
+      setEditMentor(null);
     }
   }
 
@@ -287,11 +297,13 @@ const DetailDocumentDialog = () => {
       )}
       {(editProfile || editMentor) && (
         <EditModal
-          isOpen={editProfile || editMentor}
+          isOpen={!!editProfile || !!editMentor}
           profile={editProfile}
           mentor={editMentor}
+          document={document}
           handleClose={handleCloseEditModal}
           handleSubmit={handleSaveEdit}
+          handleGoBack={handleEditModalGoBack}
         />
       )}
       <Grid container>
@@ -303,8 +315,18 @@ const DetailDocumentDialog = () => {
           className={classes.useradddialog}
         >
           <DialogTitle className={classes.dialogTitle}>
-            <Grid item xs={12} style={{ textTransform: 'uppercase' }}>
-              Chi tiết đăng ký
+            <Grid container>
+              <Grid item xs={11} style={{ textTransform: 'uppercase' }}>
+                Chi tiết đăng ký
+              </Grid>
+              <Grid item xs={1}>
+                <Button
+                  className={classes.buttonClose}
+                  onClick={handleCloseDialog}
+                >
+                  <ClearIcon className={classes.buttonCloseIcon} />
+                </Button>
+              </Grid>
             </Grid>
           </DialogTitle>
           <DialogContent className={classes.dialogContent}>
@@ -435,7 +457,7 @@ const DetailDocumentDialog = () => {
                               <span className={classes.tabItemLabelField}>Nhu cầu tư vấn:</span>
                             </Grid>
                             <Grid item lg={8} md={8} xs={8}>
-                              {document.demand}, Cơ hội nghề nghiệp, Phù hợp bản thân, Bằng cấp
+                              {document.demand}
                             </Grid>
                           </Grid>
                           <Grid container className={classes.gridItemInfo} alignItems="center">

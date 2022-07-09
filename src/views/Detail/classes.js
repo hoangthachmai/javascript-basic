@@ -10,6 +10,10 @@ const useStyles = makeStyles((theme) => ({
     background: '#FFFFFF',
     padding: '16px 32px',
     borderRadius: '15px',
+    overflowY: 'scroll',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
     [theme.breakpoints.down('xs')]: {
       maxHeight: '100vh',
       overflowY: 'scroll',
@@ -19,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: 'unset'
     },
   },
+  editBoxMentor: {
+    minWidth: '80vw',
+  },
   dialogTitle: {
     background: '#F1F1F9 !important',
     padding: '8px 24px',
@@ -26,7 +33,10 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogContent: {
     padding: '0 24px',
-    overflowY: 'hidden'
+    overflowY: 'scroll',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    }
   },
   gridItemInfo: {
     padding: '0 12px 10px',
@@ -254,7 +264,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '16px',
+    padding: '20px 16px',
     background: '#612AFF',
     color: '#ffffff',
     borderRadius: '8px',
@@ -273,8 +283,9 @@ const useStyles = makeStyles((theme) => ({
   },
   tabItemNoteTitleWrap: {
     '& div:first-child': {
-      fontSize: '16px',
-      fontWeight: 'bold'
+      fontSize: '20px',
+      fontWeight: 'bold',
+      marginBottom: '8px'
     }
   },
   tabItemNoteHour: {
@@ -373,7 +384,68 @@ const useStyles = makeStyles((theme) => ({
   },
   inputField: {
     '& input': {
-      padding: '8px 12px'
+      padding: '8px 12px',
+      '&:disabled': {
+        background: '#DADADA'
+      }
+    },
+  },
+  multpleSelectField: {
+    padding: '8px 12px',
+    width: '100%',
+    border: '1px solid rgba(0, 0, 0, 0.23)',
+    '&:before': {
+      border: 'none !important'
+    }
+  },
+  selectField: {
+    padding: '8px 12px',
+    width: '100%',
+    borderColor: 'rgba(0, 0, 0, 0.23)'
+  },
+  inputDateField: {
+    padding: '8px 12px',
+    width: '100%',
+    border: 'none',
+    borderBottom: '1px solid #000'
+  },
+  buttonClose: {
+    float: 'right',
+    '&:hover': {
+      background: 'unset'
+    }
+  },
+  buttonScheduleWrap: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  buttonSchedule: {
+    padding: '8px 12px',
+    borderRadius: '10px',
+    background: '#465069',
+    color: '#FFFFFF',
+    border: 'none',
+    minWidth: '60px',
+    cursor: 'pointer',
+    '&.active': {
+      background: '#36f'
+    }
+  },
+  mentorSchedule: {
+    padding: '8px 12px',
+    border: '1px solid #746d6d',
+    borderRadius: '10px',
+    margin: '4px 12px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    width: '20%',
+    '&.active': {
+      background: '#36f',
+      color: '#FFF'
     }
   }
 }));

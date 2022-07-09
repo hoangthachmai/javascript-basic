@@ -363,6 +363,42 @@ const EnhancedTableToolbar = (props) => {
       id: 'Chờ khách hàng',
       name: 'Chờ khách hàng',
     },
+    {
+      id: 'Chờ mentor',
+      name: 'Chờ mentor',
+    },
+    {
+      id: 'Đã lên lịch tư vấn',
+      name: 'Đã lên lịch tư vấn',
+    },
+    {
+      id: 'Đang tư vấn',
+      name: 'Đang tư vấn',
+    },
+    {
+      id: 'Chờ Feedback',
+      name: 'Chờ Feedback',
+    },
+    {
+      id: 'Mentor yêu cầu huỷ',
+      name: 'Mentor yêu cầu huỷ',
+    },
+    {
+      id: 'Mentor chưa xác nhận',
+      name: 'Mentor chưa xác nhận',
+    },
+    {
+      id: 'Mentor từ chối lịch',
+      name: 'Mentor từ chối lịch',
+    },
+    {
+      id: 'Khách hàng chưa Feedback',
+      name: 'Khách hàng chưa Feedback',
+    },
+    {
+      id: 'Khách yêu cầu huỷ',
+      name: 'Khách yêu cầu huỷ',
+    },
   ]);
   const [filter, setFilter] = React.useState({
     university_id: '',
@@ -792,6 +828,43 @@ const useStyles = makeStyles((theme) => ({
   completedStatus: {
     background: '#36f',
   },
+  styleStatus1: {
+    background: '#FF9400 !important'
+  },
+  styleStatus2: {
+    background: '#6200A5 !important'
+  },
+  styleStatus3: {
+    background: '#0FAD00 !important'
+  },
+  styleStatus4: {
+    background: '#00A2C8 !important'
+  },
+  styleStatus5: {
+    background: '#8DC700 !important'
+  },
+  styleStatus6: {
+    background: '#FF6600 !important'
+  },
+  styleStatus7: {
+    background: '#C4007C !important'
+  },
+  styleStatus8: {
+    background: '#FE0000 !important'
+  },
+  styleStatus9: {
+    background: '#0064B4 !important'
+  },
+  styleStatus10: {
+    background: '#FDFD01 !important'
+  },
+
+  styleStatus11: {
+    background: '#FFC501 !important'
+  },
+  styleStatus12: {
+    background: '#0010A4 !important'
+  },
 }));
 
 export default function GeneralTable(props) {
@@ -830,7 +903,7 @@ export default function GeneralTable(props) {
   const buttonBookingReview = menuButtons.find(
     (button) => button.name === view.booking.list.review
   );
-  
+
   const buttonBookingMeeting = menuButtons.find(
     (button) => button.name === view.booking.list.meeting
   );
@@ -1033,7 +1106,7 @@ export default function GeneralTable(props) {
 
   const handleCancelBooking = async (data) => {
     try {
-      await cancelBooking(selected[0], data.status, data.note);
+      await reviewBooking(selected[0], data.status);
     } catch (e) {
     } finally {
       setIsOpenModal(false);
@@ -1044,7 +1117,7 @@ export default function GeneralTable(props) {
 
   const handleReviewBooking = async (data) => {
     try {
-      await reviewBooking(selected[0], data.status, data.note);
+      await reviewBooking(selected[0], data.status);
     } catch (e) {
     } finally {
       setIsOpenModal(false);
@@ -1053,10 +1126,10 @@ export default function GeneralTable(props) {
     }
   };
 
-  const handleMeetingBooking  = (booking) => {
+  const handleMeetingBooking = (booking) => {
     setSelected((pre) => [...new Set([booking.id, ...pre])]);
     setSelectedRecord(booking);
-    console.log("Link",booking.link_meeting)
+    console.log("Link", booking.link_meeting)
   };
 
   const handleSetCompletedBooking = async (id) => {
@@ -1089,19 +1162,23 @@ export default function GeneralTable(props) {
     fetchDocument(data);
   };
 
-  const getStatusType = () => {
-    switch (selectedFolder.action) {
-      case bookingActions.all_list:
-        return 'waitingStatus';
-      case bookingActions.handle_list:
-        return 'handleStatus';
-      case bookingActions.cancel_list:
-        return 'cancelStatus';
-      case bookingActions.completed_list:
-        return 'completedStatus';
-      default:
-        return 'completedStatus';
-    }
+  const getStatusType = (type) => {
+    const statusListLabel = [
+      'Chờ khách hàng',
+      'Chờ mentor',
+      'Đã lên lịch tư vấn',
+      'Đang tư vấn',
+      'Chờ Feedback',
+      'Khách hàng chưa xác nhận',
+      'Mentor chưa xác nhận', 
+      'Mentor từ chối lịch',
+      'Khách hàng chưa Feedback',
+      'Meeting bị gián đoạn',
+      'Khách yêu cầu huỷ',
+      'Mentor yêu cầu hủy',
+    ]
+    const index = statusListLabel.findIndex(item => item === type.trim());
+    return `styleStatus${index + 1}`
   };
 
   const formatDateTime = (datetime) => {
@@ -1254,7 +1331,7 @@ export default function GeneralTable(props) {
                             )}
                             {displayOptions.status && (
                               <TableCell align="left">
-                                <span style={style.statusWrap} className={classes[getStatusType()]}>
+                                <span style={style.statusWrap} className={classes[getStatusType(row.status)]}>
                                   {row.status}
                                 </span>
                               </TableCell>
@@ -1282,11 +1359,11 @@ export default function GeneralTable(props) {
                             {displayOptions.menuButtons && (
                               <TableCell align="left">
                                 <div className={classes.handleButtonWrap}>
-                                {buttonBookingNote && (
+                                  {buttonBookingNote && (
                                     <Tooltip title={buttonBookingNote.text}>
                                       <Button
-                                          className={`${classes.handleButton} `}
-                                          onClick={() => handleOpenModal('note', row)}
+                                        className={`${classes.handleButton} `}
+                                        onClick={() => handleOpenModal('note', row)}
                                       >
                                         <NoteAddSharpIcon className={classes.noteButtonIcon} />
                                       </Button>
@@ -1302,28 +1379,17 @@ export default function GeneralTable(props) {
                                       </Button>
                                     </Tooltip>
                                   )}
-                                  {(buttonBookingReview && row.is_can_completed) && (
-                                    <Tooltip title={buttonBookingReview.text}>
-                                      <Button
-                                        className={classes.handleButton}
-                                        onClick={() => handleOpenModal('review', row)}
-                                      >
-                                        <DoneAllIcon className={classes.handleButtonIcon} />
-                                      </Button>
-                                    </Tooltip>
-                                  )}
-                                 
-                                    {(buttonBookingMeeting && row.link_meeting!==null) && (
+                                  {(buttonBookingMeeting && row.link_meeting !== null) && (
                                     <Tooltip title={buttonBookingMeeting.text}>
                                       <Button
                                         className={`${classes.handleButton} ${classes.handleButtonMeeting}`}
-                                   
+
                                       >
-                                      <a href={row.link_meeting} 
-                                       className={`${classes.handleButton} ${classes.handleButtonMeeting}`}
-                                       target="_blank">
-                                      <DuoIcon className={classes.handleButtonIconMeeting} />
-                                      </a>
+                                        <a href={row.link_meeting}
+                                          className={`${classes.handleButton} ${classes.handleButtonMeeting}`}
+                                          target="_blank">
+                                          <DuoIcon className={classes.handleButtonIconMeeting} />
+                                        </a>
                                       </Button>
                                     </Tooltip>
                                   )}
@@ -1334,6 +1400,16 @@ export default function GeneralTable(props) {
                                         onClick={() => handleOpenModal('cancel', row)}
                                       >
                                         <DeleteOutlineIcon className={classes.handleButtonIcon} />
+                                      </Button>
+                                    </Tooltip>
+                                  )}
+                                  {(buttonBookingReview && row.is_can_completed) && (
+                                    <Tooltip title={buttonBookingReview.text}>
+                                      <Button
+                                        className={classes.handleButton}
+                                        onClick={() => handleOpenModal('review', row)}
+                                      >
+                                        <DoneAllIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}
