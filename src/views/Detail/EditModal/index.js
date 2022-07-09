@@ -92,7 +92,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
   const handleChangeDemand = (event) => {
     const { target: { value } } = event;
     setFormDemand(typeof value === 'string' ? value.split(',') : value);
-    setFormData({...formData, demand: value.join(',') });
+    setFormData({ ...formData, demand: value.join(',') });
   }
 
   const handleChange = (e) => {
@@ -301,17 +301,23 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                     <span className={classes.tabItemLabelField}>Ngành nghề:</span>
                   </Grid>
                   <Grid item lg={8} md={8} xs={12}>
-                    <select
+                    <Select
                       name="career"
-                      className={classes.selectField}
+                      labelId="demo-multiple-name-label-1"
+                      id="demo-multiple-name-1"
+                      className={classes.multpleSelectField}
                       value={formData.career}
                       onChange={handleChange}
                     >
-                      {careerDemandList?.career?.map(item => (
-                        <option value={item} >{item}</option>
+                      {careerDemandList?.career?.map((item) => (
+                        <MenuItem
+                          key={item}
+                          value={item}
+                        >
+                          {item}
+                        </MenuItem>
                       ))}
-                    </select>
-
+                    </Select>
                   </Grid>
                 </Grid>
                 <Grid container className={classes.gridItem} alignItems="center">
@@ -336,16 +342,6 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                         </MenuItem>
                       ))}
                     </Select>
-                    {/* <TextField
-                      fullWidth
-                      rows={1}
-                      rowsMax={1}
-                      variant="outlined"
-                      name="demand"
-                      value={formData.demand}
-                      className={classes.inputField}
-                      onChange={handleChange}
-                    /> */}
                   </Grid>
                 </Grid>
                 <Grid container className={classes.gridItem} alignItems="center">
@@ -411,7 +407,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                       <span className={classes.tabItemLabelField}>Họ và tên:</span>
                     </Grid>
                     <Grid item lg={8} md={8} xs={12}>
-                      <select
+                      {/* <select
                         name="mentor_id"
                         className={classes.selectField}
                         value={mentorFormData.mentor_id}
@@ -420,7 +416,19 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                         {mentorList?.map(mentorInfo => (
                           <option key={mentorInfo.id} value={mentorInfo.id} >{mentorInfo.fullname}</option>
                         ))}
-                      </select>
+                      </select> */}
+                      <Select
+                        name="mentor_id"
+                        labelId="demo-multiple-name-label-2"
+                        id="demo-multiple-name-2"
+                        className={classes.multpleSelectField}
+                        value={mentorFormData.mentor_id}
+                        onChange={handleMentorChange}
+                      >
+                        {mentorList?.map(mentorInfo => (
+                          <MenuItem key={mentorInfo.id} value={mentorInfo.id} >{mentorInfo.fullname}</MenuItem>
+                        ))}
+                      </Select>
                     </Grid>
                   </Grid>
                   <Grid container className={classes.gridItem} alignItems="center">

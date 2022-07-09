@@ -31,13 +31,13 @@ import StarIcon from '@material-ui/icons/Star';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { gridSpacing, view } from '../../store/constant.js';
-import { FLOATING_MENU_CHANGE } from '../../store/actions.js';
 import useView from './../../hooks/useView';
 import useBooking from './../../hooks/useBooking';
 import ConfirmSaveDialog from './ConfirmSaveDialog';
 import EditModal from './EditModal';
 import { style } from './style';
 import useStyles from './classes'
+import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE } from '../../store/actions';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -132,7 +132,7 @@ const DetailDocumentDialog = () => {
     setTabIndex(newValue);
   };
 
-  const { updateBooking, getMentorDetail, getFeedback, updateBookingMentor } = useBooking();
+  const { updateBooking, getMentorDetail, getFeedback, updateBookingMentor, getBookingDetail } = useBooking();
 
   const { detailDocument: openDialog } = useSelector((state) => state.floatingMenu);
   const { projects } = useSelector((state) => state.project);
@@ -205,12 +205,6 @@ const DetailDocumentDialog = () => {
     }
   };
 
-  const handleEmailChange = (e) => {
-    const newEmail = e.target.value || document.email_address;
-    setEnableSaveButton(newEmail !== selectedDocument.email_address);
-    setDocument({ ...document, email_address: newEmail });
-  };
-
   const handleChangeNoteSelection = (e) => {
     setSelectedNoteList([...selectedNoteList, e.target.value]);
     const newSelectionList = JSON.parse(JSON.stringify(noteSelectionList));
@@ -268,9 +262,13 @@ const DetailDocumentDialog = () => {
           outputtype: 'RawJson',
         });
         setDocument({ ...document, email_address: data.email, number_phone: data.phone, ...data })
-      } else if(editMentor) {
+      } else if (editMentor) {
         await updateBookingMentor(document.id, data);
-        await getConsultantDetail(data.mentor_id);
+        const detailDocument = await getBookingDetail(document.id);
+        console.log(detailDocument)
+        dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType: 'booking' });
+        dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: true });
+        // await getConsultantDetail(data.mentor_id);
       }
     } catch (error) {
       console.log('error', error)
@@ -280,7 +278,7 @@ const DetailDocumentDialog = () => {
   }
 
   const handleEditModalGoBack = (to) => {
-    if(to === 'profile') {
+    if (to === 'profile') {
       setEditProfile(document);
       setEditMentor(null);
     }

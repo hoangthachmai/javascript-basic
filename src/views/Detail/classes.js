@@ -391,7 +391,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   multpleSelectField: {
-    padding: '8px 12px',
+    padding: '1px 12px',
     width: '100%',
     border: '1px solid rgba(0, 0, 0, 0.23)',
     '&:before': {

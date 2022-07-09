@@ -1331,7 +1331,7 @@ export default function GeneralTable(props) {
                             )}
                             {displayOptions.status && (
                               <TableCell align="left">
-                                <span style={style.statusWrap} className={classes[getStatusType(row.status)]}>
+                                <span style={style.statusWrap} className={classes[getStatusType(row.status || 'none')]}>
                                   {row.status}
                                 </span>
                               </TableCell>
