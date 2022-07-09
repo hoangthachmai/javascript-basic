@@ -109,11 +109,15 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
   }
 
   const handleMentorChange = (e) => {
-    setMentorFormData({ ...mentorFormData, [e.target.name]: e.target.value, schedule_id: '' });
     if (e.target.name === 'mentor_id') {
-      setSelectedMentor(mentorList.find(item => item.id === e.target.value));
+      const currentSelectedMentor = mentorList.find(item => item.id === e.target.value) || mentorList[0] || undefined;
+      if(currentSelectedMentor) {
+        setMentorFormData({ ...mentorFormData, [e.target.name]: e.target.value, schedule_id: currentSelectedMentor?.schedule[0]?.id || '' });
+        setSelectedMentor(currentSelectedMentor);
+      } 
       return;
     }
+    setMentorFormData({ ...mentorFormData, [e.target.name]: e.target.value, schedule_id: '' });
   }
 
   const handleClickSchedule = (id) => {
@@ -143,9 +147,12 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
       ...data
     }
     const mentors = await getMentorList(conditions);
-    const currentSelectedMentor = mentors.list.find(item => item.id === mentor.id) || mentors[0] || {};
+    const currentSelectedMentor = mentors.list.find(item => item.id === mentor.id) || mentors[0] || undefined;
+    if(currentSelectedMentor) {
+      setMentorFormData({ ...mentorFormData, mentor_id: mentor.id, schedule_id: currentSelectedMentor?.schedule[0]?.id || ''  });
+      setSelectedMentor(currentSelectedMentor);
+    }
     setMentorList(mentors.list);
-    setSelectedMentor(currentSelectedMentor)
   }
 
   const getAndSetCareerAndDemandList = async () => {
@@ -172,9 +179,8 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
       getAndSetListMentor({
         session: ""
       });
-      setMentorFormData({ ...mentorFormData, mentor_id: mentor.id })
     }
-  }, [profile, mentor])
+  }, [profile, mentor]);
 
   return (
     <div>
