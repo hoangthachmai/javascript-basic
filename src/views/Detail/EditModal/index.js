@@ -4,6 +4,7 @@ import { gridSpacing } from '../../../store/constant.js';
 import useStyles from '../classes';
 import useBooking from '../../../hooks/useBooking';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ClearIcon from '@material-ui/icons/Clear';
 
 const labelDay = {
   Monday: 'Thứ 2',
@@ -21,6 +22,7 @@ const style = {
     textAlign: 'center',
     marginBottom: '20px',
     fontWeight: 'bold',
+    position: 'relative'
   },
   buttonWrap: {
     marginTop: '12px',
@@ -35,6 +37,13 @@ const style = {
   buttonSubmit: {
     margin: '0 12px',
     background: 'rgb(97, 42, 255)',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 0,
+    minWidth: '20px'
   }
 };
 
@@ -189,6 +198,14 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
             )}
             <div>
               {profile ? 'Chỉnh sửa thông tin khách hàng' : 'Chỉnh sửa thông tin Mentor'}
+            </div>
+            <div>
+              <Button
+                style={style.closeButton}
+                onClick={handleClose}
+              >
+                <ClearIcon />
+              </Button>
             </div>
           </div>
           <div id="modal-modal-description" sx={{ mt: 2 }}>
@@ -401,7 +418,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
             )}
             {mentor && (
               <Grid container>
-                <Grid item lg={6} md={6} xs={12} style={{ paddingRight: '20px' }} >
+                <Grid item lg={6} md={6} xs={12} style={{ paddingRight: '20px', borderRight: '1px solid #000' }} >
                   <Grid container className={classes.gridItem} alignItems="center">
                     <Grid item lg={4} md={4} xs={12} >
                       <span className={classes.tabItemLabelField}>Họ và tên:</span>
@@ -478,7 +495,6 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                           shrink: true,
                         }}
                         onChange={handleMentorChange}
-
                       />
                     </Grid>
                   </Grid>
@@ -559,13 +575,14 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                     <Grid item lg={8} md={8} xs={12}>
                       <TextField
                         disabled
+                        multiline
                         fullWidth
                         rows={1}
-                        rowsMax={1}
+                        rowsMax={2}
                         variant="outlined"
                         name="title"
                         defaultValue={mentor.title}
-                        className={classes.inputField}
+                        className={`${classes.inputField} inputFieldDisabled`}
                       />
                     </Grid>
                   </Grid>

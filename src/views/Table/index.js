@@ -873,7 +873,8 @@ export default function GeneralTable(props) {
   const { setConfirmPopup } = useConfirmPopup();
   const { menu_buttons: menuButtons, columns: tableColumns, tabs } = useView();
   const [displayOptions, setDisplayOptions] = React.useState({});
-  const { flattenFolders, selectedFolder } = useSelector((state) => state.folder);
+  const { selectedFolder } = useSelector((state) => state.folder);
+  const { selectedDocument } = useSelector((state) => state.document);
 
   useEffect(() => {
     setDisplayOptions({
@@ -928,13 +929,6 @@ export default function GeneralTable(props) {
 
   const { projects } = useSelector((state) => state.project);
   const selectedProject = projects.find((project) => project.selected);
-
-  const buttonSelectUniversity = selectedFolder.action === bookingActions.all_list;
-  const buttonSelectSource = selectedFolder.action === bookingActions.handle_list;
-  const buttonSelectDate =
-    selectedFolder.action === bookingActions.by_date_list ||
-    selectedFolder.action === bookingActions.by_mentor_list;
-  const buttonSelectMentor = selectedFolder.action === bookingActions.completed_list;
 
   const reduxDocuments = useSelector((state) => state.task);
   const {
@@ -1008,6 +1002,9 @@ export default function GeneralTable(props) {
       initListUniversity();
     }
   }, [selectedFolder]);
+  useEffect(() => {
+    fetchDocument({})
+  }, [selectedDocument])
 
   const fetchDocument = (additionalQuery) => {
     const queries = { ...defaultQueries, ...additionalQuery };

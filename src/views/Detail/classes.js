@@ -389,6 +389,9 @@ const useStyles = makeStyles((theme) => ({
         background: '#DADADA'
       }
     },
+    '&.inputFieldDisabled': {
+      background: '#DADADA'
+    }
   },
   multpleSelectField: {
     padding: '1px 12px',
