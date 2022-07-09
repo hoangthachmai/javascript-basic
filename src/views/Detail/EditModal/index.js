@@ -471,6 +471,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                       <TextField
                         id="datetime-local"
                         type="datetime-local"
+                        name="date"
                         value={mentorFormData.date}
                         className={classes.inputField}
                         InputLabelProps={{
