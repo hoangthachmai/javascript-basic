@@ -47,7 +47,7 @@ export const BookingProvider = ({ children }) => {
         outputtype: 'RawJson',
         id: id,
         action: action,
-       
+
       })
       .then((response) => {
         if (response.status === 200 && response.data.return === 200) return true;
@@ -67,7 +67,7 @@ export const BookingProvider = ({ children }) => {
         return false;
       });
   };
-  
+
   const setNoteBooking = async (id, note) => {
     return axiosInstance
       .post(vibEndpoints.set_note_booking, {
@@ -80,6 +80,19 @@ export const BookingProvider = ({ children }) => {
         return false;
       });
   };
+
+  const updateBookingMentor = async (id, data) => {
+    return axiosInstance
+      .post(vibEndpoints.update_booking_mentor, {
+        outputtype: 'RawJson',
+        id: id,
+        ...data,
+      })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) return true;
+        return false;
+      });
+  }
 
   const getMentorDetail = async (id) => {
     return axiosInstance
@@ -116,6 +129,28 @@ export const BookingProvider = ({ children }) => {
       });
   };
 
+  const getMentorList = async (conditions) => {
+    return axiosInstance
+      .post(vibEndpoints.get_mentor_list, { outputtype: 'RawJson', ...conditions })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) {
+          const { data } = response;
+          return data;
+        } else return {};
+      });
+  }
+
+  const getCareerDemandList = async () => {
+    return axiosInstance
+      .post(vibEndpoints.get_career_demand, { outputtype: 'RawJson' })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) {
+          const { data } = response;
+          return data;
+        } else return {};
+      });
+  }
+
   return (
     <BookingContext.Provider
       value={{
@@ -128,6 +163,9 @@ export const BookingProvider = ({ children }) => {
         getMentorDetail,
         getListUniversity,
         getFeedback,
+        getMentorList,
+        updateBookingMentor,
+        getCareerDemandList
       }}
     >
       {children}
