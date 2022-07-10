@@ -34,9 +34,9 @@ const style = {
   },
   form: {
     width: '100%',
+    marginBottom: '20px',
   },
   noteLabel: {
-    marginTop: '20px',
     fontWeight: 'bold',
   },
   input: {},
@@ -114,6 +114,7 @@ export default function NoteModal({
               <TextField
                 fullWidth
                 multiline
+                rows={3}
                 rowsMax={5}
                 variant="outlined"
                 value={note}

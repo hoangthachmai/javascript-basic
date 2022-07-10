@@ -175,7 +175,13 @@ const DetailDocumentDialog = () => {
 
   const getFeedbackDetail = async (id) => {
     const data = await getFeedback(id);
-    setFeedback({ ...feedback, ...data });
+    if (data?.assess_mentor) setFeedback({ ...data });
+    else setFeedback({
+      times: '',
+      comment: '',
+      assess_mentor: 0,
+      assess_service: 0,
+    })
   };
 
   const getConsultantDetail = async (id) => {
@@ -582,7 +588,7 @@ const DetailDocumentDialog = () => {
                             </Grid>
                             <Grid item lg={6} md={6} xs={12} className={classes.tabAssessItem}>
                               <AssignmentReturnedTwoToneIcon style={style.tabAssessItemIconAssignment} />
-                              <div className={classes.tabAssessItemLabel}>{feedback.times}</div>
+                              <div className={classes.tabAssessItemLabel}>{feedback?.times}</div>
                             </Grid>
                             <Grid item lg={12} md={12} xs={12}>
                               <TextField
@@ -595,7 +601,7 @@ const DetailDocumentDialog = () => {
                                 name="note"
                                 InputLabelProps={{ shrink: true }}
                                 className={classes.tabItemNoteInput}
-                                defaultValue={feedback.comment}
+                                defaultValue={feedback?.comment}
                               />
                             </Grid>
                           </Grid>
