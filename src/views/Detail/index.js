@@ -233,7 +233,7 @@ const DetailDocumentDialog = () => {
   const getDayOfWeek = (date) => {
     if (!date) return '';
     const dateArr = date.split('/');
-    const newDate = new Date(dateArr[2], dateArr[1], dateArr[0]);
+    const newDate = new Date(dateArr[2], dateArr[1] - 1, dateArr[0]);
     return labelDay[weekday[newDate.getDay()]];
   }
 
