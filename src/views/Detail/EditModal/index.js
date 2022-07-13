@@ -90,9 +90,9 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
     weekend: false
   });
 
-  const handleSubmitForm = () => {
+  const handleSubmitForm = async () => {
     if (profile) {
-      handleSubmit(formData);
+      handleSubmit(formData, formData.email !== formData.email_address);
     } else {
       handleSubmit(mentorFormData);
     }

@@ -38,6 +38,12 @@ import EditModal from './EditModal';
 import { style } from './style';
 import useStyles from './classes'
 import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE } from '../../store/actions';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+const Alert = (props) => {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -86,11 +92,11 @@ const labelDay = {
 const DetailDocumentDialog = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [isOpenSnackbar, setIsOpenSnackbar] = useState(false);
   const [editProfile, setEditProfile] = useState(null);
   const [editMentor, setEditMentor] = useState(null);
 
   const [tabIndex, setTabIndex] = React.useState(0);
-  const [isOpenConfirmSaveDialog, setIsOpenConfirmSaveDialog] = React.useState(false);
   const initNoteSelectionList = {
     1: {
       id: 1,
@@ -135,9 +141,7 @@ const DetailDocumentDialog = () => {
   const { updateBooking, getMentorDetail, getFeedback, updateBookingMentor, getBookingDetail } = useBooking();
 
   const { detailDocument: openDialog } = useSelector((state) => state.floatingMenu);
-  const { projects } = useSelector((state) => state.project);
   const { selectedDocument } = useSelector((state) => state.document);
-  const [enableSaveButton, setEnableSaveButton] = React.useState(false);
   const [document, setDocument] = React.useState({
     fullname: '',
     contact: '',
@@ -194,20 +198,18 @@ const DetailDocumentDialog = () => {
     dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: false });
   };
 
-  const handleSaveBooking = async (is_send_email) => {
+  const handleSaveBooking = async () => {
     try {
       const { email_address, number_phone, ...rest } = document;
       await updateBooking({
         ...rest,
-        is_send_email,
+        is_send_email: false,
         outputtype: 'RawJson',
         email: email_address,
         phone: number_phone,
       });
     } catch (error) {
       console.log('error update booking', error)
-    } finally {
-      setIsOpenConfirmSaveDialog(false);
     }
   };
 
@@ -230,11 +232,6 @@ const DetailDocumentDialog = () => {
     setMentor({});
   };
 
-  const convertDateTime = (date, time) => {
-    if (!date && !time) return { date: '', time: '' };
-    const hour = time.split('-');
-    return { date: labelDay[date], time: hour[0] + 'h - ' + hour[1] + 'h' };
-  };
 
   const getDayOfWeek = (date) => {
     if (!date) return '';
@@ -258,28 +255,29 @@ const DetailDocumentDialog = () => {
     }
   }
 
-  const handleSaveEdit = async (data) => {
+  const handleSaveEdit = async (data, is_send_email = false) => {
     try {
       if (editProfile) {
         await updateBooking({
           ...document,
           ...data,
-          is_send_email: false,
+          is_send_email,
           outputtype: 'RawJson',
         });
-        setDocument({ ...document, email_address: data.email, number_phone: data.phone, ...data })
       } else if (editMentor) {
         await updateBookingMentor(document.id, data);
-        const detailDocument = await getBookingDetail(document.id);
-        console.log(detailDocument)
-        dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType: 'booking' });
-        dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: true });
         // await getConsultantDetail(data.mentor_id);
       }
     } catch (error) {
       console.log('error', error)
     } finally {
-      handleCloseEditModal()
+      const detailDocument = await getBookingDetail(document.id);
+      dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType: 'booking' });
+      dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: true });
+      handleCloseEditModal();
+      if (is_send_email) {
+        setIsOpenSnackbar(true);
+      }
     }
   }
 
@@ -290,15 +288,21 @@ const DetailDocumentDialog = () => {
     }
   }
 
+  const handleChangeNote = (e) => {
+    setDocument({ ...document, note: e.target.value })
+  }
+
   return (
     <React.Fragment>
-      {isOpenConfirmSaveDialog && (
-        <ConfirmSaveDialog
-          isOpen={isOpenConfirmSaveDialog}
-          handleClose={() => setIsOpenConfirmSaveDialog(false)}
-          handleSubmit={handleSaveBooking}
-        />
-      )}
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={isOpenSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setIsOpenSnackbar(false)}>
+        <Alert onClose={() => setIsOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+          Hệ thống sẽ tự động gửi mail xác nhận tới địa chỉ email mới!
+        </Alert>
+      </Snackbar>
       {(editProfile || editMentor) && (
         <EditModal
           isOpen={!!editProfile || !!editMentor}
@@ -658,9 +662,10 @@ const DetailDocumentDialog = () => {
                             multiline
                             rows={4}
                             rowsMax={4}
+                            value={document.note || ''}
                             variant="outlined"
                             name="note"
-                            onChange={() => { }}
+                            onChange={handleChangeNote}
                             InputLabelProps={{ shrink: true }}
                             className={classes.tabItemNoteInput}
                           />
@@ -689,7 +694,7 @@ const DetailDocumentDialog = () => {
                   <Button
                     variant="contained"
                     style={{ background: 'rgb(97, 42, 255)' }}
-                    onClick={() => setIsOpenConfirmSaveDialog(true)}
+                    onClick={handleSaveBooking}
                   >
                     {buttonSaveBooking.text}
                   </Button>
