@@ -93,6 +93,10 @@ const DetailDocumentDialog = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [isOpenSnackbar, setIsOpenSnackbar] = useState(false);
+  const [snackbarData, setSnackbarData] = useState({
+    type: 'success',
+    text: ''
+  })
   const [editProfile, setEditProfile] = useState(null);
   const [editMentor, setEditMentor] = useState(null);
 
@@ -175,6 +179,7 @@ const DetailDocumentDialog = () => {
     if (tabDisplayOptions.feedback) {
       getFeedbackDetail(selectedDocument.id);
     }
+    console.log('hahah');
   }, [selectedDocument]);
 
   const getFeedbackDetail = async (id) => {
@@ -264,20 +269,36 @@ const DetailDocumentDialog = () => {
           is_send_email,
           outputtype: 'RawJson',
         });
+        if (is_send_email) {
+          setIsOpenSnackbar(true);
+          setSnackbarData({
+            type: 'success',
+            text: 'Hệ thống sẽ tự động gửi mail xác nhận tới địa chỉ email mới!'
+          })
+        }
       } else if (editMentor) {
-        await updateBookingMentor(document.id, data);
+        const isSuccess = await updateBookingMentor(document.id, data);
+        if (!isSuccess) {
+          setIsOpenSnackbar(true);
+          setSnackbarData({
+            type: 'warning',
+            text: 'Bạn không thể thay đổi Mentor ngay lúc này!'
+          })
+          return;
+        }
         // await getConsultantDetail(data.mentor_id);
       }
-    } catch (error) {
-      console.log('error', error)
-    } finally {
       const detailDocument = await getBookingDetail(document.id);
       dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType: 'booking' });
       dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: true });
+    } catch (error) {
+      setIsOpenSnackbar(true);
+      setSnackbarData({
+        type: 'error',
+        text: 'Có lỗi xảy ra, vui lòng thử lại sau!'
+      })
+    } finally {
       handleCloseEditModal();
-      if (is_send_email) {
-        setIsOpenSnackbar(true);
-      }
     }
   }
 
@@ -299,8 +320,8 @@ const DetailDocumentDialog = () => {
         open={isOpenSnackbar}
         autoHideDuration={3000}
         onClose={() => setIsOpenSnackbar(false)}>
-        <Alert onClose={() => setIsOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
-          Hệ thống sẽ tự động gửi mail xác nhận tới địa chỉ email mới!
+        <Alert onClose={() => setIsOpenSnackbar(false)} severity={snackbarData.type} sx={{ width: '100%' }}>
+          {snackbarData.text}
         </Alert>
       </Snackbar>
       {(editProfile || editMentor) && (
@@ -616,12 +637,10 @@ const DetailDocumentDialog = () => {
                       <div className={classes.tabItem}>
                         <div className={classes.tabItemNoteSection}>
                           <div className={classes.tabItemNoteTitleWrap}>
-                            <div>{getDayOfWeek(document?.schedule?.split(' ')[0])} ngày {document?.schedule?.split(' ')[0]}</div>
+                            <div>{getDayOfWeek(document?.schedule?.split(' ')[0])} ngày {document?.schedule?.split(' ')[0]} - {document?.schedule?.split(' ')[1]}</div>
                             <div>{document.status}</div>
                           </div>
-                          <div className={classes.tabItemNoteHour}>
-                            {document?.schedule?.split(' ')[1]}
-                          </div>
+
                           <a href={document?.link_meeting || '#'} target="_blank">
                             <img src="https://play-lh.googleusercontent.com/GBYSf20osBl2CRHbjGOyaOG5kQ3G4xbRau-dzScU9ozuXQJtnUZPkR3IqEDOo5OiVgU" />
                             <div>Tham gia meeting</div>

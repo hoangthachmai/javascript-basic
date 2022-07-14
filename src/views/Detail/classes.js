@@ -282,6 +282,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   tabItemNoteTitleWrap: {
+    flex: 1,
     '& div:first-child': {
       fontSize: '20px',
       fontWeight: 'bold',
