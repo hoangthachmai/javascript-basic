@@ -7,14 +7,16 @@ import { Grid, Card, Button, Checkbox, Tooltip } from '@material-ui/core';
 import Modal from '../Table/Modal';
 import CachedIcon from '@material-ui/icons/Cached';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import GavelSharpIcon from '@material-ui/icons/GavelSharp';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import NoteAddSharpIcon from '@material-ui/icons/NoteAddSharp';
-import VideocamIcon from '@material-ui/icons/Videocam';
 import StarIcon from '@material-ui/icons/Star';
 import SearchIcon from '@material-ui/icons/Search';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import ClearIcon from '@material-ui/icons/Clear';
+import SkipNextIcon from '@material-ui/icons/SkipNext';
+import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -39,7 +41,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import useOnClickOutSide from './../../hooks/useClickOutSide';
 import NoteModal from './NoteModal';
 import DuoIcon from '@material-ui/icons/Duo';
-import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE } from '../../store/actions';
+import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE, CONFIRM_CHANGE } from '../../store/actions';
 import useBooking from './../../hooks/useBooking';
 import { customClasses, style } from './style';
 
@@ -789,6 +791,12 @@ const useStyles = makeStyles((theme) => ({
       background: '#272f33',
     },
   },
+  handleButtonApprove: {
+    background: '#425466',
+    '&:hover': {
+      background: '#272f33',
+    },
+  },
   handleButtonMeeting: {
     background: '#30bc41',
     '&:hover': {
@@ -796,9 +804,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   handleButtonNote: {
-    background: '#425466',
+    background: '#ffca33',
     '&:hover': {
-      background: '#272f33',
+      background: '#f9c121',
     },
   },
   handleButtonIcon: {
@@ -860,7 +868,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   styleStatus11: {
-    background: '#FFC501 !important'
+    background: '#ffc501 !important'
   },
   styleStatus12: {
     background: '#0010A4 !important'
@@ -917,6 +925,10 @@ export default function GeneralTable(props) {
     (button) => button.name === view.booking.list.note
   );
 
+  const buttonBookingApprove = menuButtons.find(
+    (button) => button.name === view.booking.list.approve
+  );
+
   const [isOpenModalNote, setIsOpenModalNote] = React.useState(false);
   const [isOpenModal, setIsOpenModal] = React.useState(false);
   const [modalType, setModalType] = React.useState('');
@@ -964,7 +976,7 @@ export default function GeneralTable(props) {
 
   const {
     getBookingDetail,
-    cancelBooking,
+    approveBooking,
     reviewBooking,
     setNoteBooking,
     setCompletedBooking,
@@ -1090,6 +1102,16 @@ export default function GeneralTable(props) {
     fetchDocument({ page: 1 });
   };
 
+  const showConfirmPopup = ({
+    title = 'Thông báo', 
+    message = 'Yêu cầu lựa chọn ít nhất một bản ghi', 
+    action = null, 
+    payload = null,
+    onSuccess = null
+    }) => {
+      setConfirmPopup({ type: CONFIRM_CHANGE, open: true, title, message,  action, payload, onSuccess }) 
+  }
+
   const handleOpenModal = (type, booking) => {
     setSelected((pre) => [...new Set([booking.id, ...pre])]);
     setSelectedRecord(booking);
@@ -1123,6 +1145,15 @@ export default function GeneralTable(props) {
     }
   };
 
+  const handleApproveBooking = async (id) => {
+    showConfirmPopup({ 
+      message: `Bạn chắc chắn muốn xác nhận đăng ký ${id} ?`,
+      action: approveBooking,
+      payload: id,
+      onSuccess: reloadCurrentDocuments
+    })
+  };
+
   const handleMeetingBooking = (booking) => {
     setSelected((pre) => [...new Set([booking.id, ...pre])]);
     setSelectedRecord(booking);
@@ -1130,14 +1161,20 @@ export default function GeneralTable(props) {
   };
 
   const handleSetCompletedBooking = async (id) => {
-    try {
-      await setCompletedBooking(id);
-    } catch (e) {
-    } finally {
-      setIsOpenModal(false);
-      setModalType('');
-      reloadCurrentDocuments();
-    }
+    showConfirmPopup({ 
+      message: `Bạn chắc chắn xử lý đăng ký ${id} ?`,
+      action: setCompletedBooking,
+      payload: id,
+      onSuccess: reloadCurrentDocuments
+    })
+    // try {
+    //   await setCompletedBooking(id);
+    // } catch (e) {
+    // } finally {
+    //   setIsOpenModal(false);
+    //   setModalType('');
+    //   reloadCurrentDocuments();
+    // }
   };
 
   const handleNoteBooking = async (note) => {
@@ -1171,7 +1208,7 @@ export default function GeneralTable(props) {
       'Mentor từ chối lịch',
       'Khách hàng chưa Feedback',
       'Meeting bị gián đoạn',
-      'Khách yêu cầu huỷ',
+      'Khách yêu cầu hủy',
       'Mentor yêu cầu hủy',
     ]
     const index = statusListLabel.findIndex(item => item === type.trim());
@@ -1356,10 +1393,20 @@ export default function GeneralTable(props) {
                             {displayOptions.menuButtons && (
                               <TableCell align="left">
                                 <div className={classes.handleButtonWrap}>
+                                  {(buttonBookingApprove && row.is_can_approve) && (
+                                    <Tooltip title={buttonBookingApprove.text}>
+                                      <Button
+                                        className={`${classes.handleButton} `}
+                                        onClick={() => handleApproveBooking(row.id)}
+                                      >
+                                        <SkipNextIcon className={classes.noteButtonIcon} />
+                                      </Button>
+                                    </Tooltip>
+                                  )}
                                   {buttonBookingNote && (
                                     <Tooltip title={buttonBookingNote.text}>
                                       <Button
-                                        className={`${classes.handleButton} `}
+                                        className={`${classes.handleButton} ${classes.handleButtonNote}`}
                                         onClick={() => handleOpenModal('note', row)}
                                       >
                                         <NoteAddSharpIcon className={classes.noteButtonIcon} />
@@ -1372,7 +1419,7 @@ export default function GeneralTable(props) {
                                         className={classes.handleButton}
                                         onClick={() => handleSetCompletedBooking(row.id)}
                                       >
-                                        <DoneAllIcon className={classes.handleButtonIcon} />
+                                        <AssignmentTurnedInIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}
@@ -1406,7 +1453,7 @@ export default function GeneralTable(props) {
                                         className={classes.handleButton}
                                         onClick={() => handleOpenModal('review', row)}
                                       >
-                                        <DoneAllIcon className={classes.handleButtonIcon} />
+                                        <GavelSharpIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}

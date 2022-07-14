@@ -55,6 +55,18 @@ export const BookingProvider = ({ children }) => {
       });
   };
 
+  const approveBooking = async (id) => {
+    return axiosInstance
+      .post(vibEndpoints.approve_booking, {
+        outputtype: 'RawJson',
+        id: id,
+      })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) return true;
+        return false;
+      });
+  };
+
   const setCompletedBooking = async (id, action = null) => {
     return axiosInstance
       .post(vibEndpoints.set_completed_state, {
@@ -165,7 +177,8 @@ export const BookingProvider = ({ children }) => {
         getFeedback,
         getMentorList,
         updateBookingMentor,
-        getCareerDemandList
+        getCareerDemandList,
+        approveBooking
       }}
     >
       {children}

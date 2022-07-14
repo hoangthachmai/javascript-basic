@@ -23,6 +23,7 @@ export const vibEndpoints = {
   update_booking: '/Primary/?FlowAlias=hnn_api_booking_update_booking_information&action=api',
   cancel_booking: '/Primary/?FlowAlias=hnn_api_booking_cancel_booking&action=api',
   review_booking: '/Primary/?FlowAlias=hnn_api_booking_review_booking&action=api',
+  approve_booking: '/Primary/?FlowAlias=hnn_api_booking_approve_booking&action=api',
   set_completed_state: '/Primary/?FlowAlias=hnn_api_booking_set_completed_state&&action=api',
   set_note_booking: '/Primary/?FlowAlias=hnn_api_booking_update_note_booking_by_id&&action=api',
 
@@ -61,6 +62,7 @@ export const view = {
       handled: 'BOOKING_LIST_HANDLED_MENU_BUTTON',
       note: 'BOOKING_LIST_NOTE_MENU_BUTTON',
       meeting: 'BOOKING_LIST_MEETING_MENU_BUTTON',
+      approve: 'BOOKING_LIST_APPROVE_MENU_BUTTON'
     },
     detail: {
       save: 'BOOKING_DETAIL_SAVE_FORM_BUTTON',
