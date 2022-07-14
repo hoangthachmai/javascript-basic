@@ -14,7 +14,9 @@ import SearchIcon from '@material-ui/icons/Search';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import ClearIcon from '@material-ui/icons/Clear';
-import SkipNextIcon from '@material-ui/icons/SkipNext';import Table from '@material-ui/core/Table';
+import SkipNextIcon from '@material-ui/icons/SkipNext';
+import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
+import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -783,9 +785,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   handleButtonCancel: {
-    background: '#36f',
+    background: '#425466',
     '&:hover': {
-      background: '#36f',
+      background: '#272f33',
     },
   },
   handleButtonApprove: {
@@ -865,7 +867,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   styleStatus11: {
-    background: '#FFC501 !important'
+    background: '#ffc501 !important'
   },
   styleStatus12: {
     background: '#0010A4 !important'
@@ -1205,7 +1207,7 @@ export default function GeneralTable(props) {
       'Mentor từ chối lịch',
       'Khách hàng chưa Feedback',
       'Meeting bị gián đoạn',
-      'Khách yêu cầu huỷ',
+      'Khách yêu cầu hủy',
       'Mentor yêu cầu hủy',
     ]
     const index = statusListLabel.findIndex(item => item === type.trim());
@@ -1416,7 +1418,7 @@ export default function GeneralTable(props) {
                                         className={classes.handleButton}
                                         onClick={() => handleSetCompletedBooking(row.id)}
                                       >
-                                        <DoneAllIcon className={classes.handleButtonIcon} />
+                                        <AssignmentTurnedInIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}
