@@ -1390,7 +1390,7 @@ export default function GeneralTable(props) {
                             {displayOptions.menuButtons && (
                               <TableCell align="left">
                                 <div className={classes.handleButtonWrap}>
-                                  {buttonBookingApprove && (
+                                  {(buttonBookingApprove && row.is_can_approve) && (
                                     <Tooltip title={buttonBookingApprove.text}>
                                       <Button
                                         className={`${classes.handleButton} `}
