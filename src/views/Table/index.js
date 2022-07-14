@@ -7,6 +7,7 @@ import { Grid, Card, Button, Checkbox, Tooltip } from '@material-ui/core';
 import Modal from '../Table/Modal';
 import CachedIcon from '@material-ui/icons/Cached';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import GavelSharpIcon from '@material-ui/icons/GavelSharp';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import NoteAddSharpIcon from '@material-ui/icons/NoteAddSharp';
 import StarIcon from '@material-ui/icons/Star';
@@ -1452,7 +1453,7 @@ export default function GeneralTable(props) {
                                         className={classes.handleButton}
                                         onClick={() => handleOpenModal('review', row)}
                                       >
-                                        <DoneAllIcon className={classes.handleButtonIcon} />
+                                        <GavelSharpIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}
