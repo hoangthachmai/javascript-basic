@@ -373,14 +373,23 @@ const useStyles = makeStyles((theme) => ({
   },
   imageaccount: { 
     height: '200px',
-    witdh: '200px',
+    width: '200px',
     boxshadow: 'rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px',
-    borderRadius: '5px'  
+    borderRadius: '50%',
+    border: '1px solid #ddd',
+    objectFit: 'cover',
+    padding: '4px',
+    boxShadow: 'rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px'
   },
   inputField: {
     '& input': {
       padding: '8px 12px'
     }
+  },
+  gridItemCenter: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center'
   }
 }));
 

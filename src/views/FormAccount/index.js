@@ -26,7 +26,7 @@ import useView from '../../hooks/useView';
 import { style } from './style.js';
 import useStyles from './classes.js';
 import PermissionModal from '../FloatingMenu/UploadFile/index.js';
-import  { FLOATING_MENU_CHANGE }  from '../../store/actions.js';
+import { FLOATING_MENU_CHANGE } from '../../store/actions.js';
 import useAccount from '../../hooks/useAccount.js';
 
 
@@ -62,9 +62,6 @@ function a11yProps(index) {
   };
 }
 
-
-
-
 const AccountModal = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -76,18 +73,18 @@ const AccountModal = () => {
     setTabIndex(newValue);
   };
 
-  const { createAccount,updateAccount, } = useAccount();
+  const { createAccount, updateAccount, } = useAccount();
   const { accountDocument: openDialog } = useSelector((state) => state.floatingMenu);
   const { selectedDocument } = useSelector((state) => state.document);
 
   const [account, setAccount] = React.useState({
     company_code: 'HNN',
     job_title: '',
-    password:'Tv@123456',
+    password: 'Tv@123456',
     first_name: '',
     last_name: '',
     job_title: '',
-    image_url: '',
+    image_url: 'https://firebasestorage.googleapis.com/v0/b/huongnghiepnhanh.appspot.com/o/Avatar%20Nam.jpg?alt=media&token=8208326e-faa9-4bdf-b811-a48481839cb5',
     email_address: '',
     is_active: true,
     employee_id: '',
@@ -96,11 +93,11 @@ const AccountModal = () => {
   useEffect(() => {
     if (!selectedDocument) return;
     setAccount({
-      
+
       ...selectedDocument,
-     
+
     });
-   
+
   }, [selectedDocument]);
 
 
@@ -110,50 +107,50 @@ const AccountModal = () => {
     setAccount({
       company_code: 'HNN',
       job_title: '',
-      password:'Tv@123456',
+      password: 'Tv@123456',
       first_name: '',
       last_name: '',
       job_title: '',
-      image_url: '',
+      image_url: 'https://firebasestorage.googleapis.com/v0/b/huongnghiepnhanh.appspot.com/o/Avatar%20Nam.jpg?alt=media&token=8208326e-faa9-4bdf-b811-a48481839cb5',
       email_address: '',
       is_active: '',
       employee_id: '',
     });
     dispatch({ type: FLOATING_MENU_CHANGE, accountDocument: false });
   };
-  
-  
+
+
   const handleSaveAccount = async () => {
     try {
       await createAccount({
         ...account,
         outputtype: 'RawJson',
       });
-     
+
     } catch (error) {
       console.log('error update booking', error)
     } finally {
-     
+
     }
   };
   const handleUpdateAccount = async () => {
     try {
-     
+
       await updateAccount({
         ...account,
         outputtype: 'RawJson',
         company_code: 'HNN'
       });
-    
+      handleCloseDialog();
     } catch (error) {
       console.log('error update booking', error)
     } finally {
-     
+
     }
   };
 
   const handleChange = (e) => {
-    const value= e.target.value;
+    const value = e.target.value;
     setAccount({
       ...account,
       [e.target.name]: value
@@ -165,28 +162,28 @@ const AccountModal = () => {
     setTabIndex(0);
 
   };
-  const setURL=(image)=>{
+  const setURL = (image) => {
     setAccount({
       ...account,
       image_url: image,
     });
   };
 
-  const handleOpenDiaLog = () =>{
-      setOpenDiaLogUploadImage(true);
+  const handleOpenDiaLog = () => {
+    setOpenDiaLogUploadImage(true);
   }
-  const handleCloseDiaLog = () =>{
+  const handleCloseDiaLog = () => {
     setOpenDiaLogUploadImage(false);
-}
+  }
   return (
-    
+
     <React.Fragment>
       <PermissionModal
-       open={openDialogUploadImage || false}
-       onSuccess={setURL}
-       onClose={handleCloseDiaLog}
+        open={openDialogUploadImage || false}
+        onSuccess={setURL}
+        onClose={handleCloseDiaLog}
       />
-       
+
       <Grid container>
         <Dialog
           open={openDialog || false}
@@ -194,9 +191,9 @@ const AccountModal = () => {
           keepMounted
           onClose={handleCloseDialog}
           className={classes.useradddialog}
-       
+
         >
-       
+
           <DialogTitle className={classes.dialogTitle}>
             <Grid item xs={12} style={{ textTransform: 'uppercase' }}>
               Tạo mới người dùng
@@ -228,7 +225,7 @@ const AccountModal = () => {
                     value={0}
                     {...a11yProps(0)}
                   />
-                  
+
                 </Tabs>
               </Grid>
               <Grid item xs={12}>
@@ -241,11 +238,28 @@ const AccountModal = () => {
                             <AccountCircleOutlinedIcon />
                             <span>Thông tin khách hàng</span>
                           </div>
-                        
+
                         </div>
                         <div className={classes.tabItemBody}>
-                          <Grid container className={classes.gridItemInfo} alignItems="center">
-                            <Grid item lg={6} md={6} xs={6} >
+                          <Grid container spacing={3} className={classes.gridItemInfo} alignItems="center">
+                            <Grid className={classes.gridItemCenter} item lg={12} md={12} xs={12}>
+                              <img
+                                src={account.image_url}
+                                className={classes.imageaccount}
+                              />
+                            </Grid>
+                            <Grid className={classes.gridItemCenter} item lg={12} md={12} xs={12}>
+                              <Button
+                                variant="contained"
+                                style={{ background: 'rgb(97, 42, 255)' }}
+                                onClick={handleOpenDiaLog}
+                              >
+                                Tải lên hình đại diện
+                              </Button>
+                            </Grid>
+                          </Grid>
+                          <Grid container spacing={3} className={classes.gridItemInfo} alignItems="center">
+                            <Grid item lg={6} md={6} xs={12} >
                               <TextField
                                 fullWidth
                                 autoFocus
@@ -259,8 +273,7 @@ const AccountModal = () => {
                                 value={account.first_name}
                               />
                             </Grid>
-                            <Grid item lg={1} md={1} xs={1}></Grid>
-                            <Grid item lg={5} md={5} xs={5}>
+                            <Grid item lg={6} md={6} xs={12}>
                               <TextField
                                 fullWidth
                                 autoFocus
@@ -275,9 +288,9 @@ const AccountModal = () => {
                               />
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItemInfo} alignItems="center">
-                            <Grid item lg={6} md={6} xs={6} >
-                            <TextField
+                          <Grid container spacing={3} className={classes.gridItemInfo} alignItems="center">
+                            <Grid item lg={6} md={6} xs={12} >
+                              <TextField
                                 fullWidth
                                 autoFocus
                                 label="Email"
@@ -290,8 +303,7 @@ const AccountModal = () => {
                                 value={account.email_address}
                               />
                             </Grid>
-                            <Grid item lg={1} md={1} xs={1}></Grid>
-                            <Grid item lg={5} md={5} xs={5}>
+                            <Grid item lg={6} md={6} xs={6}>
                               <TextField
                                 fullWidth
                                 autoFocus
@@ -306,29 +318,9 @@ const AccountModal = () => {
                               />
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItemInfo} alignItems="center">
-                            <Grid item lg={4} md={4} xs={4}>
-                                <Button
-                                variant="contained"
-                                style={{ background: 'rgb(97, 42, 255)' }}
-                                onClick={handleOpenDiaLog}
-                              >
-                                Tải lên hình đại diện
-                              </Button>
-                            </Grid>
-                            <Grid item lg={4} md={4} xs={4}>
-                              <img 
-                                src={account.image_url} 
-                                alt="(Hình ảnh kích thước 230x345)"
-                                className={classes.imageaccount}
-                               
-                              />
-                            <Grid item lg={4} md={4} xs={4}></Grid>
-                            </Grid>
-                          </Grid>
                         </div>
                       </div>
-                    </Grid> 
+                    </Grid>
                   </Grid>
                 </TabPanel>
               </Grid>
@@ -340,12 +332,12 @@ const AccountModal = () => {
                 <Button
                   variant="contained"
                   style={{ background: 'rgb(70, 81, 105)', }}
-                  onClick={()=>handleCloseDialog()}
+                  onClick={() => handleCloseDialog()}
                 >
                   Đóng
                 </Button>
               </Grid>
-                {buttonSave && (
+              {buttonSave && (
                 <Grid item>
                   <Button
                     variant="contained"
