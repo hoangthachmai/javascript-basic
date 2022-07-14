@@ -45,7 +45,7 @@ export default function PermissionModal(props) {
   const [modalStyle] = React.useState(getModalStyle);
 
   const [selectedFiles, setSelectedFile] = React.useState([]);
-
+  
   // const { onSuccess } = props
   const { open: openDialog, onSuccess, onClose } = props;
 
@@ -68,9 +68,7 @@ export default function PermissionModal(props) {
     event.preventDefault();
     const uploadData = new FormData();
     uploadData.append('file', selectedFiles[0]);
-
     const { data: file } = await api.post(apiEndpoints.upload, uploadData);
-
     // await axiosInstance.post(vibEndpoints.upload_file_to_document, { outputtype: "RawJson", project_id: selectedProject.id, document_id: documentId, file_name: selectedFiles[0].name,
     //     file_url: `${apiDomain}/${file.filename}`
     // })

@@ -4,6 +4,7 @@ export const initialState = {
   folder: false,
   document: false,
   detailDocument: false,
+  accountDocument: false,
 };
 
 const floatingMenuReducer = (state = initialState, action) => {
@@ -14,6 +15,7 @@ const floatingMenuReducer = (state = initialState, action) => {
         folder: action.folder,
         document: action.document,
         detailDocument: action.detailDocument,
+        accountDocument: action.accountDocument,
       };
     default:
       return state;

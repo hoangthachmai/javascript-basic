@@ -51,6 +51,7 @@ const JWTLogin = ({ className, ...rest }) => {
             label="Email"
             margin="normal"
             name="email"
+            size="large"
             onBlur={handleBlur}
             onChange={handleChange}
             type="email"
@@ -69,6 +70,8 @@ const JWTLogin = ({ className, ...rest }) => {
             type="password"
             value={values.password}
             variant="outlined"
+           
+            // InputLabelProps={{ style: { fontSize:20 } }}
           />
           {errors.submit && (
             <Box mt={3}>

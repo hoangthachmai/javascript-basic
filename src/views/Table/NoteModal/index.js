@@ -10,6 +10,8 @@ import {
   TextField,
 } from '@material-ui/core';
 
+import useView from '../../../hooks/useView';
+
 const style = {
   box: {
     position: 'absolute',
