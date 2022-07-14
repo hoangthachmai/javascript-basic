@@ -103,7 +103,8 @@ export const BookingProvider = ({ children }) => {
       .then((response) => {
         if (response.status === 200 && response.data.return === 200) return true;
         return false;
-      });
+      })
+      .catch(() => false);
   }
 
   const getMentorDetail = async (id) => {

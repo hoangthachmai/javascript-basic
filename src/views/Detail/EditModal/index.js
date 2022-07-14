@@ -56,7 +56,7 @@ const labelSessionDate = {
 
 export default function EditModal({ profile, mentor, document, isOpen, handleClose, handleSubmit, handleGoBack }) {
 
-  const { getMentorList, getCareerDemandList } = useBooking();
+  const { getMentorList, getCareerDemandList, getMentorDetail } = useBooking();
 
   const classes = useStyles();
   const [isDisabledSaving, setIsDisabledSaving] = useState(false);
@@ -71,6 +71,8 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
     schedule_id: '',
     date: ''
   });
+
+  const [currentMentor, setCurrentMentor] = useState({})
 
   const [formDemand, setFormDemand] = useState([]);
 
@@ -108,13 +110,15 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  const handleMentorChange = (e) => {
+  const handleMentorChange = async (e) => {
     if (e.target.name === 'mentor_id') {
       const currentSelectedMentor = mentorList.find(item => item.id === e.target.value) || mentorList[0] || undefined;
       if(currentSelectedMentor) {
         setMentorFormData({ ...mentorFormData, [e.target.name]: e.target.value, schedule_id: currentSelectedMentor?.schedule[0]?.id || '' });
         setSelectedMentor(currentSelectedMentor);
-      } 
+      }
+      const detailMentor = await getMentorDetail(e.target.value);
+      setCurrentMentor(detailMentor);
       return;
     }
     setMentorFormData({ ...mentorFormData, [e.target.name]: e.target.value, schedule_id: '' });
@@ -179,6 +183,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
       getAndSetListMentor({
         session: ""
       });
+      setCurrentMentor(mentor)
     }
   }, [profile, mentor]);
 
@@ -430,16 +435,6 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                       <span className={classes.tabItemLabelField}>Họ và tên:</span>
                     </Grid>
                     <Grid item lg={8} md={8} xs={12}>
-                      {/* <select
-                        name="mentor_id"
-                        className={classes.selectField}
-                        value={mentorFormData.mentor_id}
-                        onChange={handleMentorChange}
-                      >
-                        {mentorList?.map(mentorInfo => (
-                          <option key={mentorInfo.id} value={mentorInfo.id} >{mentorInfo.fullname}</option>
-                        ))}
-                      </select> */}
                       <Select
                         name="mentor_id"
                         labelId="demo-multiple-name-label-2"
@@ -518,7 +513,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                         rowsMax={1}
                         variant="outlined"
                         name="fullname"
-                        defaultValue={mentor.fullname}
+                        value={currentMentor?.fullname}
                         className={classes.inputField}
                       />
                     </Grid>
@@ -535,7 +530,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                         rowsMax={1}
                         variant="outlined"
                         name="email_address"
-                        defaultValue={mentor.email_address}
+                        value={currentMentor?.email_address}
                         className={classes.inputField}
                       />
                     </Grid>
@@ -552,7 +547,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                         rowsMax={1}
                         variant="outlined"
                         name="number_phone"
-                        defaultValue={mentor.number_phone}
+                        value={currentMentor?.number_phone}
                         className={classes.inputField}
                       />
                     </Grid>
@@ -569,7 +564,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                         rowsMax={1}
                         variant="outlined"
                         name="career"
-                        defaultValue={mentor.career}
+                        value={currentMentor?.career}
                         className={classes.inputField}
                       />
                     </Grid>
@@ -587,7 +582,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                         rowsMax={2}
                         variant="outlined"
                         name="title"
-                        defaultValue={mentor.title}
+                        value={currentMentor?.title}
                         className={`${classes.inputField} inputFieldDisabled`}
                       />
                     </Grid>
@@ -604,7 +599,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                         rowsMax={1}
                         variant="outlined"
                         name="weakness"
-                        defaultValue={convertDateTime(mentor.date1, mentor.time1)}
+                        value={convertDateTime(currentMentor?.date1, currentMentor?.time1)}
                         className={classes.inputField}
                       />
                     </Grid>
@@ -621,7 +616,7 @@ export default function EditModal({ profile, mentor, document, isOpen, handleClo
                         rowsMax={1}
                         variant="outlined"
                         name="career"
-                        defaultValue={convertDateTime(mentor.date2, mentor.time2)}
+                        value={convertDateTime(currentMentor?.date2, currentMentor?.time2)}
                         className={classes.inputField}
                       />
                     </Grid>
