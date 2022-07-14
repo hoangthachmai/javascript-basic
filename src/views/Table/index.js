@@ -9,7 +9,6 @@ import CachedIcon from '@material-ui/icons/Cached';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import NoteAddSharpIcon from '@material-ui/icons/NoteAddSharp';
-import VideocamIcon from '@material-ui/icons/Videocam';
 import StarIcon from '@material-ui/icons/Star';
 import SearchIcon from '@material-ui/icons/Search';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
@@ -22,6 +21,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -30,7 +31,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { bookingActions, gridSpacing, view } from '../../store/constant';
+import { accountActions, bookingActions, gridSpacing, view } from '../../store/constant';
 import { useSelector, useDispatch } from 'react-redux';
 import useTask from './../../hooks/useTask';
 import useConfirmPopup from './../../hooks/useConfirmPopup';
@@ -41,6 +42,7 @@ import NoteModal from './NoteModal';
 import DuoIcon from '@material-ui/icons/Duo';
 import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE } from '../../store/actions';
 import useBooking from './../../hooks/useBooking';
+import useAccount from '../../hooks/useAccount';
 import { customClasses, style } from './style';
 
 function descendingComparator(a, b, orderBy) {
@@ -83,7 +85,11 @@ const headCells = [
   { id: 'fullname', numeric: false, disablePadding: false, label: 'Khách hàng', maxWidth: 150 },
   { id: 'university_name', numeric: false, disablePadding: false, label: 'Trường', maxWidth: 100 },
   { id: 'assess', numeric: true, disablePadding: false, label: 'Đánh giá', maxWidth: 150 },
+  { id: 'account_id', numeric: false, disablePadding: false, label: 'ID', maxWidth: 50 },
+  { id: 'image_url', numeric: false, disablePadding: false, label: 'Ảnh', maxWidth: 100 },
+  { id: 'full_name', numeric: false, disablePadding: false, label: 'Tên', maxWidth: 150 },
   { id: 'email_address', numeric: false, disablePadding: false, label: 'Email', maxWidth: 100 },
+  { id: 'active', numeric: false, disablePadding: false, label: 'Hoạt động', maxWidth: 100 },
   { id: 'number_phone', numeric: false, disablePadding: false, label: 'SĐT', maxWidth: 100 },
   {
     id: 'schedule',
@@ -107,6 +113,9 @@ const headCells = [
   },
   { id: 'note', numeric: false, disablePadding: false, label: 'Chú thích', maxWidth: 100 },
   { id: 'menuButtons', numeric: false, disablePadding: false, label: '', maxWidth: 150 },
+
+  
+
 ];
 
 function EnhancedTableHead(props) {
@@ -801,10 +810,10 @@ export default function GeneralTable(props) {
   const { menu_buttons: menuButtons, columns: tableColumns, tabs } = useView();
   const [displayOptions, setDisplayOptions] = React.useState({});
   const { flattenFolders, selectedFolder } = useSelector((state) => state.folder);
-
+  
   useEffect(() => {
     setDisplayOptions({
-      id: selectedFolder.action !== bookingActions.by_mentor_list,
+      id: selectedFolder.action !== bookingActions.by_mentor_list &&  selectedFolder.action !== accountActions.list_active_user &&  selectedFolder.action !== accountActions.list_inactive_user ,
       fullname: tableColumns.includes('fullname'),
       university_name: tableColumns.includes('university'),
       assess: tableColumns.includes('assess'),
@@ -813,12 +822,16 @@ export default function GeneralTable(props) {
       schedule: tableColumns.includes('consultation_day'),
       link: false,
       status: tableColumns.includes('status'),
+      active: tableColumns.includes('active'),
       mentor_name: tableColumns.includes('mentor'),
       rating: tableColumns.includes('rating'),
       total: tableColumns.includes('total'),
       reject: tableColumns.includes('reject'),
       uncomplete: tableColumns.includes('uncomplete'),
       note: tableColumns.includes('note'),
+      account_id: tableColumns.includes('account_id'),
+      image_url: tableColumns.includes('image_url'),
+      full_name: tableColumns.includes('full_name'),
       menuButtons: !!menuButtons.length || false,
     });
   }, [tableColumns, selectedFolder]);
@@ -842,6 +855,7 @@ export default function GeneralTable(props) {
   const buttonBookingNote = menuButtons.find(
     (button) => button.name === view.booking.list.note
   );
+ 
 
   const [isOpenModalNote, setIsOpenModalNote] = React.useState(false);
   const [isOpenModal, setIsOpenModal] = React.useState(false);
@@ -904,6 +918,9 @@ export default function GeneralTable(props) {
     getListUniversity,
   } = useBooking();
 
+  const {
+    getAccountDetail,activeAccount,
+  } = useAccount();
   const initListUniversity = async () => {
     const data = await getListUniversity();
     setUniversity(data);
@@ -1000,6 +1017,7 @@ export default function GeneralTable(props) {
   };
 
   const handleChangeRowsPerPage = (event) => {
+  
     fetchDocument({ page: 1, no_item_per_page: event.target.value });
   };
 
@@ -1009,10 +1027,17 @@ export default function GeneralTable(props) {
     event.stopPropagation();
     let detailDocument = null;
     if (documentType === 'booking') {
+  
       detailDocument = await getBookingDetail(selectedDocument.id);
+      dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType });
+      dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: true });
     }
-    dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType });
-    dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: true });
+    else if (documentType === 'account') {
+      detailDocument = await getAccountDetail(selectedDocument.account_id);
+      dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType });
+      dispatch({ type: FLOATING_MENU_CHANGE, accountDocument: true });
+    }
+ 
   };
 
   const reloadCurrentDocuments = () => {
@@ -1053,11 +1078,7 @@ export default function GeneralTable(props) {
     }
   };
 
-  const handleMeetingBooking  = (booking) => {
-    setSelected((pre) => [...new Set([booking.id, ...pre])]);
-    setSelectedRecord(booking);
-    console.log("Link",booking.link_meeting)
-  };
+
 
   const handleSetCompletedBooking = async (id) => {
     try {
@@ -1070,9 +1091,18 @@ export default function GeneralTable(props) {
     }
   };
 
+  const toggleSetActiveAccount = async (event, email_address, is_active) => {
+    event.stopPropagation()
+    await activeAccount({
+      email_address: email_address,
+      is_active: is_active,
+    });
+    reloadCurrentDocuments();
+  };
+
   const handleNoteBooking = async (note) => {
     try {
-      console.log('note', note)
+     
       await setNoteBooking(selected[0], note);
     } catch (e) {
     } finally {
@@ -1134,6 +1164,7 @@ export default function GeneralTable(props) {
         handleReview={handleReviewBooking}
         selectedBooking={selected[0]}
       />
+      
       <Grid container spacing={gridSpacing}>
         <Grid item xs={12} style={style.tableTitleWrap}>
           <Grid item xs={6}>
@@ -1182,7 +1213,7 @@ export default function GeneralTable(props) {
                             hover
                             aria-checked={isItemSelected}
                             tabIndex={-1}
-                            key={row.id}
+                            key={row.id || row.account_id}
                             selected={isItemSelected}
                           >
                             <TableCell padding="checkbox">
@@ -1216,6 +1247,54 @@ export default function GeneralTable(props) {
                                 </>
                               </TableCell>
                             )}
+                             {displayOptions.account_id && (
+                              <TableCell align="left">
+                                <>
+                                  <span
+                                    className={classes.tableItemName}
+                                    onClick={(event) => openDetailDocument(event, row)}
+                                  >
+                                  
+                                  {row.account_id}
+                                  </span>
+                                  &nbsp;&nbsp;
+                                </>
+                              </TableCell>
+                            )}
+                            {displayOptions.image_url && (
+                              <TableCell align="left">
+                                <>
+                                  <span
+                                    className={classes.tableItemName}
+                                    onClick={(event) => openDetailDocument(event, row)}
+                                  >
+                                    <img src={row.image_url}
+                                         style={{
+                                          height: '50px',
+                                          witdh: '50px',
+                                          boxshadow: 'rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px',
+                                          borderRadius: '20px'  
+                                         }}
+                                    />
+                                  </span>
+                                  &nbsp;&nbsp;
+                                </>
+                              </TableCell>
+                            )}
+                              {displayOptions.full_name && (
+                              <TableCell align="left">
+                                <>
+                                  <span
+                                    className={classes.tableItemName}
+                                    onClick={(event) => openDetailDocument(event, row)}
+                                  >
+                                    {row.full_name}
+                                  </span>
+                                  &nbsp;&nbsp;
+                                </>
+                              </TableCell>
+                            )}
+                            
                             {displayOptions.university_name && (
                               <TableCell align="left">{row.university_name || ''}</TableCell>
                             )}
@@ -1232,6 +1311,16 @@ export default function GeneralTable(props) {
                             {displayOptions.email_address && (
                               <TableCell align="left">{row.email_address || ''}</TableCell>
                             )}
+                             {displayOptions.active && (
+                               <TableCell align="left">
+                               <>
+                               <FormControlLabel
+                                  control={<Switch color="primary" checked={row.is_active} onClick={(event) => toggleSetActiveAccount(event, row.email_address, event.target.checked)}/>}
+                                />
+                                 &nbsp;&nbsp;
+                               </>
+                             </TableCell>
+                             )}
                             {displayOptions.number_phone && (
                               <TableCell align="left">{row.number_phone || ''}</TableCell>
                             )}

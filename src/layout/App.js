@@ -18,6 +18,7 @@ import { create } from 'jss';
 import rtl from 'jss-rtl';
 import { StylesProvider, jssPreset } from '@material-ui/core/styles';
 import { BookingProvider } from './../contexts/BookingContext';
+import { AccountProvider } from '../contexts/AccountContext';
 import { TaskProvider } from '../contexts/TaskContext.js';
 
 function loadLocaleData(locale) {
@@ -61,8 +62,10 @@ const App = () => {
                           <FolderProvider>
                             <TaskProvider>
                               <BookingProvider>
-                                <Routes />
-                                <Snackbar />
+                                <AccountProvider>
+                                  <Routes />
+                                  <Snackbar />
+                                </AccountProvider>
                               </BookingProvider>
                             </TaskProvider>
                           </FolderProvider>

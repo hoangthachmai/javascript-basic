@@ -18,7 +18,7 @@ import Loading from './Loading';
 import useLoading from './../../hooks/useLoading';
 import ConfirmPopup from '../../views/ConfirmPopup';
 import DetailDocumentDialog from '../../views/Detail/index.js';
-
+import AccountModal from '../../views/FormAccount';
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -93,6 +93,7 @@ const MainLayout = ({ children }) => {
         <FloatingMenu />
         <UploadFile />
         <DetailDocumentDialog />
+        <AccountModal/>
       </main>
       {loading && <Loading />}
       <ConfirmPopup />
