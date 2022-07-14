@@ -16,6 +16,7 @@ import {
   MenuItem,
   TextField
 } from '@material-ui/core';
+import ClearIcon from '@material-ui/icons/Clear';
 import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
 import RemoveRedEyeTwoToneIcon from '@material-ui/icons/RemoveRedEyeTwoTone';
 import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
@@ -30,13 +31,19 @@ import StarIcon from '@material-ui/icons/Star';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { gridSpacing, view } from '../../store/constant.js';
-import { FLOATING_MENU_CHANGE } from '../../store/actions.js';
 import useView from './../../hooks/useView';
 import useBooking from './../../hooks/useBooking';
 import ConfirmSaveDialog from './ConfirmSaveDialog';
 import EditModal from './EditModal';
 import { style } from './style';
 import useStyles from './classes'
+import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE } from '../../store/actions';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+const Alert = (props) => {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -85,11 +92,15 @@ const labelDay = {
 const DetailDocumentDialog = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [isOpenSnackbar, setIsOpenSnackbar] = useState(false);
+  const [snackbarData, setSnackbarData] = useState({
+    type: 'success',
+    text: ''
+  })
   const [editProfile, setEditProfile] = useState(null);
   const [editMentor, setEditMentor] = useState(null);
 
   const [tabIndex, setTabIndex] = React.useState(0);
-  const [isOpenConfirmSaveDialog, setIsOpenConfirmSaveDialog] = React.useState(false);
   const initNoteSelectionList = {
     1: {
       id: 1,
@@ -116,7 +127,7 @@ const DetailDocumentDialog = () => {
   const [selectedNote, setSelectedNote] = useState("");
   const [selectedNoteList, setSelectedNoteList] = useState([]);
 
-  const { form_buttons: formButtons, name, tabs, disabled_fields } = useView();
+  const { form_buttons: formButtons, tabs, } = useView();
 
   const tabDisplayOptions = {
     mentee: tabs.includes('mentee'),
@@ -131,12 +142,10 @@ const DetailDocumentDialog = () => {
     setTabIndex(newValue);
   };
 
-  const { updateBooking, getMentorDetail, getFeedback } = useBooking();
+  const { updateBooking, getMentorDetail, getFeedback, updateBookingMentor, getBookingDetail } = useBooking();
 
   const { detailDocument: openDialog } = useSelector((state) => state.floatingMenu);
-  const { projects } = useSelector((state) => state.project);
   const { selectedDocument } = useSelector((state) => state.document);
-  const [enableSaveButton, setEnableSaveButton] = React.useState(false);
   const [document, setDocument] = React.useState({
     fullname: '',
     contact: '',
@@ -170,11 +179,18 @@ const DetailDocumentDialog = () => {
     if (tabDisplayOptions.feedback) {
       getFeedbackDetail(selectedDocument.id);
     }
+    console.log('hahah');
   }, [selectedDocument]);
 
   const getFeedbackDetail = async (id) => {
     const data = await getFeedback(id);
-    setFeedback({ ...feedback, ...data });
+    if (data?.assess_mentor) setFeedback({ ...data });
+    else setFeedback({
+      times: '',
+      comment: '',
+      assess_mentor: 0,
+      assess_service: 0,
+    })
   };
 
   const getConsultantDetail = async (id) => {
@@ -187,27 +203,19 @@ const DetailDocumentDialog = () => {
     dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: false });
   };
 
-  const handleSaveBooking = async (is_send_email) => {
+  const handleSaveBooking = async () => {
     try {
       const { email_address, number_phone, ...rest } = document;
       await updateBooking({
         ...rest,
-        is_send_email,
+        is_send_email: false,
         outputtype: 'RawJson',
         email: email_address,
         phone: number_phone,
       });
     } catch (error) {
       console.log('error update booking', error)
-    } finally {
-      setIsOpenConfirmSaveDialog(false);
     }
-  };
-
-  const handleEmailChange = (e) => {
-    const newEmail = e.target.value || document.email_address;
-    setEnableSaveButton(newEmail !== selectedDocument.email_address);
-    setDocument({ ...document, email_address: newEmail });
   };
 
   const handleChangeNoteSelection = (e) => {
@@ -229,16 +237,11 @@ const DetailDocumentDialog = () => {
     setMentor({});
   };
 
-  const convertDateTime = (date, time) => {
-    if (!date && !time) return { date: '', time: '' };
-    const hour = time.split('-');
-    return { date: labelDay[date], time: hour[0] + 'h - ' + hour[1] + 'h' };
-  };
 
   const getDayOfWeek = (date) => {
     if (!date) return '';
     const dateArr = date.split('/');
-    const newDate = new Date(dateArr[2], dateArr[1], dateArr[0]);
+    const newDate = new Date(dateArr[2], dateArr[1] - 1, dateArr[0]);
     return labelDay[weekday[newDate.getDay()]];
   }
 
@@ -257,41 +260,79 @@ const DetailDocumentDialog = () => {
     }
   }
 
-  const handleSaveEdit = async (data) => {
+  const handleSaveEdit = async (data, is_send_email = false) => {
     try {
       if (editProfile) {
         await updateBooking({
           ...document,
           ...data,
-          phone: document.number_phone,
-          is_send_email: false,
+          is_send_email,
           outputtype: 'RawJson',
         });
-        setDocument({ ...document, email_address: data.email })
+        if (is_send_email) {
+          setIsOpenSnackbar(true);
+          setSnackbarData({
+            type: 'success',
+            text: 'Hệ thống sẽ tự động gửi mail xác nhận tới địa chỉ email mới!'
+          })
+        }
+      } else if (editMentor) {
+        const isSuccess = await updateBookingMentor(document.id, data);
+        if (!isSuccess) {
+          setIsOpenSnackbar(true);
+          setSnackbarData({
+            type: 'warning',
+            text: 'Bạn không thể thay đổi Mentor ngay lúc này!'
+          })
+          return;
+        }
+        // await getConsultantDetail(data.mentor_id);
       }
+      const detailDocument = await getBookingDetail(document.id);
+      dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType: 'booking' });
+      dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: true });
     } catch (error) {
-      console.log('error', error)
+      setIsOpenSnackbar(true);
+      setSnackbarData({
+        type: 'error',
+        text: 'Có lỗi xảy ra, vui lòng thử lại sau!'
+      })
     } finally {
-      handleCloseEditModal()
+      handleCloseEditModal();
     }
+  }
+
+  const handleEditModalGoBack = (to) => {
+    if (to === 'profile') {
+      setEditProfile(document);
+      setEditMentor(null);
+    }
+  }
+
+  const handleChangeNote = (e) => {
+    setDocument({ ...document, note: e.target.value })
   }
 
   return (
     <React.Fragment>
-      {isOpenConfirmSaveDialog && (
-        <ConfirmSaveDialog
-          isOpen={isOpenConfirmSaveDialog}
-          handleClose={() => setIsOpenConfirmSaveDialog(false)}
-          handleSubmit={handleSaveBooking}
-        />
-      )}
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={isOpenSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setIsOpenSnackbar(false)}>
+        <Alert onClose={() => setIsOpenSnackbar(false)} severity={snackbarData.type} sx={{ width: '100%' }}>
+          {snackbarData.text}
+        </Alert>
+      </Snackbar>
       {(editProfile || editMentor) && (
         <EditModal
-          isOpen={editProfile || editMentor}
+          isOpen={!!editProfile || !!editMentor}
           profile={editProfile}
           mentor={editMentor}
+          document={document}
           handleClose={handleCloseEditModal}
           handleSubmit={handleSaveEdit}
+          handleGoBack={handleEditModalGoBack}
         />
       )}
       <Grid container>
@@ -303,8 +344,18 @@ const DetailDocumentDialog = () => {
           className={classes.useradddialog}
         >
           <DialogTitle className={classes.dialogTitle}>
-            <Grid item xs={12} style={{ textTransform: 'uppercase' }}>
-              Chi tiết đăng ký
+            <Grid container>
+              <Grid item xs={11} style={{ textTransform: 'uppercase' }}>
+                Chi tiết đăng ký
+              </Grid>
+              <Grid item xs={1}>
+                <Button
+                  className={classes.buttonClose}
+                  onClick={handleCloseDialog}
+                >
+                  <ClearIcon className={classes.buttonCloseIcon} />
+                </Button>
+              </Grid>
             </Grid>
           </DialogTitle>
           <DialogContent className={classes.dialogContent}>
@@ -435,7 +486,7 @@ const DetailDocumentDialog = () => {
                               <span className={classes.tabItemLabelField}>Nhu cầu tư vấn:</span>
                             </Grid>
                             <Grid item lg={8} md={8} xs={8}>
-                              {document.demand}, Cơ hội nghề nghiệp, Phù hợp bản thân, Bằng cấp
+                              {document.demand}
                             </Grid>
                           </Grid>
                           <Grid container className={classes.gridItemInfo} alignItems="center">
@@ -562,7 +613,7 @@ const DetailDocumentDialog = () => {
                             </Grid>
                             <Grid item lg={6} md={6} xs={12} className={classes.tabAssessItem}>
                               <AssignmentReturnedTwoToneIcon style={style.tabAssessItemIconAssignment} />
-                              <div className={classes.tabAssessItemLabel}>{feedback.times}</div>
+                              <div className={classes.tabAssessItemLabel}>{feedback?.times}</div>
                             </Grid>
                             <Grid item lg={12} md={12} xs={12}>
                               <TextField
@@ -575,7 +626,7 @@ const DetailDocumentDialog = () => {
                                 name="note"
                                 InputLabelProps={{ shrink: true }}
                                 className={classes.tabItemNoteInput}
-                                defaultValue={feedback.comment}
+                                defaultValue={feedback?.comment}
                               />
                             </Grid>
                           </Grid>
@@ -586,12 +637,10 @@ const DetailDocumentDialog = () => {
                       <div className={classes.tabItem}>
                         <div className={classes.tabItemNoteSection}>
                           <div className={classes.tabItemNoteTitleWrap}>
-                            <div>{getDayOfWeek(document?.schedule?.split(' ')[0])} ngày {document?.schedule?.split(' ')[0]}</div>
+                            <div>{getDayOfWeek(document?.schedule?.split(' ')[0])} ngày {document?.schedule?.split(' ')[0]} - {document?.schedule?.split(' ')[1]}</div>
                             <div>{document.status}</div>
                           </div>
-                          <div className={classes.tabItemNoteHour}>
-                            {document?.schedule?.split(' ')[1]}
-                          </div>
+
                           <a href={document?.link_meeting || '#'} target="_blank">
                             <img src="https://play-lh.googleusercontent.com/GBYSf20osBl2CRHbjGOyaOG5kQ3G4xbRau-dzScU9ozuXQJtnUZPkR3IqEDOo5OiVgU" />
                             <div>Tham gia meeting</div>
@@ -632,9 +681,10 @@ const DetailDocumentDialog = () => {
                             multiline
                             rows={4}
                             rowsMax={4}
+                            value={document.note || ''}
                             variant="outlined"
                             name="note"
-                            onChange={() => { }}
+                            onChange={handleChangeNote}
                             InputLabelProps={{ shrink: true }}
                             className={classes.tabItemNoteInput}
                           />
@@ -663,7 +713,7 @@ const DetailDocumentDialog = () => {
                   <Button
                     variant="contained"
                     style={{ background: 'rgb(97, 42, 255)' }}
-                    onClick={() => setIsOpenConfirmSaveDialog(true)}
+                    onClick={handleSaveBooking}
                   >
                     {buttonSaveBooking.text}
                   </Button>

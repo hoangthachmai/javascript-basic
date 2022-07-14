@@ -10,7 +10,7 @@ export const vibEndpoints = {
   get_folders: '/Primary/?FlowAlias=hnn_booking_api_get_menu_tree&action=api',
 
   get_mentor_detail: '/Primary/?FlowAlias=hnn_api_booking_get_mentor_detail_by_id&action=api',
-
+  get_mentor_list: '/Primary/?FlowAlias=hnn_api_booking_change_mentor&action=api',
   //booking
   get_all_booking: '/Primary/?FlowAlias=hnn_api_booking_get_all_booking&action=api',
   get_handle_booking: '/Primary/?FlowAlias=hnn_api_booking_get_all_handle_booking&action=api',
@@ -23,8 +23,10 @@ export const vibEndpoints = {
   update_booking: '/Primary/?FlowAlias=hnn_api_booking_update_booking_information&action=api',
   cancel_booking: '/Primary/?FlowAlias=hnn_api_booking_cancel_booking&action=api',
   review_booking: '/Primary/?FlowAlias=hnn_api_booking_review_booking&action=api',
+  approve_booking: '/Primary/?FlowAlias=hnn_api_booking_approve_booking&action=api',
   set_completed_state: '/Primary/?FlowAlias=hnn_api_booking_set_completed_state&&action=api',
   set_note_booking: '/Primary/?FlowAlias=hnn_api_booking_update_note_booking_by_id&&action=api',
+
 
   get_all_account: '/Primary/?FlowAlias=hnn_acco_api_get_all_account_by_page&action=api',
   get_all_inaccount: '/Primary/?FlowAlias=hnn_acco_api_get_all_inaccount_by_page&action=api',
@@ -32,10 +34,12 @@ export const vibEndpoints = {
   create_account: '/Primary/?FlowAlias=hnn_api_booking_user_create_account&action=api',
   update_account: '/Primary/?FlowAlias=hnn_api_booking_user_update_account&action=api',
   active_account: '/Primary/?FlowAlias=hnn_api_user_active_account&action=api',
-  
+
+  get_career_demand: '/Primary/?FlowAlias=hnn_api_booking_get_all_career_and_demand&action=api',
   get_list_university: '/Primary/?FlowAlias=hnn_api_univ_get_all_university&action=api',
   get_feedback_detail: '/Primary/?FlowAlias=hnn_api_booking_get_feedback_by_booking_id&action=api',
-  
+  update_booking_mentor: '/Primary/?FlowAlias=hnn_api_booking_update_booking_mentor&action=api'
+
 };
 export const apiDomain = 'https://upload.truebpm.vn';
 // export const apiDomain = 'http://localhost:4000'
@@ -72,6 +76,7 @@ export const view = {
       handled: 'BOOKING_LIST_HANDLED_MENU_BUTTON',
       note: 'BOOKING_LIST_NOTE_MENU_BUTTON',
       meeting: 'BOOKING_LIST_MEETING_MENU_BUTTON',
+      approve: 'BOOKING_LIST_APPROVE_MENU_BUTTON'
     },
     detail: {
       save: 'BOOKING_DETAIL_SAVE_FORM_BUTTON',

@@ -7,6 +7,7 @@ import { Grid, Card, Button, Checkbox, Tooltip } from '@material-ui/core';
 import Modal from '../Table/Modal';
 import CachedIcon from '@material-ui/icons/Cached';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import GavelSharpIcon from '@material-ui/icons/GavelSharp';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import NoteAddSharpIcon from '@material-ui/icons/NoteAddSharp';
 import StarIcon from '@material-ui/icons/Star';
@@ -14,6 +15,8 @@ import SearchIcon from '@material-ui/icons/Search';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import ClearIcon from '@material-ui/icons/Clear';
+import SkipNextIcon from '@material-ui/icons/SkipNext';
+import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -40,7 +43,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import useOnClickOutSide from './../../hooks/useClickOutSide';
 import NoteModal from './NoteModal';
 import DuoIcon from '@material-ui/icons/Duo';
-import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE } from '../../store/actions';
+import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE, CONFIRM_CHANGE } from '../../store/actions';
 import useBooking from './../../hooks/useBooking';
 import useAccount from '../../hooks/useAccount';
 import { customClasses, style } from './style';
@@ -371,6 +374,42 @@ const EnhancedTableToolbar = (props) => {
     {
       id: 'Chờ khách hàng',
       name: 'Chờ khách hàng',
+    },
+    {
+      id: 'Chờ mentor',
+      name: 'Chờ mentor',
+    },
+    {
+      id: 'Đã lên lịch tư vấn',
+      name: 'Đã lên lịch tư vấn',
+    },
+    {
+      id: 'Đang tư vấn',
+      name: 'Đang tư vấn',
+    },
+    {
+      id: 'Chờ Feedback',
+      name: 'Chờ Feedback',
+    },
+    {
+      id: 'Mentor yêu cầu huỷ',
+      name: 'Mentor yêu cầu huỷ',
+    },
+    {
+      id: 'Mentor chưa xác nhận',
+      name: 'Mentor chưa xác nhận',
+    },
+    {
+      id: 'Mentor từ chối lịch',
+      name: 'Mentor từ chối lịch',
+    },
+    {
+      id: 'Khách hàng chưa Feedback',
+      name: 'Khách hàng chưa Feedback',
+    },
+    {
+      id: 'Khách yêu cầu huỷ',
+      name: 'Khách yêu cầu huỷ',
     },
   ]);
   const [filter, setFilter] = React.useState({
@@ -762,6 +801,12 @@ const useStyles = makeStyles((theme) => ({
       background: '#272f33',
     },
   },
+  handleButtonApprove: {
+    background: '#425466',
+    '&:hover': {
+      background: '#272f33',
+    },
+  },
   handleButtonMeeting: {
     background: '#30bc41',
     '&:hover': {
@@ -769,9 +814,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   handleButtonNote: {
-    background: '#425466',
+    background: '#ffca33',
     '&:hover': {
-      background: '#272f33',
+      background: '#f9c121',
     },
   },
   handleButtonIcon: {
@@ -801,6 +846,43 @@ const useStyles = makeStyles((theme) => ({
   completedStatus: {
     background: '#36f',
   },
+  styleStatus1: {
+    background: '#FF9400 !important'
+  },
+  styleStatus2: {
+    background: '#6200A5 !important'
+  },
+  styleStatus3: {
+    background: '#0FAD00 !important'
+  },
+  styleStatus4: {
+    background: '#00A2C8 !important'
+  },
+  styleStatus5: {
+    background: '#8DC700 !important'
+  },
+  styleStatus6: {
+    background: '#FF6600 !important'
+  },
+  styleStatus7: {
+    background: '#C4007C !important'
+  },
+  styleStatus8: {
+    background: '#FE0000 !important'
+  },
+  styleStatus9: {
+    background: '#0064B4 !important'
+  },
+  styleStatus10: {
+    background: '#FDFD01 !important'
+  },
+
+  styleStatus11: {
+    background: '#ffc501 !important'
+  },
+  styleStatus12: {
+    background: '#0010A4 !important'
+  },
 }));
 
 export default function GeneralTable(props) {
@@ -810,7 +892,9 @@ export default function GeneralTable(props) {
   const { menu_buttons: menuButtons, columns: tableColumns, tabs } = useView();
   const [displayOptions, setDisplayOptions] = React.useState({});
   const { flattenFolders, selectedFolder } = useSelector((state) => state.folder);
-  
+
+  const { selectedDocument } = useSelector((state) => state.document);
+
   useEffect(() => {
     setDisplayOptions({
       id: selectedFolder.action !== bookingActions.by_mentor_list &&  selectedFolder.action !== accountActions.list_active_user &&  selectedFolder.action !== accountActions.list_inactive_user ,
@@ -843,7 +927,7 @@ export default function GeneralTable(props) {
   const buttonBookingReview = menuButtons.find(
     (button) => button.name === view.booking.list.review
   );
-  
+
   const buttonBookingMeeting = menuButtons.find(
     (button) => button.name === view.booking.list.meeting
   );
@@ -857,6 +941,10 @@ export default function GeneralTable(props) {
   );
  
 
+  const buttonBookingApprove = menuButtons.find(
+    (button) => button.name === view.booking.list.approve
+  );
+
   const [isOpenModalNote, setIsOpenModalNote] = React.useState(false);
   const [isOpenModal, setIsOpenModal] = React.useState(false);
   const [modalType, setModalType] = React.useState('');
@@ -869,13 +957,6 @@ export default function GeneralTable(props) {
 
   const { projects } = useSelector((state) => state.project);
   const selectedProject = projects.find((project) => project.selected);
-
-  const buttonSelectUniversity = selectedFolder.action === bookingActions.all_list;
-  const buttonSelectSource = selectedFolder.action === bookingActions.handle_list;
-  const buttonSelectDate =
-    selectedFolder.action === bookingActions.by_date_list ||
-    selectedFolder.action === bookingActions.by_mentor_list;
-  const buttonSelectMentor = selectedFolder.action === bookingActions.completed_list;
 
   const reduxDocuments = useSelector((state) => state.task);
   const {
@@ -911,7 +992,7 @@ export default function GeneralTable(props) {
 
   const {
     getBookingDetail,
-    cancelBooking,
+    approveBooking,
     reviewBooking,
     setNoteBooking,
     setCompletedBooking,
@@ -952,6 +1033,9 @@ export default function GeneralTable(props) {
       initListUniversity();
     }
   }, [selectedFolder]);
+  useEffect(() => {
+    fetchDocument({})
+  }, [selectedDocument])
 
   const fetchDocument = (additionalQuery) => {
     const queries = { ...defaultQueries, ...additionalQuery };
@@ -1045,6 +1129,16 @@ export default function GeneralTable(props) {
     fetchDocument({ page: 1 });
   };
 
+  const showConfirmPopup = ({
+    title = 'Thông báo', 
+    message = 'Yêu cầu lựa chọn ít nhất một bản ghi', 
+    action = null, 
+    payload = null,
+    onSuccess = null
+    }) => {
+      setConfirmPopup({ type: CONFIRM_CHANGE, open: true, title, message,  action, payload, onSuccess }) 
+  }
+
   const handleOpenModal = (type, booking) => {
     setSelected((pre) => [...new Set([booking.id, ...pre])]);
     setSelectedRecord(booking);
@@ -1058,7 +1152,7 @@ export default function GeneralTable(props) {
 
   const handleCancelBooking = async (data) => {
     try {
-      await cancelBooking(selected[0], data.status, data.note);
+      await reviewBooking(selected[0], data.status);
     } catch (e) {
     } finally {
       setIsOpenModal(false);
@@ -1069,7 +1163,7 @@ export default function GeneralTable(props) {
 
   const handleReviewBooking = async (data) => {
     try {
-      await reviewBooking(selected[0], data.status, data.note);
+      await reviewBooking(selected[0], data.status);
     } catch (e) {
     } finally {
       setIsOpenModal(false);
@@ -1078,17 +1172,36 @@ export default function GeneralTable(props) {
     }
   };
 
+  const handleApproveBooking = async (id) => {
+    showConfirmPopup({ 
+      message: `Bạn chắc chắn muốn xác nhận đăng ký ${id} ?`,
+      action: approveBooking,
+      payload: id,
+      onSuccess: reloadCurrentDocuments
+    })
+  };
 
+  const handleMeetingBooking = (booking) => {
+    setSelected((pre) => [...new Set([booking.id, ...pre])]);
+    setSelectedRecord(booking);
+    console.log("Link", booking.link_meeting)
+  };
 
   const handleSetCompletedBooking = async (id) => {
-    try {
-      await setCompletedBooking(id);
-    } catch (e) {
-    } finally {
-      setIsOpenModal(false);
-      setModalType('');
-      reloadCurrentDocuments();
-    }
+    showConfirmPopup({ 
+      message: `Bạn chắc chắn xử lý đăng ký ${id} ?`,
+      action: setCompletedBooking,
+      payload: id,
+      onSuccess: reloadCurrentDocuments
+    })
+    // try {
+    //   await setCompletedBooking(id);
+    // } catch (e) {
+    // } finally {
+    //   setIsOpenModal(false);
+    //   setModalType('');
+    //   reloadCurrentDocuments();
+    // }
   };
 
   const toggleSetActiveAccount = async (event, email_address, is_active) => {
@@ -1119,19 +1232,23 @@ export default function GeneralTable(props) {
     fetchDocument(data);
   };
 
-  const getStatusType = () => {
-    switch (selectedFolder.action) {
-      case bookingActions.all_list:
-        return 'waitingStatus';
-      case bookingActions.handle_list:
-        return 'handleStatus';
-      case bookingActions.cancel_list:
-        return 'cancelStatus';
-      case bookingActions.completed_list:
-        return 'completedStatus';
-      default:
-        return 'completedStatus';
-    }
+  const getStatusType = (type) => {
+    const statusListLabel = [
+      'Chờ khách hàng',
+      'Chờ mentor',
+      'Đã lên lịch tư vấn',
+      'Đang tư vấn',
+      'Chờ Feedback',
+      'Khách hàng chưa xác nhận',
+      'Mentor chưa xác nhận', 
+      'Mentor từ chối lịch',
+      'Khách hàng chưa Feedback',
+      'Meeting bị gián đoạn',
+      'Khách yêu cầu hủy',
+      'Mentor yêu cầu hủy',
+    ]
+    const index = statusListLabel.findIndex(item => item === type.trim());
+    return `styleStatus${index + 1}`
   };
 
   const formatDateTime = (datetime) => {
@@ -1343,7 +1460,7 @@ export default function GeneralTable(props) {
                             )}
                             {displayOptions.status && (
                               <TableCell align="left">
-                                <span style={style.statusWrap} className={classes[getStatusType()]}>
+                                <span style={style.statusWrap} className={classes[getStatusType(row.status || 'none')]}>
                                   {row.status}
                                 </span>
                               </TableCell>
@@ -1371,11 +1488,21 @@ export default function GeneralTable(props) {
                             {displayOptions.menuButtons && (
                               <TableCell align="left">
                                 <div className={classes.handleButtonWrap}>
-                                {buttonBookingNote && (
+                                  {(buttonBookingApprove && row.is_can_approve) && (
+                                    <Tooltip title={buttonBookingApprove.text}>
+                                      <Button
+                                        className={`${classes.handleButton} `}
+                                        onClick={() => handleApproveBooking(row.id)}
+                                      >
+                                        <SkipNextIcon className={classes.noteButtonIcon} />
+                                      </Button>
+                                    </Tooltip>
+                                  )}
+                                  {buttonBookingNote && (
                                     <Tooltip title={buttonBookingNote.text}>
                                       <Button
-                                          className={`${classes.handleButton} `}
-                                          onClick={() => handleOpenModal('note', row)}
+                                        className={`${classes.handleButton} ${classes.handleButtonNote}`}
+                                        onClick={() => handleOpenModal('note', row)}
                                       >
                                         <NoteAddSharpIcon className={classes.noteButtonIcon} />
                                       </Button>
@@ -1387,32 +1514,21 @@ export default function GeneralTable(props) {
                                         className={classes.handleButton}
                                         onClick={() => handleSetCompletedBooking(row.id)}
                                       >
-                                        <DoneAllIcon className={classes.handleButtonIcon} />
+                                        <AssignmentTurnedInIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}
-                                  {(buttonBookingReview && row.is_can_completed) && (
-                                    <Tooltip title={buttonBookingReview.text}>
-                                      <Button
-                                        className={classes.handleButton}
-                                        onClick={() => handleOpenModal('review', row)}
-                                      >
-                                        <DoneAllIcon className={classes.handleButtonIcon} />
-                                      </Button>
-                                    </Tooltip>
-                                  )}
-                                 
-                                    {(buttonBookingMeeting && row.link_meeting!==null) && (
+                                  {(buttonBookingMeeting && row.link_meeting !== null) && (
                                     <Tooltip title={buttonBookingMeeting.text}>
                                       <Button
                                         className={`${classes.handleButton} ${classes.handleButtonMeeting}`}
-                                   
+
                                       >
-                                      <a href={row.link_meeting} 
-                                       className={`${classes.handleButton} ${classes.handleButtonMeeting}`}
-                                       target="_blank">
-                                      <DuoIcon className={classes.handleButtonIconMeeting} />
-                                      </a>
+                                        <a href={row.link_meeting}
+                                          className={`${classes.handleButton} ${classes.handleButtonMeeting}`}
+                                          target="_blank">
+                                          <DuoIcon className={classes.handleButtonIconMeeting} />
+                                        </a>
                                       </Button>
                                     </Tooltip>
                                   )}
@@ -1423,6 +1539,16 @@ export default function GeneralTable(props) {
                                         onClick={() => handleOpenModal('cancel', row)}
                                       >
                                         <DeleteOutlineIcon className={classes.handleButtonIcon} />
+                                      </Button>
+                                    </Tooltip>
+                                  )}
+                                  {(buttonBookingReview && row.is_can_completed) && (
+                                    <Tooltip title={buttonBookingReview.text}>
+                                      <Button
+                                        className={classes.handleButton}
+                                        onClick={() => handleOpenModal('review', row)}
+                                      >
+                                        <GavelSharpIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}
