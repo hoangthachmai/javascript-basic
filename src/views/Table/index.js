@@ -16,6 +16,7 @@ import GavelSharpIcon from '@material-ui/icons/GavelSharp';
 import NoteAddSharpIcon from '@material-ui/icons/NoteAddSharp';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import StarIcon from '@material-ui/icons/Star';
+import HowToRegIcon from '@material-ui/icons/HowToReg';
 import { useDispatch, useSelector } from 'react-redux';
 import useAccount from '../../hooks/useAccount';
 import { CONFIRM_CHANGE, DOCUMENT_CHANGE, FLOATING_MENU_CHANGE, TASK_CHANGE } from '../../store/actions';
@@ -646,7 +647,7 @@ export default function GeneralTable(props) {
                                         className={classes.handleButton}
                                         onClick={() => handleSetCompletedBooking(row.id)}
                                       >
-                                        <AssignmentTurnedInIcon className={classes.handleButtonIcon} />
+                                        <HowToRegIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}
@@ -680,7 +681,7 @@ export default function GeneralTable(props) {
                                         className={classes.handleButton}
                                         onClick={() => handleOpenModal('review', row)}
                                       >
-                                        <GavelSharpIcon className={classes.handleButtonIcon} />
+                                        <AssignmentTurnedInIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}
