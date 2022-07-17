@@ -8,7 +8,7 @@ import {
   CssBaseline,
   Toolbar,
 } from '@material-ui/core';
-
+import { useSelector } from 'react-redux';
 import { drawerWidth } from './../../store/constant';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -19,6 +19,7 @@ import useLoading from './../../hooks/useLoading';
 import ConfirmPopup from '../../views/ConfirmPopup';
 import DetailDocumentDialog from '../../views/Detail/index.js';
 import AccountModal from '../../views/FormAccount';
+import MentorModal from '../../views/Mentor/Detail';
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -70,6 +71,19 @@ const MainLayout = ({ children }) => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const { loading } = useLoading();
 
+  const { documentType } = useSelector((state) => state.document);
+
+  const renderDetailDialog = () => {
+    switch (documentType) {
+      case 'booking':
+        return <DetailDocumentDialog />;
+      case 'account':
+        return <AccountModal />;
+      case 'mentor':
+        return <MentorModal />;
+    }
+  }
+
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
   };
@@ -92,8 +106,8 @@ const MainLayout = ({ children }) => {
         <div className={classes.main}>{children}</div>
         <FloatingMenu />
         <UploadFile />
-        <DetailDocumentDialog />
-        <AccountModal/>
+        
+        {renderDetailDialog()}
       </main>
       {loading && <Loading />}
       <ConfirmPopup />

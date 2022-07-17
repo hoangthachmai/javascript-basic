@@ -19,6 +19,7 @@ import rtl from 'jss-rtl';
 import { StylesProvider, jssPreset } from '@material-ui/core/styles';
 import { BookingProvider } from './../contexts/BookingContext';
 import { AccountProvider } from '../contexts/AccountContext';
+import { MentorProvider } from '../contexts/MentorContext';
 import { TaskProvider } from '../contexts/TaskContext.js';
 
 function loadLocaleData(locale) {
@@ -63,8 +64,10 @@ const App = () => {
                             <TaskProvider>
                               <BookingProvider>
                                 <AccountProvider>
-                                  <Routes />
-                                  <Snackbar />
+                                  <MentorProvider>
+                                    <Routes />
+                                    <Snackbar />
+                                  </MentorProvider>
                                 </AccountProvider>
                               </BookingProvider>
                             </TaskProvider>
