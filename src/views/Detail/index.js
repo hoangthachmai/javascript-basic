@@ -142,7 +142,7 @@ const DetailDocumentDialog = () => {
     setTabIndex(newValue);
   };
 
-  const { updateBooking, getMentorDetail, getFeedback, updateBookingMentor, getBookingDetail } = useBooking();
+  const { updateBooking, getMentorDetail, getFeedback, updateBookingMentor, getBookingDetail, setNoteBooking } = useBooking();
 
   const { detailDocument: openDialog } = useSelector((state) => state.floatingMenu);
   const { selectedDocument } = useSelector((state) => state.document);
@@ -205,14 +205,8 @@ const DetailDocumentDialog = () => {
 
   const handleSaveBooking = async () => {
     try {
-      const { email_address, number_phone, ...rest } = document;
-      await updateBooking({
-        ...rest,
-        is_send_email: false,
-        outputtype: 'RawJson',
-        email: email_address,
-        phone: number_phone,
-      });
+      const { id, note } = document;
+      await setNoteBooking(id, note);
     } catch (error) {
       console.log('error update booking', error)
     }
@@ -286,6 +280,11 @@ const DetailDocumentDialog = () => {
           })
           return;
         }
+        setIsOpenSnackbar(true);
+          setSnackbarData({
+            type: 'success',
+            text: 'Thay đổi Mentor thành công!'
+          })
         // await getConsultantDetail(data.mentor_id);
       }
       const detailDocument = await getBookingDetail(document.id);

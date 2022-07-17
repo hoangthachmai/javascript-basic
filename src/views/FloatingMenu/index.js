@@ -39,8 +39,6 @@ export default function FloatingMenu() {
     setOpen(false);
   };
 
-  console.log(floatButtons);
-
   return (
     <React.Fragment>
       {floatButtons.length > 0 && (
