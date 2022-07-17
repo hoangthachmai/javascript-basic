@@ -9,7 +9,7 @@ export const vibEndpoints = {
   get_project_list: '/Primary/?FlowAlias=hnn_booking_api_get_menu_project&action=api',
   get_folders: '/Primary/?FlowAlias=hnn_booking_api_get_menu_tree&action=api',
 
-  get_mentor_detail: '/Primary/?FlowAlias=hnn_api_booking_get_mentor_detail_by_id&action=api',
+  get_mentor_detail: '/Primary/?FlowAlias=hnn_api_ment_get_mentor_detail_by_id&action=api',
   get_mentor_list: '/Primary/?FlowAlias=hnn_api_booking_change_mentor&action=api',
   //booking
   get_all_booking: '/Primary/?FlowAlias=hnn_api_booking_get_all_booking&action=api',
@@ -38,7 +38,9 @@ export const vibEndpoints = {
   get_career_demand: '/Primary/?FlowAlias=hnn_api_booking_get_all_career_and_demand&action=api',
   get_list_university: '/Primary/?FlowAlias=hnn_api_univ_get_all_university&action=api',
   get_feedback_detail: '/Primary/?FlowAlias=hnn_api_booking_get_feedback_by_booking_id&action=api',
-  update_booking_mentor: '/Primary/?FlowAlias=hnn_api_booking_update_booking_mentor&action=api'
+  update_booking_mentor: '/Primary/?FlowAlias=hnn_api_booking_update_booking_mentor&action=api',
+
+  get_statistic_donut_data: '/Primary/?FlowAlias=hnn_api_booking_get_statistic_donut_data&action=api'
 
 };
 export const apiDomain = 'https://upload.truebpm.vn';

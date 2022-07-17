@@ -164,6 +164,17 @@ export const BookingProvider = ({ children }) => {
       });
   }
 
+  const getStatisticData = async () => {
+    return axiosInstance
+      .post(vibEndpoints.get_statistic_donut_data, { outputtype: 'RawJson' })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) {
+          const { list } = response.data;
+          return list;
+        } else return {};
+      });
+  }
+
   return (
     <BookingContext.Provider
       value={{
@@ -179,7 +190,8 @@ export const BookingProvider = ({ children }) => {
         getMentorList,
         updateBookingMentor,
         getCareerDemandList,
-        approveBooking
+        approveBooking,
+        getStatisticData
       }}
     >
       {children}

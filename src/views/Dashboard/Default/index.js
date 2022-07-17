@@ -5,6 +5,7 @@ import BookingWrapper from './../../Booking/index';
 import AccountWrapper from '../../Account';
 import { Grid } from '@material-ui/core';
 import { bookingActions, gridSpacing, accountActions } from './../../../store/constant';
+import Summnary from './../Summary/index';
 
 const Default = () => {
   const { selectedFolder } = useSelector((state) => state.folder);
@@ -20,10 +21,10 @@ const Default = () => {
   const availableAccountEndpoint = [
     accountActions.list_active_user,
     accountActions.list_inactive_user,
-   
   ];
   return (
     <Grid container spacing={gridSpacing}>
+      {!getUrlByAction(selectedFolder) && <Summnary />}
       {getUrlByAction(selectedFolder) && (
         <Grid item xs={12}>
           {availableBookingEndpoint.includes(selectedFolder?.action) && <BookingWrapper />}
