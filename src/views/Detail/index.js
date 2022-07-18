@@ -1,39 +1,26 @@
-import React, { useEffect, useState } from 'react';
 import {
-  Grid,
-  Button,
-  Slide,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Tabs,
-  Box,
-  Typography,
-  Tab,
-  Select,
-  FormControl,
-  MenuItem,
-  TextField,
+  Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, MenuItem, Select, Slide, Tab, Tabs, TextField, Typography
 } from '@material-ui/core';
-import ClearIcon from '@material-ui/icons/Clear';
-import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
-import RemoveRedEyeTwoToneIcon from '@material-ui/icons/RemoveRedEyeTwoTone';
-import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
-import DescriptionTwoToneIcon from '@material-ui/icons/DescriptionTwoTone';
-import AssignmentReturnedTwoToneIcon from '@material-ui/icons/AssignmentReturnedTwoTone';
-import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
-import LocalMallOutlinedIcon from '@material-ui/icons/LocalMallOutlined';
-import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
+import AssignmentReturnedTwoToneIcon from '@material-ui/icons/AssignmentReturnedTwoTone';
+import ClearIcon from '@material-ui/icons/Clear';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import DescriptionTwoToneIcon from '@material-ui/icons/DescriptionTwoTone';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
+import RemoveRedEyeTwoToneIcon from '@material-ui/icons/RemoveRedEyeTwoTone';
 import StarIcon from '@material-ui/icons/Star';
+import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
 import CheckIcon from '@material-ui/icons/Check';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { DOCUMENT_CHANGE, FLOATING_MENU_CHANGE } from '../../store/actions';
 import { gridSpacing, view } from '../../store/constant.js';
-import useView from './../../hooks/useView';
 import useBooking from './../../hooks/useBooking';
+import useView from './../../hooks/useView';
 import { format as formatDate } from 'date-fns';
 import EditModal from './EditModal';
 import { style } from './style';
@@ -193,7 +180,6 @@ const DetailDocumentDialog = () => {
     if (tabDisplayOptions.feedback) {
       getFeedbackDetail(selectedDocument.id);
     }
-    console.log('hahah');
   }, [selectedDocument]);
 
   const getFeedbackDetail = async (id) => {

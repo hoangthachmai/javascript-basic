@@ -1,14 +1,5 @@
-import { Button, Card, Checkbox, Grid, Tooltip } from '@material-ui/core';
-import React, { useEffect } from 'react';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Paper from '@material-ui/core/Paper';
-import Switch from '@material-ui/core/Switch';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
+import { Button, Card, Checkbox, Grid, Tooltip, FormControlLabel, TablePagination, TableRow, Paper, Switch, Table, TableBody, TableCell, TableContainer, } from '@material-ui/core';
+import React, { useEffect } from 'react'
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import DuoIcon from '@material-ui/icons/Duo';
@@ -18,11 +9,12 @@ import SkipNextIcon from '@material-ui/icons/SkipNext';
 import StarIcon from '@material-ui/icons/Star';
 import HowToRegIcon from '@material-ui/icons/HowToReg';
 import { useDispatch, useSelector } from 'react-redux';
-import useAccount from '../../hooks/useAccount';
 import { CONFIRM_CHANGE, DOCUMENT_CHANGE, FLOATING_MENU_CHANGE, TASK_CHANGE } from '../../store/actions';
-import { accountActions, bookingActions, gridSpacing, view } from '../../store/constant';
+import { bookingActions, gridSpacing, view } from '../../store/constant';
 import Modal from '../Table/Modal';
+import useAccount from '../../hooks/useAccount';
 import useBooking from './../../hooks/useBooking';
+import useMentor from '../../hooks/useMentor';
 import useConfirmPopup from './../../hooks/useConfirmPopup';
 import useTask from './../../hooks/useTask';
 import useView from './../../hooks/useView';
@@ -31,43 +23,8 @@ import EnhancedTableToolbar from './EnhancedTableToolbar';
 import NoteModal from './NoteModal';
 import { style, useStyles } from './style';
 import { bookingStatusList } from './data';
-
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-function getTodayAndTomorrow(date) {
-  let today = new Date(date);
-  const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  return {
-    today: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}T00:00:00`,
-    tomorrow: `${tomorrow.getFullYear()}-${tomorrow.getMonth() + 1}-${tomorrow.getDate()}T00:00:00`,
-  };
-}
-
+import { getComparator, stableSort, getTodayAndTomorrow } from '../../utils/table';
+import SearchIcon from '@material-ui/icons/Search';
 export default function GeneralTable(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -79,13 +36,15 @@ export default function GeneralTable(props) {
   const { selectedDocument } = useSelector((state) => state.document);
 
   useEffect(() => {
-    setDisplayOptions({
-      id: selectedFolder.action !== bookingActions.by_mentor_list && selectedFolder.action !== accountActions.list_active_user && selectedFolder.action !== accountActions.list_inactive_user,
+    const initOptions = {
+      id: Object.values(bookingActions).includes(selectedFolder.action),
       fullname: tableColumns.includes('fullname'),
+      department_name: tableColumns.includes('department_name'),
       university_name: tableColumns.includes('university'),
-      assess: tableColumns.includes('assess'),
       email_address: tableColumns.includes('email'),
       number_phone: tableColumns.includes('number_phone'),
+      career: tableColumns.includes('career'),
+      assess: tableColumns.includes('assess'),
       schedule: tableColumns.includes('consultation_day'),
       link: false,
       status: tableColumns.includes('status'),
@@ -100,7 +59,8 @@ export default function GeneralTable(props) {
       image_url: tableColumns.includes('image_url'),
       full_name: tableColumns.includes('full_name'),
       menuButtons: !!menuButtons.length || false,
-    });
+    } 
+    setDisplayOptions(initOptions);
   }, [tableColumns, selectedFolder]);
 
   const buttonBookingCancel = menuButtons.find(
@@ -127,6 +87,10 @@ export default function GeneralTable(props) {
   const buttonBookingApprove = menuButtons.find(
     (button) => button.name === view.booking.list.approve
   );
+ 
+  const buttonAccountCreate= menuButtons.find(
+    (button) => button.name === view.user.list.create
+  );
 
   const [isOpenModalNote, setIsOpenModalNote] = React.useState(false);
   const [isOpenModal, setIsOpenModal] = React.useState(false);
@@ -135,7 +99,7 @@ export default function GeneralTable(props) {
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
   const [selectedRecord, setSelectedRecord] = React.useState({});
-  const { url, documentType, tableTitle, showPreviewUrl = true } = props;
+  const { url, documentType, tableTitle } = props;
 
   const { projects } = useSelector((state) => state.project);
   const selectedProject = projects.find((project) => project.selected);
@@ -168,6 +132,7 @@ export default function GeneralTable(props) {
     to_date: getTodayAndTomorrow(Date.now()).tomorrow,
     university_id: '',
     status: '',
+    career: ''
   };
 
   const { getDocuments } = useTask();
@@ -184,6 +149,8 @@ export default function GeneralTable(props) {
   const {
     getAccountDetail, activeAccount,
   } = useAccount();
+
+  const { getMentorDetail } = useMentor();
 
   useEffect(() => {
     if (selectedProject && selectedFolder && url) {
@@ -208,7 +175,7 @@ export default function GeneralTable(props) {
     }
   }, [selectedFolder]);
   useEffect(() => {
-    fetchDocument({})
+    reloadCurrentDocuments()
   }, [selectedDocument])
 
   const fetchDocument = (additionalQuery) => {
@@ -276,19 +243,26 @@ export default function GeneralTable(props) {
     event.stopPropagation();
     let detailDocument = null;
     if (documentType === 'booking') {
-
       detailDocument = await getBookingDetail(selectedDocument.id);
       dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType });
       dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: true });
-    }
-    else if (documentType === 'account') {
+    } else if (documentType === 'account') {
       detailDocument = await getAccountDetail(selectedDocument.account_id);
       dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType });
       dispatch({ type: FLOATING_MENU_CHANGE, accountDocument: true });
+    } else if (documentType === 'mentor') {
+      detailDocument = await getMentorDetail(selectedDocument.id);
+      dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType });
+      dispatch({ type: FLOATING_MENU_CHANGE, mentorDocument: true });
     }
 
   };
 
+  const openDialogCreate=()=>{
+    if (documentType === 'account') {
+      dispatch({ type: FLOATING_MENU_CHANGE, accountDocument: true });
+  }
+};
   const reloadCurrentDocuments = () => {
     setSelected([]);
     fetchDocument({ page: 1 });
@@ -423,8 +397,11 @@ export default function GeneralTable(props) {
       <Grid container spacing={gridSpacing}>
         <Grid item xs={12} style={style.tableTitleWrap}>
           <Grid item xs={6}>
-            <div style={style.tableTitle}>{tableTitle}</div>
+            <div style={style.tableTitle}>{tableTitle}
+            </div>
           </Grid>
+         
+         
         </Grid>
         <Grid item xs={12}>
           <Card className={classes.root}>
@@ -438,6 +415,8 @@ export default function GeneralTable(props) {
                 displayOptions={displayOptions}
                 data={stableSort(documents || [], getComparator(order, orderBy))}
                 getListUniversity={getListUniversity}
+                btnCreateNewAccount={buttonAccountCreate}
+                createNewAccount={openDialogCreate}
               />
               <TableContainer>
                 <Table
@@ -531,6 +510,19 @@ export default function GeneralTable(props) {
                                 </>
                               </TableCell>
                             )}
+                             {displayOptions.department_name && (
+                              <TableCell align="left">
+                                <>
+                                  <span
+                                    className={classes.tableItemName}
+                                    onClick={(event) => openDetailDocument(event, row)}
+                                  >
+                                    {row.department_name}
+                                  </span>
+                                  &nbsp;&nbsp;
+                                </>
+                              </TableCell>
+                            )}
                             {displayOptions.full_name && (
                               <TableCell align="left">
                                 <>
@@ -548,6 +540,19 @@ export default function GeneralTable(props) {
                             {displayOptions.university_name && (
                               <TableCell align="left">{row.university_name || ''}</TableCell>
                             )}
+                            {displayOptions.email_address && (
+                              <TableCell align="left">{row.email_address || ''}</TableCell>
+                            )}
+
+                            {displayOptions.number_phone && (
+                              <TableCell align="left">{row.number_phone || ''}</TableCell>
+                            )}
+                            {displayOptions.schedule && (
+                              <TableCell align="left">{row.schedule || ''}</TableCell>
+                            )}
+                            {displayOptions.career && (
+                              <TableCell align="left">{row.career || ''}</TableCell>
+                            )}
                             {displayOptions.assess && (
                               <TableCell align="left">
                                 {(!isNaN(row.assess) && row.assess) > 0 && (
@@ -557,25 +562,6 @@ export default function GeneralTable(props) {
                                   </div>
                                 )}
                               </TableCell>
-                            )}
-                            {displayOptions.email_address && (
-                              <TableCell align="left">{row.email_address || ''}</TableCell>
-                            )}
-                            {displayOptions.active && (
-                              <TableCell align="left">
-                                <>
-                                  <FormControlLabel
-                                    control={<Switch color="primary" checked={row.is_active} onClick={(event) => toggleSetActiveAccount(event, row.email_address, event.target.checked)} />}
-                                  />
-                                  &nbsp;&nbsp;
-                                </>
-                              </TableCell>
-                            )}
-                            {displayOptions.number_phone && (
-                              <TableCell align="left">{row.number_phone || ''}</TableCell>
-                            )}
-                            {displayOptions.schedule && (
-                              <TableCell align="left">{row.schedule || ''}</TableCell>
                             )}
                             {displayOptions.mentor_name && (
                               <TableCell align="left">{row.mentor_name || ''}</TableCell>
@@ -593,9 +579,11 @@ export default function GeneralTable(props) {
                             )}
                             {displayOptions.status && (
                               <TableCell align="left">
-                                <span style={style.statusWrap} className={classes[getStatusType(row.status || 'none')]}>
-                                  {row.status}
-                                </span>
+                                {row.status && (
+                                  <span style={style.statusWrap} className={classes[getStatusType(row.status || 'none')]}>
+                                    {row.status}
+                                  </span>
+                                )}
                               </TableCell>
                             )}
                             {displayOptions.rating && (
@@ -618,6 +606,16 @@ export default function GeneralTable(props) {
                               <TableCell align="left">{row.uncomplete}</TableCell>
                             )}
                             {displayOptions.note && <TableCell align="left">{row.note}</TableCell>}
+                            {displayOptions.active && (
+                              <TableCell align="left">
+                                <>
+                                  <FormControlLabel
+                                    control={<Switch color="primary" checked={row.is_active} onClick={(event) => toggleSetActiveAccount(event, row.email_address, event.target.checked)} />}
+                                  />
+                                  &nbsp;&nbsp;
+                                </>
+                              </TableCell>
+                            )}
                             {displayOptions.menuButtons && (
                               <TableCell align="left">
                                 <div className={classes.handleButtonWrap}>

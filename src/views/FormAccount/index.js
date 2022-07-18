@@ -26,7 +26,7 @@ import useView from '../../hooks/useView';
 import { style } from './style.js';
 import useStyles from './classes.js';
 import PermissionModal from '../FloatingMenu/UploadFile/index.js';
-import { FLOATING_MENU_CHANGE } from '../../store/actions.js';
+import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE } from '../../store/actions.js';
 import useAccount from '../../hooks/useAccount.js';
 
 
@@ -113,26 +113,14 @@ const AccountModal = () => {
       job_title: '',
       image_url: 'https://firebasestorage.googleapis.com/v0/b/huongnghiepnhanh.appspot.com/o/Avatar%20Nam.jpg?alt=media&token=8208326e-faa9-4bdf-b811-a48481839cb5',
       email_address: '',
-      is_active: '',
+      is_active: true,
       employee_id: '',
+      account_id: '',
     });
+    dispatch({ type: DOCUMENT_CHANGE, selectedDocument: null, documentType: 'account' });
     dispatch({ type: FLOATING_MENU_CHANGE, accountDocument: false });
   };
 
-
-  const handleSaveAccount = async () => {
-    try {
-      await createAccount({
-        ...account,
-        outputtype: 'RawJson',
-      });
-
-    } catch (error) {
-      console.log('error update booking', error)
-    } finally {
-
-    }
-  };
   const handleUpdateAccount = async () => {
     try {
 
@@ -142,6 +130,7 @@ const AccountModal = () => {
         company_code: 'HNN'
       });
       handleCloseDialog();
+      
     } catch (error) {
       console.log('error update booking', error)
     } finally {
@@ -270,7 +259,7 @@ const AccountModal = () => {
                                 type="text"
                                 variant="outlined"
                                 onChange={handleChange}
-                                value={account.first_name}
+                                value={account.first_name || ''}
                               />
                             </Grid>
                             <Grid item lg={6} md={6} xs={12}>
@@ -284,7 +273,7 @@ const AccountModal = () => {
                                 type="text"
                                 variant="outlined"
                                 onChange={handleChange}
-                                value={account.last_name}
+                                value={account.last_name || ''}
                               />
                             </Grid>
                           </Grid>
@@ -300,7 +289,7 @@ const AccountModal = () => {
                                 type="email"
                                 variant="outlined"
                                 onChange={handleChange}
-                                value={account.email_address}
+                                value={account.email_address || ''}
                               />
                             </Grid>
                             <Grid item lg={6} md={6} xs={6}>
@@ -312,9 +301,10 @@ const AccountModal = () => {
                                 name="job_title"
                                 size="medium"
                                 type="text"
+
                                 variant="outlined"
                                 onChange={handleChange}
-                                value={account.job_title}
+                                value={account.job_title || ''}
                               />
                             </Grid>
                           </Grid>
