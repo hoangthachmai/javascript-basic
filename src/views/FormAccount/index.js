@@ -113,7 +113,7 @@ const AccountModal = () => {
       job_title: '',
       image_url: 'https://firebasestorage.googleapis.com/v0/b/huongnghiepnhanh.appspot.com/o/Avatar%20Nam.jpg?alt=media&token=8208326e-faa9-4bdf-b811-a48481839cb5',
       email_address: '',
-      is_active: '',
+      is_active: true,
       employee_id: '',
     });
     dispatch({ type: FLOATING_MENU_CHANGE, accountDocument: false });

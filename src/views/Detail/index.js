@@ -1,45 +1,29 @@
-import React, { useEffect, useState } from 'react';
 import {
-  Grid,
-  Button,
-  Slide,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Tabs,
-  Box,
-  Typography,
-  Tab,
-  Select,
-  FormControl,
-  MenuItem,
-  TextField
+  Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, MenuItem, Select, Slide, Tab, Tabs, TextField, Typography
 } from '@material-ui/core';
-import ClearIcon from '@material-ui/icons/Clear';
-import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
-import RemoveRedEyeTwoToneIcon from '@material-ui/icons/RemoveRedEyeTwoTone';
-import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
-import DescriptionTwoToneIcon from '@material-ui/icons/DescriptionTwoTone';
-import AssignmentReturnedTwoToneIcon from '@material-ui/icons/AssignmentReturnedTwoTone';
-import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
-import LocalMallOutlinedIcon from '@material-ui/icons/LocalMallOutlined';
-import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import Snackbar from '@material-ui/core/Snackbar';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
+import AssignmentReturnedTwoToneIcon from '@material-ui/icons/AssignmentReturnedTwoTone';
+import ClearIcon from '@material-ui/icons/Clear';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import DescriptionTwoToneIcon from '@material-ui/icons/DescriptionTwoTone';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
+import RemoveRedEyeTwoToneIcon from '@material-ui/icons/RemoveRedEyeTwoTone';
 import StarIcon from '@material-ui/icons/Star';
-import { useSelector, useDispatch } from 'react-redux';
+import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
+import MuiAlert from '@material-ui/lab/Alert';
 import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { DOCUMENT_CHANGE, FLOATING_MENU_CHANGE } from '../../store/actions';
 import { gridSpacing, view } from '../../store/constant.js';
-import useView from './../../hooks/useView';
 import useBooking from './../../hooks/useBooking';
-import ConfirmSaveDialog from './ConfirmSaveDialog';
+import useView from './../../hooks/useView';
+import useStyles from './classes';
 import EditModal from './EditModal';
 import { style } from './style';
-import useStyles from './classes'
-import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE } from '../../store/actions';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
 
 const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -179,7 +163,6 @@ const DetailDocumentDialog = () => {
     if (tabDisplayOptions.feedback) {
       getFeedbackDetail(selectedDocument.id);
     }
-    console.log('hahah');
   }, [selectedDocument]);
 
   const getFeedbackDetail = async (id) => {

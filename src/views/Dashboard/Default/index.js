@@ -5,29 +5,20 @@ import BookingWrapper from './../../Booking/index';
 import AccountWrapper from '../../Account';
 import DepartmentWrapper from '../../Department';
 import { Grid } from '@material-ui/core';
-import { bookingActions, gridSpacing, accountActions, departmentActions } from './../../../store/constant';
+import { bookingActions, gridSpacing, accountActions, departmentActions, mentorActions } from './../../../store/constant';
+import MentorWrapper from '../../Mentor';
+
+
+
 
 const Default = () => {
   const { selectedFolder } = useSelector((state) => state.folder);
 
-  const availableBookingEndpoint = [
-    bookingActions.all_list,
-    bookingActions.handle_list,
-    bookingActions.cancel_list,
-    bookingActions.completed_list,
-    bookingActions.by_date_list,
-    bookingActions.by_mentor_list,
-  ];
-  const availableAccountEndpoint = [
-    accountActions.list_active_user,
-    accountActions.list_inactive_user,
-   
-  ];
-  const availableDepartmentEndpoint = [
-    departmentActions.list_active_department,
-    departmentActions.list_inactive_department,
-   
-  ];
+  const availableBookingEndpoint = Object.values(bookingActions);
+  const availableAccountEndpoint = Object.values(accountActions);
+  const availableMentorEndpoint = Object.values(mentorActions);
+  const availableDepartmentEndpoint = Object.values(departmentActions);
+
   return (
     <Grid container spacing={gridSpacing}>
       {getUrlByAction(selectedFolder) && (
@@ -35,6 +26,7 @@ const Default = () => {
           {availableBookingEndpoint.includes(selectedFolder?.action) && <BookingWrapper />}
           {availableAccountEndpoint.includes(selectedFolder?.action) && <AccountWrapper />}
           {availableDepartmentEndpoint.includes(selectedFolder?.action) && <DepartmentWrapper />}
+          {availableMentorEndpoint.includes(selectedFolder?.action) && <MentorWrapper />}
         </Grid>
       )}
     </Grid>

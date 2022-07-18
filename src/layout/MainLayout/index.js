@@ -8,7 +8,7 @@ import {
   CssBaseline,
   Toolbar,
 } from '@material-ui/core';
-
+import { useSelector } from 'react-redux';
 import { drawerWidth } from './../../store/constant';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -18,8 +18,8 @@ import Loading from './Loading';
 import useLoading from './../../hooks/useLoading';
 import ConfirmPopup from '../../views/ConfirmPopup';
 import DetailDocumentDialog from '../../views/Detail/index.js';
-import { useDispatch, useSelector } from 'react-redux';
 import AccountModal from '../../views/FormAccount';
+import MentorModal from '../../views/Mentor/Detail';
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -71,20 +71,23 @@ const MainLayout = ({ children }) => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const { loading } = useLoading();
 
-  const handleDrawerToggle = () => {
-    setDrawerOpen(!drawerOpen);
-  };
   const { documentType } = useSelector((state) => state.document);
-  const renderDetailDialog = () =>{
+
+  const renderDetailDialog = () => {
     switch (documentType) {
       case 'booking':
         return <DetailDocumentDialog />;
       case 'account':
-        return <AccountModal/>;
-      default:
-        break;
+        return <AccountModal />;
+      case 'mentor':
+        return <MentorModal />;
     }
   }
+
+  const handleDrawerToggle = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
   React.useEffect(() => {
     setDrawerOpen(matchUpMd);
   }, [matchUpMd]);
