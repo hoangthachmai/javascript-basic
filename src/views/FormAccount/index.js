@@ -26,7 +26,7 @@ import useView from '../../hooks/useView';
 import { style } from './style.js';
 import useStyles from './classes.js';
 import PermissionModal from '../FloatingMenu/UploadFile/index.js';
-import { FLOATING_MENU_CHANGE } from '../../store/actions.js';
+import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE } from '../../store/actions.js';
 import useAccount from '../../hooks/useAccount.js';
 
 
@@ -115,24 +115,12 @@ const AccountModal = () => {
       email_address: '',
       is_active: true,
       employee_id: '',
+      account_id: '',
     });
+    dispatch({ type: DOCUMENT_CHANGE, selectedDocument: null, documentType: 'account' });
     dispatch({ type: FLOATING_MENU_CHANGE, accountDocument: false });
   };
 
-
-  const handleSaveAccount = async () => {
-    try {
-      await createAccount({
-        ...account,
-        outputtype: 'RawJson',
-      });
-
-    } catch (error) {
-      console.log('error update booking', error)
-    } finally {
-
-    }
-  };
   const handleUpdateAccount = async () => {
     try {
 
@@ -142,6 +130,7 @@ const AccountModal = () => {
         company_code: 'HNN'
       });
       handleCloseDialog();
+      
     } catch (error) {
       console.log('error update booking', error)
     } finally {

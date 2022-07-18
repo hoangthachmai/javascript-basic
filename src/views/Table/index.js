@@ -174,7 +174,7 @@ export default function GeneralTable(props) {
     }
   }, [selectedFolder]);
   useEffect(() => {
-    fetchDocument({})
+    reloadCurrentDocuments()
   }, [selectedDocument])
 
   const fetchDocument = (additionalQuery) => {
