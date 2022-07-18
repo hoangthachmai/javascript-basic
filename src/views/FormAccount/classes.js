@@ -374,7 +374,7 @@ const useStyles = makeStyles((theme) => ({
   imageaccount: { 
     height: '200px',
     width: '200px',
-    boxshadow: 'rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px',
+    boxShadow: 'rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px',
     borderRadius: '50%',
     border: '1px solid #ddd',
     objectFit: 'cover',

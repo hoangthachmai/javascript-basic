@@ -270,7 +270,7 @@ const AccountModal = () => {
                                 type="text"
                                 variant="outlined"
                                 onChange={handleChange}
-                                value={account.first_name}
+                                value={account.first_name || ''}
                               />
                             </Grid>
                             <Grid item lg={6} md={6} xs={12}>
@@ -284,7 +284,7 @@ const AccountModal = () => {
                                 type="text"
                                 variant="outlined"
                                 onChange={handleChange}
-                                value={account.last_name}
+                                value={account.last_name || ''}
                               />
                             </Grid>
                           </Grid>
@@ -300,7 +300,7 @@ const AccountModal = () => {
                                 type="email"
                                 variant="outlined"
                                 onChange={handleChange}
-                                value={account.email_address}
+                                value={account.email_address || ''}
                               />
                             </Grid>
                             <Grid item lg={6} md={6} xs={6}>
@@ -312,9 +312,10 @@ const AccountModal = () => {
                                 name="job_title"
                                 size="medium"
                                 type="text"
+
                                 variant="outlined"
                                 onChange={handleChange}
-                                value={account.job_title}
+                                value={account.job_title || ''}
                               />
                             </Grid>
                           </Grid>

@@ -81,6 +81,7 @@ export default function GeneralTable(props) {
     setDisplayOptions({
       id: selectedFolder.action !== bookingActions.by_mentor_list && selectedFolder.action !== accountActions.list_active_user && selectedFolder.action !== accountActions.list_inactive_user,
       fullname: tableColumns.includes('fullname'),
+      department_name: tableColumns.includes('department_name'),
       university_name: tableColumns.includes('university'),
       assess: tableColumns.includes('assess'),
       email_address: tableColumns.includes('email'),
@@ -525,6 +526,19 @@ export default function GeneralTable(props) {
                                     <img src={row.image_url}
                                       style={style.tableUserAvatar}
                                     />
+                                  </span>
+                                  &nbsp;&nbsp;
+                                </>
+                              </TableCell>
+                            )}
+                             {displayOptions.department_name && (
+                              <TableCell align="left">
+                                <>
+                                  <span
+                                    className={classes.tableItemName}
+                                    onClick={(event) => openDetailDocument(event, row)}
+                                  >
+                                    {row.department_name}
                                   </span>
                                   &nbsp;&nbsp;
                                 </>

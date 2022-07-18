@@ -28,12 +28,14 @@ export const vibEndpoints = {
   set_note_booking: '/Primary/?FlowAlias=hnn_api_booking_update_note_booking_by_id&&action=api',
 
 
-  get_all_account: '/Primary/?FlowAlias=hnn_acco_api_get_all_account_by_page&action=api',
-  get_all_inaccount: '/Primary/?FlowAlias=hnn_acco_api_get_all_inaccount_by_page&action=api',
+  get_all_active_account: '/Primary/?FlowAlias=hnn_acco_api_get_all_active_account_by_page&action=api',
+  get_all_inactive_account: '/Primary/?FlowAlias=hnn_acco_api_get_all_inactive_account_by_page&action=api',
   get_account_detail: '/Primary/?FlowAlias=hnn_api_booking_get_account_by_id&action=api',
   create_account: '/Primary/?FlowAlias=hnn_api_booking_user_create_account&action=api',
   update_account: '/Primary/?FlowAlias=hnn_api_booking_user_update_account&action=api',
   active_account: '/Primary/?FlowAlias=hnn_api_user_active_account&action=api',
+
+  get_all_active_department: '/Primary/?FlowAlias=hnn_api_dept_get_all_active_department_by_page&action=api',
 
   get_career_demand: '/Primary/?FlowAlias=hnn_api_booking_get_all_career_and_demand&action=api',
   get_list_university: '/Primary/?FlowAlias=hnn_api_univ_get_all_university&action=api',
@@ -58,6 +60,10 @@ export const bookingActions = {
 export const accountActions={
   list_active_user: 'HNN_ACTION_OPEN_ACTIVE_USER_LIST',
   list_inactive_user: 'HNN_ACTION_OPEN_INACTIVE_USER_LIST',
+}
+export const departmentActions={
+  list_active_department: 'HNN_ACTION_OPEN_ACTIVE_DEPT_LIST',
+  list_inactive_department: 'HNN_ACTION_OPEN_INACTIVE_DEPT_LIST',
 }
 export const tinyMCESecretKey = '7kiqm5c7crs3mdgf1lgiq973xn7kdxtf6ohasxhmkb2mpc45';
 export const pageUrls = {

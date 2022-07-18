@@ -18,6 +18,7 @@ import Loading from './Loading';
 import useLoading from './../../hooks/useLoading';
 import ConfirmPopup from '../../views/ConfirmPopup';
 import DetailDocumentDialog from '../../views/Detail/index.js';
+import { useDispatch, useSelector } from 'react-redux';
 import AccountModal from '../../views/FormAccount';
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -73,7 +74,17 @@ const MainLayout = ({ children }) => {
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
   };
-
+  const { documentType } = useSelector((state) => state.document);
+  const renderDetailDialog = () =>{
+    switch (documentType) {
+      case 'booking':
+        return <DetailDocumentDialog />;
+      case 'account':
+        return <AccountModal/>;
+      default:
+        break;
+    }
+  }
   React.useEffect(() => {
     setDrawerOpen(matchUpMd);
   }, [matchUpMd]);
@@ -92,8 +103,7 @@ const MainLayout = ({ children }) => {
         <div className={classes.main}>{children}</div>
         <FloatingMenu />
         <UploadFile />
-        <DetailDocumentDialog />
-        <AccountModal/>
+        {renderDetailDialog()}
       </main>
       {loading && <Loading />}
       <ConfirmPopup />

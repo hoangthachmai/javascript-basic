@@ -1,4 +1,4 @@
-import { bookingActions, vibEndpoints ,accountActions } from '../store/constant.js';
+import { bookingActions, vibEndpoints ,accountActions, departmentActions } from '../store/constant.js';
 
 export function getUrlByAction(selectedFolder) {
   switch (selectedFolder ? selectedFolder.action : '') {
@@ -21,12 +21,17 @@ export function getUrlByAction(selectedFolder) {
       return vibEndpoints.get_by_mentor_booking;
     }
     case accountActions.list_active_user: {
-      return vibEndpoints.get_all_account;
+      return vibEndpoints.get_all_active_account;
     }
     case accountActions.list_inactive_user: {
-      return vibEndpoints.get_all_inaccount;
+      return vibEndpoints.get_all_inactive_account;
     }
-    
+    case departmentActions.list_active_department: {
+      return vibEndpoints.get_all_active_department;
+    }
+    case departmentActions.list_inactive_department: {
+      return vibEndpoints.get_all_inactive_account;
+    }
     default: {
       return '';
     }
