@@ -53,13 +53,14 @@ export const vibEndpoints = {
   get_feedback_detail: '/Primary/?FlowAlias=hnn_api_booking_get_feedback_by_booking_id&action=api',
   update_booking_mentor: '/Primary/?FlowAlias=hnn_api_booking_update_booking_mentor&action=api',
 
-  // mentor
   get_all_mentors: '/Primary/?FlowAlias=hnn_api_ment_get_all_mentors&action=api',
   get_inactive_mentors: '/Primary/?FlowAlias=hnn_api_ment_get_all_inactive_mentors&action=api',
   get_mentor_detail_by_id: '/Primary/?FlowAlias=hnn_api_ment_get_mentor_detail_by_id&action=api',
   create_mentor: '/Primary/?FlowAlias=hnn_api_ment_create_mentor&action=api',
   update_mentor: '/Primary/?FlowAlias=hnn_api_ment_update_mentor&action=api'
 
+  get_statistic_data: '/Primary/?FlowAlias=hnn_api_booking_get_statistic_data&action=api',
+  get_log_data: '/Primary/?FlowAlias=hnn_api_booking_get_log_data&action=api'
 
 };
 export const apiDomain = 'https://upload.truebpm.vn';

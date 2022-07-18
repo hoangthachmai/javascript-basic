@@ -11,7 +11,6 @@ import useAccount from '../../hooks/useAccount';
 import CustomIcon from '../../layout/MainLayout/Sidebar/MenuList/CustomIcon/index';
 import { getUrlByAction } from '../../utils/utils';
 
-
 const useStyles = makeStyles((theme) => ({
   speedDial: {
     position: 'fixed',
@@ -22,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FloatingMenu() {
   const classes = useStyles();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
   const { float_buttons: floatButtons } = useView();
   const handleOpen = () => {
@@ -31,32 +30,37 @@ export default function FloatingMenu() {
 
   const handleClose = () => {
     setOpen(false);
-
   };
-  
-  const buttonCreateUser = floatButtons.find(button => button.name === view.floating.create)
 
- 
+  const buttonCreateUser = floatButtons.find((button) => button.name === view.floating.create);
 
-  const handleClickCreateUser=async()=>{
+  const handleClickCreateUser = async () => {
     dispatch({ type: FLOATING_MENU_CHANGE, accountDocument: true });
     setOpen(false);
-  }
-  
-  return (
-    <SpeedDial
-      ariaLabel="SpeedDial tooltip example"
-      className={classes.speedDial}
-      icon={<SpeedDialIcon />}
-      onClose={handleClose}
-      onOpen={handleOpen}
-      open={open}
-    >
-      { buttonCreateUser && 
-      <SpeedDialAction key="create" 
-      icon={<CustomIcon name={buttonCreateUser.icon || ""} />} 
-      tooltipTitle={buttonCreateUser.text} tooltipOpen onClick={handleClickCreateUser} /> }
+  };
 
-    </SpeedDial>
+  return (
+    <React.Fragment>
+      {floatButtons.length > 0 && (
+        <SpeedDial
+          ariaLabel="SpeedDial tooltip example"
+          className={classes.speedDial}
+          icon={<SpeedDialIcon />}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          open={open}
+        >
+          {buttonCreateUser && (
+            <SpeedDialAction
+              key="create"
+              icon={<CustomIcon name={buttonCreateUser.icon || ''} />}
+              tooltipTitle={buttonCreateUser.text}
+              tooltipOpen
+              onClick={handleClickCreateUser}
+            />
+          )}
+        </SpeedDial>
+      )}
+    </React.Fragment>
   );
 }

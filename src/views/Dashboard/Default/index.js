@@ -7,9 +7,7 @@ import DepartmentWrapper from '../../Department';
 import { Grid } from '@material-ui/core';
 import { bookingActions, gridSpacing, accountActions, departmentActions, mentorActions } from './../../../store/constant';
 import MentorWrapper from '../../Mentor';
-
-
-
+import Summnary from './../Summary/index';
 
 const Default = () => {
   const { selectedFolder } = useSelector((state) => state.folder);
@@ -21,6 +19,7 @@ const Default = () => {
 
   return (
     <Grid container spacing={gridSpacing}>
+      {!getUrlByAction(selectedFolder) && <Summnary />}
       {getUrlByAction(selectedFolder) && (
         <Grid item xs={12}>
           {availableBookingEndpoint.includes(selectedFolder?.action) && <BookingWrapper />}
