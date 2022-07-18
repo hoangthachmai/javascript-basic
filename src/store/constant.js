@@ -40,7 +40,8 @@ export const vibEndpoints = {
   get_feedback_detail: '/Primary/?FlowAlias=hnn_api_booking_get_feedback_by_booking_id&action=api',
   update_booking_mentor: '/Primary/?FlowAlias=hnn_api_booking_update_booking_mentor&action=api',
 
-  get_statistic_donut_data: '/Primary/?FlowAlias=hnn_api_booking_get_statistic_donut_data&action=api'
+  get_statistic_data: '/Primary/?FlowAlias=hnn_api_booking_get_statistic_data&action=api',
+  get_log_data: '/Primary/?FlowAlias=hnn_api_booking_get_log_data&action=api'
 
 };
 export const apiDomain = 'https://upload.truebpm.vn';

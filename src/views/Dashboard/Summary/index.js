@@ -15,19 +15,17 @@ import useBooking from './../../../hooks/useBooking';
 
 const Summnary = () => {
   const theme = useTheme();
-  const [label, setLabel] = useState([]);
-  const [series, setSeries] = useState([]);
   const { getStatisticData } = useBooking();
+  const [statistic, setStatistic] = useState({})
 
   useEffect(() => {
-    getDataDonut();
+    getStatistic();
   }, []);
 
-  const getDataDonut = async () => {
+  const getStatistic = async () => {
     try {
       const data = await getStatisticData();
-      setLabel(data.map((item) => item.label));
-      setSeries(data.map((item) => item.series));
+      setStatistic(data)
     } catch (e) {
       console.log(e);
     }
@@ -39,55 +37,47 @@ const Summnary = () => {
         <Grid container spacing={gridSpacing}>
           <Grid item lg={3} sm={6} xs={12}>
             <ReportCard
-              primary={10}
-              secondary="Đăng ký mới"
+              primary={statistic.total}
+              secondary="Tổng số đăng ký"
               color={theme.palette.primary.main}
-              footerData="10% changes on profit"
               iconPrimary={MonetizationOnTwoTone}
-              iconFooter={TrendingUpIcon}
             />
           </Grid>
           <Grid item lg={3} sm={6} xs={12}>
             <ReportCard
-              primary={5}
-              secondary="Đăng ký cần xử lý"
-              color={theme.palette.warning.main}
-              footerData="28% task performance"
-              iconPrimary={CalendarTodayTwoTone}
-              iconFooter={TrendingDownIcon}
+              primary={statistic.scheduled}
+              secondary="Đăng ký đã lên lịch"
+              color={theme.palette.info.main}
+              iconPrimary={ThumbUpAltTwoTone}
+              footerData={statistic.pending+' Đăng ký đang chờ'}
             />
           </Grid>
           <Grid item lg={3} sm={6} xs={12}>
+            <ReportCard
+              primary={statistic.completed}
+              secondary="Đăng ký đã hoàn thành"
+              color={theme.palette.success.main}
+              iconPrimary={ThumbUpAltTwoTone}
+              footerData=''
+            />
+          </Grid>
+          <Grid item lg={3} sm={6} xs={12}>
+            <ReportCard
+              primary={statistic.cancel}
+              secondary="Đăng ký đã huỷ"
+              color={theme.palette.error.main}
+              iconPrimary={CalendarTodayTwoTone}
+              footerData=''
+            />
+          </Grid>
+          {/* <Grid item lg={3} sm={6} xs={12}>
             <ReportCard
               primary={7}
               secondary="Đăng ký đã huỷ"
               color={theme.palette.error.main}
-              footerData="10k daily views"
               iconPrimary={DescriptionTwoTone}
-              iconFooter={TrendingUpIcon}
             />
-          </Grid>
-          <Grid item lg={3} sm={6} xs={12}>
-            <ReportCard
-              primary={100}
-              secondary="Đăng ký"
-              color={theme.palette.success.main}
-              footerData="1k download in App store"
-              iconPrimary={ThumbUpAltTwoTone}
-              iconFooter={TrendingUpIcon}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={12}>
-        <Grid container spacing={gridSpacing}>
-          <Grid item lg={8} xs={12}>
-            <Grid container spacing={gridSpacing}>
-              <Grid item xs={12} sm={6}>
-                <RevenuChartCard label={label} series={series} />
-              </Grid>
-            </Grid>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Grid>
     </React.Fragment>

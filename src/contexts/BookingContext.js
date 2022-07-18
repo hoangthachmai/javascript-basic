@@ -166,7 +166,18 @@ export const BookingProvider = ({ children }) => {
 
   const getStatisticData = async () => {
     return axiosInstance
-      .post(vibEndpoints.get_statistic_donut_data, { outputtype: 'RawJson' })
+      .post(vibEndpoints.get_statistic_data, { outputtype: 'RawJson' })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) {
+          const { data } = response.data;
+          return data;
+        } else return {};
+      });
+  }
+
+  const getLog = async (id) => {
+    return axiosInstance
+      .post(vibEndpoints.get_log_data, { id: id, outputtype: 'RawJson' })
       .then((response) => {
         if (response.status === 200 && response.data.return === 200) {
           const { list } = response.data;
@@ -191,7 +202,8 @@ export const BookingProvider = ({ children }) => {
         updateBookingMentor,
         getCareerDemandList,
         approveBooking,
-        getStatisticData
+        getStatisticData,
+        getLog
       }}
     >
       {children}

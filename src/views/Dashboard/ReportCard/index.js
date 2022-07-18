@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: '20px',
         paddingRight: '20px',
         color: theme.palette.common.white,
+        minHeight: '42px'
     },
 }));
 
