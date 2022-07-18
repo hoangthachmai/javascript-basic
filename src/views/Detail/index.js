@@ -1,3 +1,5 @@
+import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import {
   Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, MenuItem, Select, Slide, Tab, Tabs, TextField, Typography
 } from '@material-ui/core';
@@ -13,11 +15,7 @@ import RemoveRedEyeTwoToneIcon from '@material-ui/icons/RemoveRedEyeTwoTone';
 import StarIcon from '@material-ui/icons/Star';
 import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
 import CheckIcon from '@material-ui/icons/Check';
-import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { DOCUMENT_CHANGE, FLOATING_MENU_CHANGE } from '../../store/actions';
 import { gridSpacing, view } from '../../store/constant.js';
 import useBooking from './../../hooks/useBooking';
 import useView from './../../hooks/useView';

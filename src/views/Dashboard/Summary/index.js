@@ -2,14 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles, Grid } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import TrendingDownIcon from '@material-ui/icons/TrendingDown';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+import ScheduleIcon from '@material-ui/icons/Schedule';
 import MonetizationOnTwoTone from '@material-ui/icons/MonetizationOnTwoTone';
-import DescriptionTwoTone from '@material-ui/icons/DescriptionTwoTone';
-import ThumbUpAltTwoTone from '@material-ui/icons/ThumbUpAltTwoTone';
-import CalendarTodayTwoTone from '@material-ui/icons/CalendarTodayTwoTone';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import ReportCard from './../ReportCard/index';
-import RevenuChartCard from './../../Chart/RevenuChartCard';
 import { gridSpacing } from './../../../store/constant';
 import useBooking from './../../../hooks/useBooking';
 
@@ -47,8 +44,8 @@ const Summnary = () => {
             <ReportCard
               primary={statistic.scheduled}
               secondary="Đăng ký đã lên lịch"
-              color={theme.palette.info.main}
-              iconPrimary={ThumbUpAltTwoTone}
+              color={theme.palette.warning.main}
+              iconPrimary={ScheduleIcon}
               footerData={statistic.pending+' Đăng ký đang chờ'}
             />
           </Grid>
@@ -57,7 +54,7 @@ const Summnary = () => {
               primary={statistic.completed}
               secondary="Đăng ký đã hoàn thành"
               color={theme.palette.success.main}
-              iconPrimary={ThumbUpAltTwoTone}
+              iconPrimary={CheckCircleOutlineIcon}
               footerData=''
             />
           </Grid>
@@ -66,18 +63,10 @@ const Summnary = () => {
               primary={statistic.cancel}
               secondary="Đăng ký đã huỷ"
               color={theme.palette.error.main}
-              iconPrimary={CalendarTodayTwoTone}
+              iconPrimary={CancelOutlinedIcon}
               footerData=''
             />
           </Grid>
-          {/* <Grid item lg={3} sm={6} xs={12}>
-            <ReportCard
-              primary={7}
-              secondary="Đăng ký đã huỷ"
-              color={theme.palette.error.main}
-              iconPrimary={DescriptionTwoTone}
-            />
-          </Grid> */}
         </Grid>
       </Grid>
     </React.Fragment>
