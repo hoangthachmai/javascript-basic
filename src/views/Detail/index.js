@@ -1,7 +1,28 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, MenuItem, Select, Slide, Tab, Tabs, TextField, Typography
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Grid,
+  MenuItem,
+  Select,
+  Slide,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from '@material-ui/core';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import AssignmentReturnedTwoToneIcon from '@material-ui/icons/AssignmentReturnedTwoTone';
@@ -23,6 +44,7 @@ import { format as formatDate } from 'date-fns';
 import EditModal from './EditModal';
 import { style } from './style';
 import useStyles from './classes';
+import { withStyles } from '@material-ui/core/styles';
 import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE } from '../../store/actions';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -75,6 +97,17 @@ const labelDay = {
   Saturday: 'Thứ 7',
   Sunday: 'Chủ nhật',
 };
+
+const StyledTableCell = withStyles((theme) => ({
+  root: {
+    '&:not(:first-child)': {
+      padding: '16px 2px'
+    },
+    '&:first-child': {
+      padding: '16px 2px 16px 20px'
+    }
+  },
+}))(TableCell);
 
 const DetailDocumentDialog = () => {
   const classes = useStyles();
@@ -732,7 +765,27 @@ const DetailDocumentDialog = () => {
                           className={`${classes.tabItemNoteSelection} ${classes.tabItemNoteInputWrap}`}
                         >
                           <div className={classes.tabItemNoteSelectionLabel}>Ghi chú: </div>
-                          <TextField
+                          <TableContainer component={Paper} className={classes.tableNote}>
+                            <Table stickyHeader aria-label="sticky table">
+                              <TableHead>
+                                <TableRow>
+                                  <StyledTableCell>Thời gian</StyledTableCell>
+                                  <StyledTableCell align="left">Người tạo</StyledTableCell>
+                                  <StyledTableCell align="left">Nội dung</StyledTableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {document?.notes?.map((row) => (
+                                  <TableRow key={row.created_date}>
+                                    <StyledTableCell align="left">{formatDate(new Date(row.created_date), 'h:mm aa')}</StyledTableCell>
+                                    <StyledTableCell align="left">{row.created_by}</StyledTableCell>
+                                    <StyledTableCell align="left">{row.note}</StyledTableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                          {/* <TextField
                             fullWidth
                             multiline
                             rows={4}
@@ -743,7 +796,7 @@ const DetailDocumentDialog = () => {
                             onChange={handleChangeNote}
                             InputLabelProps={{ shrink: true }}
                             className={classes.tabItemNoteInput}
-                          />
+                          /> */}
                         </div>
                       </div>
                     </Grid>
@@ -766,35 +819,40 @@ const DetailDocumentDialog = () => {
                             alignItems="center"
                             className={classes.projecttablemain}
                           >
-                            {logs?.map((item, i, arr) => (
-                              <Grid item xs={12} key={i}>
-                                <Grid container spacing={2}>
-                                  <Grid item>
-                                    <Avatar
-                                      color="primary"
-                                      size="small"
-                                      className={classes.avatarIcon}
-                                    >
-                                      <CheckIcon className={i === arr.length - 1 ? classes.avatarIcon : classes.dnone} />
-                                    </Avatar>
-                                  </Grid>
-                                  <Grid item xs zeroMinWidth>
-                                    <Grid container spacing={0}>
-                                      <Grid item xs={12}>
-                                        <Typography align="left" variant="subtitle2">
-                                          {formatDate(new Date(item.time), 'dd/MM/yyyy h:mm aa')}
-                                        </Typography>
-                                      </Grid>
-                                      <Grid item xs={12}>
-                                        <Typography align="left" variant="body1">
-                                          {item.action_name}
-                                        </Typography>
+                            {logs
+                              .slice(0)
+                              .reverse()
+                              .map((item, i, arr) => (
+                                <Grid item xs={12} key={i}>
+                                  <Grid container spacing={2}>
+                                    <Grid item>
+                                      <Avatar
+                                        color="primary"
+                                        size="small"
+                                        className={classes.avatarIcon}
+                                      >
+                                        <CheckIcon
+                                          className={i === 0 ? classes.avatarIcon : classes.dnone}
+                                        />
+                                      </Avatar>
+                                    </Grid>
+                                    <Grid item xs zeroMinWidth>
+                                      <Grid container spacing={0}>
+                                        <Grid item xs={12}>
+                                          <Typography align="left" variant="subtitle2">
+                                            {formatDate(new Date(item.time), 'dd/MM/yyyy h:mm aa')}
+                                          </Typography>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                          <Typography align="left" variant="body1">
+                                            {item.action_name}
+                                          </Typography>
+                                        </Grid>
                                       </Grid>
                                     </Grid>
                                   </Grid>
                                 </Grid>
-                              </Grid>
-                            ))}
+                              ))}
                           </Grid>
                         </div>
                       </div>

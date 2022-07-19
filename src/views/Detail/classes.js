@@ -472,6 +472,10 @@ const useStyles = makeStyles((theme) => ({
   avatarIcon: {
     top: '10px',
   },
+  tableNote: {
+    maxHeight: 300,
+    marginTop: 15
+  }
 }));
 
 export default useStyles;

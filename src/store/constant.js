@@ -30,6 +30,7 @@ export const vibEndpoints = {
   get_list_university: '/Primary/?FlowAlias=hnn_api_univ_get_all_university&action=api',
   get_feedback_detail: '/Primary/?FlowAlias=hnn_api_booking_get_feedback_by_booking_id&action=api',
   update_booking_mentor: '/Primary/?FlowAlias=hnn_api_booking_update_booking_mentor&action=api',
+  get_list_note: '/Primary/?FlowAlias=hnn_api_booking_get_list_note&action=api',
 
   get_all_active_account: '/Primary/?FlowAlias=hnn_acco_api_get_all_active_account_by_page&action=api',
   get_all_inactive_account: '/Primary/?FlowAlias=hnn_acco_api_get_all_inactive_account_by_page&action=api',

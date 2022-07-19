@@ -186,6 +186,17 @@ export const BookingProvider = ({ children }) => {
       });
   }
 
+  const getLitsNote = async (id) => {
+    return axiosInstance
+      .post(vibEndpoints.get_list_note, { id: id, outputtype: 'RawJson' })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) {
+          const { list } = response.data;
+          return list;
+        } else return {};
+      });
+  }
+
   return (
     <BookingContext.Provider
       value={{
@@ -203,7 +214,8 @@ export const BookingProvider = ({ children }) => {
         getCareerDemandList,
         approveBooking,
         getStatisticData,
-        getLog
+        getLog,
+        getLitsNote
       }}
     >
       {children}

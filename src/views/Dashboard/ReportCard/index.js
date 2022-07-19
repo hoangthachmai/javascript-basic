@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: '20px',
         paddingRight: '20px',
         color: theme.palette.common.white,
-        minHeight: '42px'
+        // minHeight: '42px'
     },
 }));
 
@@ -31,7 +31,7 @@ const ReportCard = (props) => {
             <CardContent>
                 <Grid container justify="space-between" alignItems="center">
                     <Grid item>
-                        <Typography variant="h3" style={{ color: color }}>
+                        <Typography variant="h2" style={{ color: color }}>
                             {primary}
                         </Typography>
                         <Typography variant="subtitle1" className={classes.secondary}>

@@ -340,7 +340,6 @@ export default function GeneralTable(props) {
 
   const handleNoteBooking = async (note) => {
     try {
-
       await setNoteBooking(selected[0], note);
     } catch (e) {
     } finally {
@@ -605,7 +604,6 @@ export default function GeneralTable(props) {
                             {displayOptions.uncomplete && (
                               <TableCell align="left">{row.uncomplete}</TableCell>
                             )}
-                            {displayOptions.note && <TableCell align="left">{row.note}</TableCell>}
                             {displayOptions.active && (
                               <TableCell align="left">
                                 <>
