@@ -22,14 +22,14 @@ export const MentorProvider = ({ children }) => {
   };
 
   const createMentor = async (mentor) => {
-    return axiosInstance.post(vibEndpoints.create_mentor, mentor).then((response) => {
+    return axiosInstance.post(vibEndpoints.create_mentor, {outputtype: 'RawJson', ...mentor}).then((response) => {
       if (response.status === 200 && response.data.return === 200) return true;
       return false;
     });
   };
   
   const updateMentor = async (mentor) => {
-    return axiosInstance.post(vibEndpoints.update_mentor, mentor).then((response) => {
+    return axiosInstance.post(vibEndpoints.update_mentor, { outputtype: 'RawJson', ...mentor}).then((response) => {
       if (response.status === 200 && response.data.return === 200) return true;
       return false;
     });
