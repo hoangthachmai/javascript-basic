@@ -30,8 +30,7 @@ const EnhancedTableToolbar = (props) => {
     getListUniversity,
     data,
     buttonCreateMentor,
-    handleClickCreateMentor
-
+    handleClickCreateMentor,
     btnCreateNewAccount,
     createNewAccount,
     btnCreateNewDept,
@@ -145,8 +144,6 @@ const EnhancedTableToolbar = (props) => {
         [classes.highlight]: numSelected > 0,
       })}
     >
-    
-     
         <Grid container justify="flex-end" spacing={gridSpacing}>
         {btnCreateNewAccount && (
         <Grid item>
@@ -170,8 +167,6 @@ const EnhancedTableToolbar = (props) => {
             </Button>
         </Grid>
         )}
-     
-      
         <Grid item lg={6} md={6} xs={12} className={classes.toolSearchWrap}>
           {numSelected > 0 ? (
             <Typography
