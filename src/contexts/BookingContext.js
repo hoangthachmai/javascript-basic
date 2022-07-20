@@ -80,12 +80,13 @@ export const BookingProvider = ({ children }) => {
       });
   };
 
-  const setNoteBooking = async (id, note) => {
+  const setNoteBooking = async (id, note, is_send) => {
     return axiosInstance
       .post(vibEndpoints.set_note_booking, {
         outputtype: 'RawJson',
         id: id,
         note: note,
+        is_send: is_send
       })
       .then((response) => {
         if (response.status === 200 && response.data.return === 200) return true;
@@ -164,6 +165,39 @@ export const BookingProvider = ({ children }) => {
       });
   }
 
+  const getStatisticData = async () => {
+    return axiosInstance
+      .post(vibEndpoints.get_statistic_data, { outputtype: 'RawJson' })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) {
+          const { data } = response.data;
+          return data;
+        } else return {};
+      });
+  }
+
+  const getLog = async (id) => {
+    return axiosInstance
+      .post(vibEndpoints.get_log_data, { id: id, outputtype: 'RawJson' })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) {
+          const { list } = response.data;
+          return list;
+        } else return {};
+      });
+  }
+
+  const getLitsNote = async (id) => {
+    return axiosInstance
+      .post(vibEndpoints.get_list_note, { id: id, outputtype: 'RawJson' })
+      .then((response) => {
+        if (response.status === 200 && response.data.return === 200) {
+          const { list } = response.data;
+          return list;
+        } else return {};
+      });
+  }
+
   return (
     <BookingContext.Provider
       value={{
@@ -179,7 +213,10 @@ export const BookingProvider = ({ children }) => {
         getMentorList,
         updateBookingMentor,
         getCareerDemandList,
-        approveBooking
+        approveBooking,
+        getStatisticData,
+        getLog,
+        getLitsNote
       }}
     >
       {children}

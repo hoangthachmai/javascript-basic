@@ -30,8 +30,7 @@ export const vibEndpoints = {
   get_list_university: '/Primary/?FlowAlias=hnn_api_univ_get_all_university&action=api',
   get_feedback_detail: '/Primary/?FlowAlias=hnn_api_booking_get_feedback_by_booking_id&action=api',
   update_booking_mentor: '/Primary/?FlowAlias=hnn_api_booking_update_booking_mentor&action=api',
-
-
+  get_list_note: '/Primary/?FlowAlias=hnn_api_booking_get_list_note&action=api',
 
   get_all_active_account: '/Primary/?FlowAlias=hnn_acco_api_get_all_active_account_by_page&action=api',
   get_all_inactive_account: '/Primary/?FlowAlias=hnn_acco_api_get_all_inactive_account_by_page&action=api',
@@ -45,7 +44,6 @@ export const vibEndpoints = {
   update_account: '/Primary/?FlowAlias=hnn_api_booking_user_update_account&action=api',
   active_account: '/Primary/?FlowAlias=hnn_api_user_active_account&action=api',
 
-
   get_all_active_department: '/Primary/?FlowAlias=hnn_api_dept_get_all_active_department_by_page&action=api',
   get_all_inactive_department: '/Primary/?FlowAlias=hnn_api_dept_get_all_inactive_department_by_page&action=api',
   deactive_department: '/Primary/?FlowAlias=hnn_api_booking_user_deactive_department&action=api',
@@ -55,18 +53,14 @@ export const vibEndpoints = {
   get_department_type_list:'/Primary/?FlowAlias=hnn_api_booking_user_get_department_type_list&action=api',
   get_department_detail:'/Primary/?FlowAlias=hnn_api_booking_department_get_detail_department_by_name&action=api',
 
-  get_career_demand: '/Primary/?FlowAlias=hnn_api_booking_get_all_career_and_demand&action=api',
-  get_list_university: '/Primary/?FlowAlias=hnn_api_univ_get_all_university&action=api',
-  get_feedback_detail: '/Primary/?FlowAlias=hnn_api_booking_get_feedback_by_booking_id&action=api',
-  update_booking_mentor: '/Primary/?FlowAlias=hnn_api_booking_update_booking_mentor&action=api',
-
-  // mentor
   get_all_mentors: '/Primary/?FlowAlias=hnn_api_ment_get_all_mentors&action=api',
   get_inactive_mentors: '/Primary/?FlowAlias=hnn_api_ment_get_all_inactive_mentors&action=api',
   get_mentor_detail_by_id: '/Primary/?FlowAlias=hnn_api_ment_get_mentor_detail_by_id&action=api',
   create_mentor: '/Primary/?FlowAlias=hnn_api_ment_create_mentor&action=api',
-  update_mentor: '/Primary/?FlowAlias=hnn_api_ment_update_mentor&action=api'
+  update_mentor: '/Primary/?FlowAlias=hnn_api_ment_update_mentor&action=api',
 
+  get_statistic_data: '/Primary/?FlowAlias=hnn_api_booking_get_statistic_data&action=api',
+  get_log_data: '/Primary/?FlowAlias=hnn_api_booking_get_log_data&action=api'
 
 };
 export const apiDomain = 'https://upload.truebpm.vn';

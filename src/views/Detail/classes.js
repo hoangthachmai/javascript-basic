@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
       minWidth: '100%',
       maxWidth: '100%',
       padding: '16px',
-      borderRadius: 'unset'
+      borderRadius: 'unset',
     },
   },
   editBoxMentor: {
@@ -29,25 +29,24 @@ const useStyles = makeStyles((theme) => ({
   dialogTitle: {
     background: '#F1F1F9 !important',
     padding: '8px 24px',
-
   },
   dialogContent: {
     padding: '0 24px',
     overflowY: 'scroll',
     '&::-webkit-scrollbar': {
       display: 'none',
-    }
+    },
   },
   gridItemInfo: {
     padding: '0 12px 10px',
     [theme.breakpoints.down('xs')]: {
-      padding: '8px 0'
+      padding: '8px 0',
     },
   },
   gridItem: {
     padding: '0 12px 12px',
     [theme.breakpoints.down('xs')]: {
-      padding: '8px 0'
+      padding: '8px 0',
     },
   },
   useradddialog: {
@@ -71,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
         },
         '&>div:first-child': {
           background: 'unset !important',
-        }
+        },
       },
     },
   },
@@ -207,16 +206,16 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     '& > svg': {
       marginRight: '8px',
-    }
+    },
   },
   tabActiveIcon: {
-    color: '#36f'
+    color: '#36f',
   },
   tabItem: {
     background: '#FFFFFF',
     borderRadius: '8px',
     marginBottom: '8px',
-    boxShadow: 'rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px'
+    boxShadow: 'rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px',
   },
   tabItemTitle: {
     display: 'flex',
@@ -224,41 +223,41 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     padding: '16px',
     marginBottom: '16px',
-    borderBottom: '1px solid #ddd'
+    borderBottom: '1px solid #ddd',
   },
   tabItemLabel: {
     display: 'flex',
     alignItems: 'center',
     fontWeight: 'bold',
     '& span': {
-      marginLeft: '8px'
-    }
+      marginLeft: '8px',
+    },
   },
   tabItemEdit: {
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
     '& span': {
-      marginLeft: '8px'
-    }
+      marginLeft: '8px',
+    },
   },
   tabItemBody: {
     padding: '0 16px 16px',
   },
   tabItemLabelField: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   unUpperCase: {
-    textTransform: 'unset !important'
+    textTransform: 'unset !important',
   },
   mentorDateTimeWrap: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   mentorDateTime: {
     display: 'flex',
     flexDirection: 'column',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   tabItemNoteSection: {
     display: 'flex',
@@ -278,31 +277,31 @@ const useStyles = makeStyles((theme) => ({
     },
     '& > a > img': {
       width: '50px',
-      marginLeft: '8px'
-    }
+      marginLeft: '8px',
+    },
   },
   tabItemNoteTitleWrap: {
     flex: 1,
     '& div:first-child': {
       fontSize: '20px',
       fontWeight: 'bold',
-      marginBottom: '8px'
-    }
+      marginBottom: '8px',
+    },
   },
   tabItemNoteHour: {
     fontSize: '18px',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   tabItemNoteSelection: {
     display: 'flex',
     alignItems: 'flex-end',
     padding: '16px',
-    borderBottom: '1px solid #ddd'
+    borderBottom: '1px solid #ddd',
   },
   tabItemNoteSelectionLabel: {
     width: '120px',
     fontWeight: 'bold',
-    lineHeight: 1
+    lineHeight: 1,
   },
   selectedNoteListSection: {
     padding: '16px',
@@ -323,7 +322,7 @@ const useStyles = makeStyles((theme) => ({
       '&::-webkit-scrollbar': {
         display: 'none',
       },
-    }
+    },
   },
   selectedNoteItem: {
     display: 'flex',
@@ -338,14 +337,12 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'baseline',
     paddingTop: '8px',
-    paddingBottom: '16px'
+    paddingBottom: '16px',
   },
   tabItemNoteInput: {
-    marginTop: '8px'
+    marginTop: '8px',
   },
-  tabItemAssessSection: {
-
-  },
+  tabItemAssessSection: {},
   tabItemAssessTitle: {
     overflow: 'hidden',
     height: '78px',
@@ -358,7 +355,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '24px',
     lineHeight: '58px',
     fontWeight: 'bold',
-    color: '#FFF'
+    color: '#FFF',
   },
   tabItemAssessCup: {
     width: '60px',
@@ -368,7 +365,7 @@ const useStyles = makeStyles((theme) => ({
     transform: 'rotate(30deg) translateY(20px)',
   },
   tabAssessItemWrap: {
-    padding: '16px'
+    padding: '16px',
   },
   tabAssessItem: {
     display: 'flex',
@@ -381,43 +378,43 @@ const useStyles = makeStyles((theme) => ({
   },
   tabAssessItemStarWrap: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   inputField: {
     '& input': {
       padding: '8px 12px',
       '&:disabled': {
-        background: '#DADADA'
-      }
+        background: '#DADADA',
+      },
     },
     '&.inputFieldDisabled': {
-      background: '#DADADA'
-    }
+      background: '#DADADA',
+    },
   },
   multpleSelectField: {
     padding: '1px 12px',
     width: '100%',
     border: '1px solid rgba(0, 0, 0, 0.23)',
     '&:before': {
-      border: 'none !important'
-    }
+      border: 'none !important',
+    },
   },
   selectField: {
     padding: '8px 12px',
     width: '100%',
-    borderColor: 'rgba(0, 0, 0, 0.23)'
+    borderColor: 'rgba(0, 0, 0, 0.23)',
   },
   inputDateField: {
     padding: '8px 12px',
     width: '100%',
     border: 'none',
-    borderBottom: '1px solid #000'
+    borderBottom: '1px solid #000',
   },
   buttonClose: {
     float: 'right',
     '&:hover': {
-      background: 'unset'
-    }
+      background: 'unset',
+    },
   },
   buttonScheduleWrap: {
     display: 'flex',
@@ -433,8 +430,8 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '60px',
     cursor: 'pointer',
     '&.active': {
-      background: '#36f'
-    }
+      background: '#36f',
+    },
   },
   mentorSchedule: {
     padding: '8px 12px',
@@ -449,11 +446,36 @@ const useStyles = makeStyles((theme) => ({
     width: '20%',
     '&.active': {
       background: '#36f',
-      color: '#FFF'
-    }
+      color: '#FFF',
+    },
+  },
+  projecttablemain: {
+    position: 'relative',
+    '&>*': {
+      position: 'relative',
+      zIndex: '5',
+    },
+    '&:after': {
+      content: '""',
+      position: 'absolute',
+      top: '0',
+      left: '23px',
+      width: '2px',
+      height: '100%',
+      background: '#ebebeb',
+      zIndex: '1',
+    },
+  },
+  dnone: {
+    display: 'none',
+  },
+  avatarIcon: {
+    top: '10px',
+  },
+  tableNote: {
+    maxHeight: 300,
+    marginTop: 15
   }
 }));
-
-
 
 export default useStyles;

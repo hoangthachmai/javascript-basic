@@ -40,7 +40,6 @@ export const headCells = [
     label: 'Chưa hoàn thành',
     maxWidth: 100,
   },
-  { id: 'note', numeric: false, disablePadding: false, label: 'Chú thích', maxWidth: 100 },
   { id: 'active', numeric: false, disablePadding: false, label: 'Hoạt động', maxWidth: 100 },
   { id: 'menuButtons', numeric: false, disablePadding: false, label: '', maxWidth: 150 },
 ];

@@ -1,7 +1,29 @@
+import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import {
-  Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, MenuItem, Select, Slide, Tab, Tabs, TextField, Typography
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Grid,
+  MenuItem,
+  Select,
+  Slide,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from '@material-ui/core';
-import Snackbar from '@material-ui/core/Snackbar';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import AssignmentReturnedTwoToneIcon from '@material-ui/icons/AssignmentReturnedTwoTone';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -13,21 +35,24 @@ import PeopleAltTwoToneIcon from '@material-ui/icons/PeopleAltTwoTone';
 import RemoveRedEyeTwoToneIcon from '@material-ui/icons/RemoveRedEyeTwoTone';
 import StarIcon from '@material-ui/icons/Star';
 import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
-import MuiAlert from '@material-ui/lab/Alert';
+import CheckIcon from '@material-ui/icons/Check';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { DOCUMENT_CHANGE, FLOATING_MENU_CHANGE } from '../../store/actions';
 import { gridSpacing, view } from '../../store/constant.js';
 import useBooking from './../../hooks/useBooking';
 import useView from './../../hooks/useView';
-import useStyles from './classes';
+import { format as formatDate } from 'date-fns';
 import EditModal from './EditModal';
 import { style } from './style';
+import useStyles from './classes';
+import { withStyles } from '@material-ui/core/styles';
+import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE, TASK_CHANGE } from '../../store/actions';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import Avatar from './../../component/Avatar/index';
 
 const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+};
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -61,7 +86,7 @@ function a11yProps(index) {
   };
 }
 
-const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const labelDay = {
   Monday: 'Thứ 2',
@@ -73,14 +98,25 @@ const labelDay = {
   Sunday: 'Chủ nhật',
 };
 
+const StyledTableCell = withStyles((theme) => ({
+  root: {
+    '&:not(:first-child)': {
+      padding: '16px 2px'
+    },
+    '&:first-child': {
+      padding: '16px 2px 16px 20px'
+    }
+  },
+}))(TableCell);
+
 const DetailDocumentDialog = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [isOpenSnackbar, setIsOpenSnackbar] = useState(false);
   const [snackbarData, setSnackbarData] = useState({
     type: 'success',
-    text: ''
-  })
+    text: '',
+  });
   const [editProfile, setEditProfile] = useState(null);
   const [editMentor, setEditMentor] = useState(null);
 
@@ -88,30 +124,30 @@ const DetailDocumentDialog = () => {
   const initNoteSelectionList = {
     1: {
       id: 1,
-      label: 'Khách quen'
+      label: 'Khách quen',
     },
     2: {
       id: 2,
-      label: 'Phụ huynh tham gia'
+      label: 'Phụ huynh tham gia',
     },
     3: {
       id: 3,
-      label: 'Tư vấn nhóm'
+      label: 'Tư vấn nhóm',
     },
     4: {
       id: 4,
-      label: 'Khách VIP'
+      label: 'Khách VIP',
     },
     5: {
       id: 5,
-      label: 'Khách mời đặc biệt'
-    }
-  }
+      label: 'Khách mời đặc biệt',
+    },
+  };
   const [noteSelectionList, setNoteSelectionList] = useState(initNoteSelectionList);
-  const [selectedNote, setSelectedNote] = useState("");
+  const [selectedNote, setSelectedNote] = useState('');
   const [selectedNoteList, setSelectedNoteList] = useState([]);
 
-  const { form_buttons: formButtons, tabs, } = useView();
+  const { form_buttons: formButtons, tabs } = useView();
 
   const tabDisplayOptions = {
     mentee: tabs.includes('mentee'),
@@ -123,10 +159,21 @@ const DetailDocumentDialog = () => {
   const buttonSaveBooking = formButtons.find((button) => button.name === view.booking.detail.save);
 
   const handleChangeTab = (event, newValue) => {
+    if (newValue === 1) {
+      getLogDetail(selectedDocument.id);
+    }
     setTabIndex(newValue);
   };
 
-  const { updateBooking, getMentorDetail, getFeedback, updateBookingMentor, getBookingDetail } = useBooking();
+  const {
+    updateBooking,
+    getMentorDetail,
+    getFeedback,
+    updateBookingMentor,
+    getBookingDetail,
+    setNoteBooking,
+    getLog,
+  } = useBooking();
 
   const { detailDocument: openDialog } = useSelector((state) => state.floatingMenu);
   const { selectedDocument } = useSelector((state) => state.document);
@@ -151,6 +198,7 @@ const DetailDocumentDialog = () => {
     assess_mentor: 0,
     assess_service: 0,
   });
+  const [logs, setLogs] = useState([]);
 
   useEffect(() => {
     if (!selectedDocument) return;
@@ -168,17 +216,24 @@ const DetailDocumentDialog = () => {
   const getFeedbackDetail = async (id) => {
     const data = await getFeedback(id);
     if (data?.assess_mentor) setFeedback({ ...data });
-    else setFeedback({
-      times: '',
-      comment: '',
-      assess_mentor: 0,
-      assess_service: 0,
-    })
+    else
+      setFeedback({
+        times: '',
+        comment: '',
+        assess_mentor: 0,
+        assess_service: 0,
+      });
   };
 
   const getConsultantDetail = async (id) => {
     const cons = await getMentorDetail(id);
     setMentor({ ...mentor, ...cons });
+  };
+
+  const getLogDetail = async (id) => {
+    const list = await getLog(id);
+    if (list.length > 0) setLogs(list);
+    else setLogs([]);
   };
 
   const handleCloseDialog = () => {
@@ -188,16 +243,10 @@ const DetailDocumentDialog = () => {
 
   const handleSaveBooking = async () => {
     try {
-      const { email_address, number_phone, ...rest } = document;
-      await updateBooking({
-        ...rest,
-        is_send_email: false,
-        outputtype: 'RawJson',
-        email: email_address,
-        phone: number_phone,
-      });
+      const { id, note } = document;
+      await setNoteBooking(id, note);
     } catch (error) {
-      console.log('error update booking', error)
+      console.log('error update booking', error);
     }
   };
 
@@ -206,32 +255,31 @@ const DetailDocumentDialog = () => {
     const newSelectionList = JSON.parse(JSON.stringify(noteSelectionList));
     delete newSelectionList[e.target.value];
     setNoteSelectionList(newSelectionList);
-    setSelectedNote("");
-  }
+    setSelectedNote('');
+  };
 
   const handleRemoveSelectedNote = (id) => {
-    const newSelectedNoteList = selectedNoteList.filter(item => item !== id);
+    const newSelectedNoteList = selectedNoteList.filter((item) => item !== id);
     setSelectedNoteList(newSelectedNoteList);
-    setNoteSelectionList({ ...noteSelectionList, [id]: initNoteSelectionList[id] })
-  }
+    setNoteSelectionList({ ...noteSelectionList, [id]: initNoteSelectionList[id] });
+  };
 
   const setDocumentToDefault = async () => {
     setTabIndex(0);
     setMentor({});
   };
 
-
   const getDayOfWeek = (date) => {
     if (!date) return '';
     const dateArr = date.split('/');
     const newDate = new Date(dateArr[2], dateArr[1] - 1, dateArr[0]);
     return labelDay[weekday[newDate.getDay()]];
-  }
+  };
 
   const handleCloseEditModal = () => {
     setEditProfile(null);
     setEditMentor(null);
-  }
+  };
 
   const handleClickEditButton = (type) => {
     if (type === 'profile') {
@@ -241,7 +289,7 @@ const DetailDocumentDialog = () => {
       setEditProfile(null);
       setEditMentor(mentor);
     }
-  }
+  };
 
   const handleSaveEdit = async (data, is_send_email = false) => {
     try {
@@ -256,8 +304,8 @@ const DetailDocumentDialog = () => {
           setIsOpenSnackbar(true);
           setSnackbarData({
             type: 'success',
-            text: 'Hệ thống sẽ tự động gửi mail xác nhận tới địa chỉ email mới!'
-          })
+            text: 'Hệ thống sẽ tự động gửi mail xác nhận tới địa chỉ email mới!',
+          });
         }
       } else if (editMentor) {
         const isSuccess = await updateBookingMentor(document.id, data);
@@ -265,36 +313,45 @@ const DetailDocumentDialog = () => {
           setIsOpenSnackbar(true);
           setSnackbarData({
             type: 'warning',
-            text: 'Bạn không thể thay đổi Mentor ngay lúc này!'
-          })
+            text: 'Bạn không thể thay đổi Mentor ngay lúc này!',
+          });
           return;
         }
+        setIsOpenSnackbar(true);
+        setSnackbarData({
+          type: 'success',
+          text: 'Thay đổi Mentor thành công!',
+        });
         // await getConsultantDetail(data.mentor_id);
       }
       const detailDocument = await getBookingDetail(document.id);
-      dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType: 'booking' });
+      dispatch({
+        type: DOCUMENT_CHANGE,
+        selectedDocument: detailDocument,
+        documentType: 'booking',
+      });
       dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: true });
     } catch (error) {
       setIsOpenSnackbar(true);
       setSnackbarData({
         type: 'error',
-        text: 'Có lỗi xảy ra, vui lòng thử lại sau!'
-      })
+        text: 'Có lỗi xảy ra, vui lòng thử lại sau!',
+      });
     } finally {
       handleCloseEditModal();
     }
-  }
+  };
 
   const handleEditModalGoBack = (to) => {
     if (to === 'profile') {
       setEditProfile(document);
       setEditMentor(null);
     }
-  }
+  };
 
   const handleChangeNote = (e) => {
-    setDocument({ ...document, note: e.target.value })
-  }
+    setDocument({ ...document, note: e.target.value });
+  };
 
   return (
     <React.Fragment>
@@ -302,8 +359,13 @@ const DetailDocumentDialog = () => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         open={isOpenSnackbar}
         autoHideDuration={3000}
-        onClose={() => setIsOpenSnackbar(false)}>
-        <Alert onClose={() => setIsOpenSnackbar(false)} severity={snackbarData.type} sx={{ width: '100%' }}>
+        onClose={() => setIsOpenSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setIsOpenSnackbar(false)}
+          severity={snackbarData.type}
+          sx={{ width: '100%' }}
+        >
           {snackbarData.text}
         </Alert>
       </Snackbar>
@@ -332,10 +394,7 @@ const DetailDocumentDialog = () => {
                 Chi tiết đăng ký
               </Grid>
               <Grid item xs={1}>
-                <Button
-                  className={classes.buttonClose}
-                  onClick={handleCloseDialog}
-                >
+                <Button className={classes.buttonClose} onClick={handleCloseDialog}>
                   <ClearIcon className={classes.buttonCloseIcon} />
                 </Button>
               </Grid>
@@ -360,7 +419,9 @@ const DetailDocumentDialog = () => {
                         component="span"
                         variant="subtitle1"
                       >
-                        <AccountCircleOutlinedIcon className={`${tabIndex === 0 ? classes.tabActiveIcon : ''}`} />
+                        <AccountCircleOutlinedIcon
+                          className={`${tabIndex === 0 ? classes.tabActiveIcon : ''}`}
+                        />
                         Chi tiết đăng ký
                       </Typography>
                     }
@@ -375,7 +436,9 @@ const DetailDocumentDialog = () => {
                         component="span"
                         variant="subtitle1"
                       >
-                        <DescriptionOutlinedIcon className={`${tabIndex === 1 ? classes.tabActiveIcon : ''}`} />
+                        <DescriptionOutlinedIcon
+                          className={`${tabIndex === 1 ? classes.tabActiveIcon : ''}`}
+                        />
                         Lịch sử thay đổi
                       </Typography>
                     }
@@ -394,14 +457,17 @@ const DetailDocumentDialog = () => {
                             <AccountCircleOutlinedIcon />
                             <span>Thông tin khách hàng</span>
                           </div>
-                          <div className={classes.tabItemEdit} onClick={() => handleClickEditButton('profile')}>
+                          <div
+                            className={classes.tabItemEdit}
+                            onClick={() => handleClickEditButton('profile')}
+                          >
                             <EditOutlinedIcon />
                             <span>Chỉnh sửa</span>
                           </div>
                         </div>
                         <div className={classes.tabItemBody}>
                           <Grid container className={classes.gridItemInfo} alignItems="center">
-                            <Grid item lg={4} md={4} xs={4} >
+                            <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Mã đăng ký:</span>
                             </Grid>
                             <Grid item lg={8} md={8} xs={8}>
@@ -409,7 +475,7 @@ const DetailDocumentDialog = () => {
                             </Grid>
                           </Grid>
                           <Grid container className={classes.gridItemInfo} alignItems="center">
-                            <Grid item lg={4} md={4} xs={4} >
+                            <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Họ và tên:</span>
                             </Grid>
                             <Grid item lg={8} md={8} xs={8}>
@@ -488,7 +554,12 @@ const DetailDocumentDialog = () => {
                               {document.university_name}
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItemInfo} style={{ paddingBottom: '0' }} alignItems="center">
+                          <Grid
+                            container
+                            className={classes.gridItemInfo}
+                            style={{ paddingBottom: '0' }}
+                            alignItems="center"
+                          >
                             <Grid item lg={12} md={12} xs={12}>
                               <span className={classes.tabItemLabelField}>Câu hỏi cho mentor:</span>
                             </Grid>
@@ -517,14 +588,17 @@ const DetailDocumentDialog = () => {
                             <AccountCircleOutlinedIcon />
                             <span>Thông tin Mentor</span>
                           </div>
-                          <div className={classes.tabItemEdit} onClick={() => handleClickEditButton('mentor')}>
+                          <div
+                            className={classes.tabItemEdit}
+                            onClick={() => handleClickEditButton('mentor')}
+                          >
                             <EditOutlinedIcon />
                             <span>Chỉnh sửa</span>
                           </div>
                         </div>
                         <div className={classes.tabItemBody}>
                           <Grid container className={classes.gridItemInfo} alignItems="center">
-                            <Grid item lg={4} md={4} xs={4} >
+                            <Grid item lg={4} md={4} xs={4}>
                               <span className={classes.tabItemLabelField}>Họ và tên:</span>
                             </Grid>
                             <Grid item lg={8} md={8} xs={8}>
@@ -561,18 +635,32 @@ const DetailDocumentDialog = () => {
                         <div className={classes.tabItemAssessSection}>
                           <div className={classes.tabItemAssessTitle}>
                             Đánh giá
-                            <img className={classes.tabItemAssessCup} src="https://icons-for-free.com/download-icon-champion+cup+trophy+icon-1320166580183052831_256.png" />
+                            <img
+                              className={classes.tabItemAssessCup}
+                              src="https://icons-for-free.com/download-icon-champion+cup+trophy+icon-1320166580183052831_256.png"
+                            />
                           </div>
-                          <Grid container spacing={gridSpacing} className={classes.tabAssessItemWrap}>
+                          <Grid
+                            container
+                            spacing={gridSpacing}
+                            className={classes.tabAssessItemWrap}
+                          >
                             <Grid item lg={6} md={6} xs={12} className={classes.tabAssessItem}>
                               <RemoveRedEyeTwoToneIcon style={style.tabAssessItemIconEye} />
                               <div className={classes.tabAssessItemLabel}>
                                 <div className={classes.tabAssessItemStarWrap}>
-                                  {new Array(5).fill(1).map((star, index) => (
-                                    index < feedback.assess_service ?
-                                      <StarIcon style={style.tabAssessItemStar} key={index} /> :
-                                      <StarBorderOutlinedIcon style={style.tabAssessItemStar} key={index} />
-                                  ))}
+                                  {new Array(5)
+                                    .fill(1)
+                                    .map((star, index) =>
+                                      index < feedback.assess_service ? (
+                                        <StarIcon style={style.tabAssessItemStar} key={index} />
+                                      ) : (
+                                        <StarBorderOutlinedIcon
+                                          style={style.tabAssessItemStar}
+                                          key={index}
+                                        />
+                                      )
+                                    )}
                                 </div>
                                 <div>Đánh giá dịch vụ</div>
                               </div>
@@ -581,11 +669,18 @@ const DetailDocumentDialog = () => {
                               <PeopleAltTwoToneIcon style={style.tabAssessItemIconPeople} />
                               <div className={classes.tabAssessItemLabel}>
                                 <div className={classes.tabAssessItemStarWrap}>
-                                  {new Array(5).fill(1).map((star, index) => (
-                                    index < feedback.assess_mentor ?
-                                      <StarIcon key={index} style={style.tabAssessItemStar} /> :
-                                      <StarBorderOutlinedIcon key={index} style={style.tabAssessItemStar} />
-                                  ))}
+                                  {new Array(5)
+                                    .fill(1)
+                                    .map((star, index) =>
+                                      index < feedback.assess_mentor ? (
+                                        <StarIcon key={index} style={style.tabAssessItemStar} />
+                                      ) : (
+                                        <StarBorderOutlinedIcon
+                                          key={index}
+                                          style={style.tabAssessItemStar}
+                                        />
+                                      )
+                                    )}
                                 </div>
                                 <div>Đánh giá Mentor</div>
                               </div>
@@ -595,7 +690,9 @@ const DetailDocumentDialog = () => {
                               <div className={classes.tabAssessItemLabel}>Ý kiến đánh giá:</div>
                             </Grid>
                             <Grid item lg={6} md={6} xs={12} className={classes.tabAssessItem}>
-                              <AssignmentReturnedTwoToneIcon style={style.tabAssessItemIconAssignment} />
+                              <AssignmentReturnedTwoToneIcon
+                                style={style.tabAssessItemIconAssignment}
+                              />
                               <div className={classes.tabAssessItemLabel}>{feedback?.times}</div>
                             </Grid>
                             <Grid item lg={12} md={12} xs={12}>
@@ -620,7 +717,11 @@ const DetailDocumentDialog = () => {
                       <div className={classes.tabItem}>
                         <div className={classes.tabItemNoteSection}>
                           <div className={classes.tabItemNoteTitleWrap}>
-                            <div>{getDayOfWeek(document?.schedule?.split(' ')[0])} ngày {document?.schedule?.split(' ')[0]} - {document?.schedule?.split(' ')[1]}</div>
+                            <div>
+                              {getDayOfWeek(document?.schedule?.split(' ')[0])} ngày{' '}
+                              {document?.schedule?.split(' ')[0]} -{' '}
+                              {document?.schedule?.split(' ')[1]}
+                            </div>
                             <div>{document.status}</div>
                           </div>
 
@@ -653,13 +754,38 @@ const DetailDocumentDialog = () => {
                           {selectedNoteList.map((id) => (
                             <div key={id} className={classes.selectedNoteItem}>
                               <div>{initNoteSelectionList[id].label}</div>
-                              <CloseOutlinedIcon onClick={() => handleRemoveSelectedNote(id)} style={style.selectedItemCloseIcon} />
+                              <CloseOutlinedIcon
+                                onClick={() => handleRemoveSelectedNote(id)}
+                                style={style.selectedItemCloseIcon}
+                              />
                             </div>
                           ))}
                         </div>
-                        <div className={`${classes.tabItemNoteSelection} ${classes.tabItemNoteInputWrap}`}>
+                        <div
+                          className={`${classes.tabItemNoteSelection} ${classes.tabItemNoteInputWrap}`}
+                        >
                           <div className={classes.tabItemNoteSelectionLabel}>Ghi chú: </div>
-                          <TextField
+                          <TableContainer component={Paper} className={classes.tableNote}>
+                            <Table stickyHeader aria-label="sticky table">
+                              <TableHead>
+                                <TableRow>
+                                  <StyledTableCell>Thời gian</StyledTableCell>
+                                  <StyledTableCell align="left">Người tạo</StyledTableCell>
+                                  <StyledTableCell align="left">Nội dung</StyledTableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {document?.notes?.map((row) => (
+                                  <TableRow key={row.created_date}>
+                                    <StyledTableCell align="left">{formatDate(new Date(row.created_date), 'h:mm aa')}</StyledTableCell>
+                                    <StyledTableCell align="left">{row.created_by}</StyledTableCell>
+                                    <StyledTableCell align="left">{row.note}</StyledTableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                          {/* <TextField
                             fullWidth
                             multiline
                             rows={4}
@@ -670,10 +796,66 @@ const DetailDocumentDialog = () => {
                             onChange={handleChangeNote}
                             InputLabelProps={{ shrink: true }}
                             className={classes.tabItemNoteInput}
-                          />
+                          /> */}
                         </div>
                       </div>
-
+                    </Grid>
+                  </Grid>
+                </TabPanel>
+                <TabPanel value={tabIndex} index={1}>
+                  <Grid container spacing={1}>
+                    <Grid item lg={6} md={6} xs={12}>
+                      <div className={classes.tabItem}>
+                        <div className={classes.tabItemTitle}>
+                          <div className={classes.tabItemLabel}>
+                            <DescriptionTwoToneIcon />
+                            <span>Chi tiết thay đổi</span>
+                          </div>
+                        </div>
+                        <div className={classes.tabItemBody}>
+                          <Grid
+                            container
+                            spacing={gridSpacing}
+                            alignItems="center"
+                            className={classes.projecttablemain}
+                          >
+                            {logs
+                              .slice(0)
+                              .reverse()
+                              .map((item, i, arr) => (
+                                <Grid item xs={12} key={i}>
+                                  <Grid container spacing={2}>
+                                    <Grid item>
+                                      <Avatar
+                                        color="primary"
+                                        size="small"
+                                        className={classes.avatarIcon}
+                                      >
+                                        <CheckIcon
+                                          className={i === 0 ? classes.avatarIcon : classes.dnone}
+                                        />
+                                      </Avatar>
+                                    </Grid>
+                                    <Grid item xs zeroMinWidth>
+                                      <Grid container spacing={0}>
+                                        <Grid item xs={12}>
+                                          <Typography align="left" variant="subtitle2">
+                                            {formatDate(new Date(item.time), 'dd/MM/yyyy h:mm aa')}
+                                          </Typography>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                          <Typography align="left" variant="body1">
+                                            {item.action_name}
+                                          </Typography>
+                                        </Grid>
+                                      </Grid>
+                                    </Grid>
+                                  </Grid>
+                                </Grid>
+                              ))}
+                          </Grid>
+                        </div>
+                      </div>
                     </Grid>
                   </Grid>
                 </TabPanel>
@@ -685,7 +867,7 @@ const DetailDocumentDialog = () => {
               <Grid item>
                 <Button
                   variant="contained"
-                  style={{ background: 'rgb(70, 81, 105)', }}
+                  style={{ background: 'rgb(70, 81, 105)' }}
                   onClick={handleCloseDialog}
                 >
                   Đóng

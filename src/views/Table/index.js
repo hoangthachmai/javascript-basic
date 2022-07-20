@@ -7,6 +7,7 @@ import GavelSharpIcon from '@material-ui/icons/GavelSharp';
 import NoteAddSharpIcon from '@material-ui/icons/NoteAddSharp';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import StarIcon from '@material-ui/icons/Star';
+import HowToRegIcon from '@material-ui/icons/HowToReg';
 import { useDispatch, useSelector } from 'react-redux';
 import { CONFIRM_CHANGE, DOCUMENT_CHANGE, FLOATING_MENU_CHANGE, TASK_CHANGE } from '../../store/actions';
 import { bookingActions, gridSpacing, view } from '../../store/constant';
@@ -361,7 +362,6 @@ export default function GeneralTable(props) {
     });
     reloadCurrentDocuments();
   };
-  
   const toggleSetDepartment = async (event, department_code, is_active) => {
     event.stopPropagation()
     await activeDepartment({
@@ -370,10 +370,9 @@ export default function GeneralTable(props) {
     });
     reloadCurrentDocuments();
   };
-  const handleNoteBooking = async (note) => {
+  const handleNoteBooking = async (note, isSend) => {
     try {
-
-      await setNoteBooking(selected[0], note);
+      await setNoteBooking(selected[0], note, isSend);
     } catch (e) {
     } finally {
       setIsOpenModalNote(false);
@@ -690,7 +689,6 @@ export default function GeneralTable(props) {
                             {displayOptions.uncomplete && (
                               <TableCell align="left">{row.uncomplete}</TableCell>
                             )}
-                            {displayOptions.note && <TableCell align="left">{row.note}</TableCell>}
                             {displayOptions.active && (
                               <TableCell align="left">
                                 <>
@@ -738,7 +736,7 @@ export default function GeneralTable(props) {
                                         className={classes.handleButton}
                                         onClick={() => handleSetCompletedBooking(row.id)}
                                       >
-                                        <AssignmentTurnedInIcon className={classes.handleButtonIcon} />
+                                        <HowToRegIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}
@@ -772,7 +770,7 @@ export default function GeneralTable(props) {
                                         className={classes.handleButton}
                                         onClick={() => handleOpenModal('review', row)}
                                       >
-                                        <GavelSharpIcon className={classes.handleButtonIcon} />
+                                        <AssignmentTurnedInIcon className={classes.handleButtonIcon} />
                                       </Button>
                                     </Tooltip>
                                   )}
