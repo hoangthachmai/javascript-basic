@@ -14,22 +14,20 @@ import {
   Select,
   FormControl,
   MenuItem,
-  TextField
+  TextField,
+  InputLabel,
+
 } from '@material-ui/core';
 
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
-
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { gridSpacing, view } from '../../store/constant.js';
-import useView from '../../hooks/useView';
-import { style } from './style.js';
+import style from '../Detail/style'
+import { gridSpacing, view } from '../../../store/constant';
+import useView from '../../../hooks/useView';
 import useStyles from './classes.js';
-import PermissionModal from '../FloatingMenu/UploadFile/index.js';
-import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE } from '../../store/actions.js';
-import useAccount from '../../hooks/useAccount.js';
-
-
+import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE } from '../../../store/actions';
+import useDepartment from '../../../hooks/useDepartment';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
@@ -62,86 +60,105 @@ function a11yProps(index) {
   };
 }
 
-const AccountModal = () => {
+const DepartmentModal = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [tabIndex, setTabIndex] = React.useState(0);
   const [openDialogUploadImage, setOpenDiaLogUploadImage] = React.useState(false);
   const { form_buttons: formButtons, name, tabs, disabled_fields } = useView();
-  const buttonSave = formButtons.find((button) => button.name === view.user.detail.save);
+  const buttonSave = formButtons.find((button) => button.name === view.department.detail.save);
   const handleChangeTab = (event, newValue) => {
     setTabIndex(newValue);
   };
 
-  const { createAccount, updateAccount, } = useAccount();
-  const { accountDocument: openDialog } = useSelector((state) => state.floatingMenu);
+  const { updateDepartment, getDepartmentList, createDepartment, getDepartmentTypeList,} = useDepartment();
+  const { departmentDocument: openDialog } = useSelector((state) => state.floatingMenu);
   const { selectedDocument } = useSelector((state) => state.document);
 
-  const [account, setAccount] = React.useState({
-    company_code: 'HNN',
-    job_title: '',
-    password: 'Tv@123456',
-    first_name: '',
-    last_name: '',
-    job_title: '',
-    image_url: 'https://firebasestorage.googleapis.com/v0/b/huongnghiepnhanh.appspot.com/o/Avatar%20Nam.jpg?alt=media&token=8208326e-faa9-4bdf-b811-a48481839cb5',
-    email_address: '',
+  const [department, setDepartment] = React.useState({
+    company_code: "HNN",
+    department_code: null,
+    department_description: "",
+    department_name: "",
+    department_type: "COMPANY",
     is_active: true,
-    employee_id: '',
+    parent_department_code: "",
   });
-
+  const [categories, setCategory] = React.useState();
+  const [departmentTypes, setDepartmentType] = React.useState();
   useEffect(() => {
+    getDepartmentParent({
+      company_code: 'HNN', 
+      parent_department_code: null,});
     if (!selectedDocument) return;
-    setAccount({
+    setDepartment({
 
       ...selectedDocument,
 
     });
-
+    
   }, [selectedDocument]);
 
+  
+  const getDepartmentParent = async (company_code,parent_department_code) =>{
+    try{
+      let departmentData= await getDepartmentTypeList(
+        company_code,
+       );
+      setDepartmentType(departmentData);
+      let categoriesData= await getDepartmentList(
+        company_code,
+        parent_department_code,);
+      setCategory(categoriesData);
+      
+    }
+    catch{
 
-
+    }
+  }
   const handleCloseDialog = () => {
     setDocumentToDefault();
-    setAccount({
-      company_code: 'HNN',
-      job_title: '',
-      password: 'Tv@123456',
-      first_name: '',
-      last_name: '',
-      job_title: '',
-      image_url: 'https://firebasestorage.googleapis.com/v0/b/huongnghiepnhanh.appspot.com/o/Avatar%20Nam.jpg?alt=media&token=8208326e-faa9-4bdf-b811-a48481839cb5',
-      email_address: '',
+    setDepartment({
+      
+      company_code: "HNN",
+      department_code: null,
+      department_description: "",
+      department_name: "",
+      department_type: "COMPANY",
       is_active: true,
-      employee_id: '',
-      account_id: '',
+      parent_department_code: "",
     });
-    dispatch({ type: DOCUMENT_CHANGE, selectedDocument: null, documentType: 'account' });
-    dispatch({ type: FLOATING_MENU_CHANGE, accountDocument: false });
+    dispatch({ type: DOCUMENT_CHANGE, selectedDocument: null, documentType: 'department' });
+    dispatch({ type: FLOATING_MENU_CHANGE, departmentDocument: false });
   };
 
-  const handleUpdateAccount = async () => {
+  const handleUpdateDepartment = async () => {
     try {
-
-      await updateAccount({
-        ...account,
-        outputtype: 'RawJson',
-        company_code: 'HNN'
-      });
+      if (department.department_code==null) {
+        await createDepartment({
+          ...department,
+          outputtype: 'RawJson',
+        });
+      } else {
+        await updateDepartment({
+          ...department,
+          outputtype: 'RawJson',
+        });
+      }
+        
       handleCloseDialog();
-      
     } catch (error) {
-      console.log('error update booking', error)
+      console.log('error update department', error)
     } finally {
 
     }
   };
-
+ 
+  
   const handleChange = (e) => {
     const value = e.target.value;
-    setAccount({
-      ...account,
+    setDepartment({
+      ...department,
       [e.target.name]: value
     });
   }
@@ -150,12 +167,6 @@ const AccountModal = () => {
   const setDocumentToDefault = async () => {
     setTabIndex(0);
 
-  };
-  const setURL = (image) => {
-    setAccount({
-      ...account,
-      image_url: image,
-    });
   };
 
   const handleOpenDiaLog = () => {
@@ -167,11 +178,7 @@ const AccountModal = () => {
   return (
 
     <React.Fragment>
-      <PermissionModal
-        open={openDialogUploadImage || false}
-        onSuccess={setURL}
-        onClose={handleCloseDiaLog}
-      />
+     
 
       <Grid container>
         <Dialog
@@ -180,12 +187,11 @@ const AccountModal = () => {
           keepMounted
           onClose={handleCloseDialog}
           className={classes.useradddialog}
-
         >
 
           <DialogTitle className={classes.dialogTitle}>
             <Grid item xs={12} style={{ textTransform: 'uppercase' }}>
-              Tạo mới người dùng
+              Tạo mới phòng ban
             </Grid>
           </DialogTitle>
           <DialogContent className={classes.dialogContent}>
@@ -225,87 +231,69 @@ const AccountModal = () => {
                         <div className={classes.tabItemTitle}>
                           <div className={classes.tabItemLabel}>
                             <AccountCircleOutlinedIcon />
-                            <span>Thông tin khách hàng</span>
+                            <span>Thông tin phòng ban</span>
                           </div>
 
                         </div>
                         <div className={classes.tabItemBody}>
-                          <Grid container spacing={3} className={classes.gridItemInfo} alignItems="center">
-                            <Grid className={classes.gridItemCenter} item lg={12} md={12} xs={12}>
-                              <img
-                                src={account.image_url}
-                                className={classes.imageaccount}
-                              />
-                            </Grid>
-                            <Grid className={classes.gridItemCenter} item lg={12} md={12} xs={12}>
-                              <Button
-                                variant="contained"
-                                style={{ background: 'rgb(97, 42, 255)' }}
-                                onClick={handleOpenDiaLog}
-                              >
-                                Tải lên hình đại diện
-                              </Button>
-                            </Grid>
-                          </Grid>
+                          
                           <Grid container spacing={3} className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={6} md={6} xs={12} >
                               <TextField
                                 fullWidth
                                 autoFocus
-                                label="Họ"
+                                label="Tên phòng ban"
                                 margin="normal"
-                                name="first_name"
+                                name="department_name"
                                 size="medium"
                                 type="text"
                                 variant="outlined"
                                 onChange={handleChange}
-                                value={account.first_name || ''}
+                                value={ department.department_name || ''}
                               />
                             </Grid>
                             <Grid item lg={6} md={6} xs={12}>
-                              <TextField
-                                fullWidth
-                                autoFocus
-                                label="Tên"
-                                margin="normal"
-                                name="last_name"
-                                size="medium"
-                                type="text"
-                                variant="outlined"
-                                onChange={handleChange}
-                                value={account.last_name || ''}
-                              />
+                            <FormControl variant="outlined" className={classes.formControl}>
+                              <InputLabel id="department_code">Trực thuộc phòng ban</InputLabel>
+                              <Select
+                                labelId="parent_department_code"
+                                id="parent_department_code"
+                                value={department.parent_department_code}
+                                onChange={event => setDepartment({ ...department, parent_department_code: event.target.value})}
+                                label="Trực thuộc phòng ban"
+                                >
+                                <MenuItem value="">
+                                  <em>Không chọn</em>
+                                </MenuItem>
+                                {categories && categories.map(category => (
+                                  <MenuItem value={category.Key} key={category.Key} selected={category.Key===department.parent_department_code}>{category.Value}</MenuItem>
+                                ))}
+                                </Select>
+                              </FormControl>
                             </Grid>
                           </Grid>
                           <Grid container spacing={3} className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={6} md={6} xs={12} >
-                              <TextField
-                                fullWidth
-                                autoFocus
-                                label="Email"
-                                margin="normal"
-                                name="email_address"
-                                size="medium"
-                                type="email"
-                                variant="outlined"
-                                onChange={handleChange}
-                                value={account.email_address || ''}
-                              />
+                               <FormControl variant="outlined" className={classes.formControl}>
+                              <InputLabel id="department_type">Loại phòng ban</InputLabel>
+                              <Select
+                                labelId="department_type"
+                                id="department_type"
+                                value={department.department_type}
+                                onChange={event => setDepartment({ ...department, department_type: event.target.value})}
+                                label="Loại phòng ban"
+                                >
+                                <MenuItem value="">
+                                  <em>Không chọn</em>
+                                </MenuItem>
+                                {departmentTypes && departmentTypes.map(category => (
+                                  <MenuItem value={category.Key} key={category.Key}  selected={category.Key===department.department_type}>{category.Value}</MenuItem>
+                                ))}
+                                </Select>
+                              </FormControl>
                             </Grid>
                             <Grid item lg={6} md={6} xs={6}>
-                              <TextField
-                                fullWidth
-                                autoFocus
-                                label="Ngành nghề"
-                                margin="normal"
-                                name="job_title"
-                                size="medium"
-                                type="text"
-
-                                variant="outlined"
-                                onChange={handleChange}
-                                value={account.job_title || ''}
-                              />
+                            <TextField multiline rows={3} fullWidth label="Mô tả ngắn gọn" variant="outlined" value={department.department_description}  onChange={event => setDepartment({ ...department, department_description: event.target.value})}/>
                             </Grid>
                           </Grid>
                         </div>
@@ -332,7 +320,7 @@ const AccountModal = () => {
                   <Button
                     variant="contained"
                     style={{ background: 'rgb(97, 42, 255)' }}
-                    onClick={() => handleUpdateAccount()}
+                    onClick={() => handleUpdateDepartment()}
                   >
                     {buttonSave.text}
                   </Button>
@@ -343,7 +331,7 @@ const AccountModal = () => {
                   <Button
                     variant="contained"
                     style={{ background: 'rgb(97, 42, 255)' }}
-                    onClick={() => handleUpdateAccount()}
+                    onClick={() => handleUpdateDepartment()}
                   >
                     Lưu
                   </Button>
@@ -357,4 +345,4 @@ const AccountModal = () => {
   );
 };
 
-export default AccountModal;
+export default DepartmentModal;

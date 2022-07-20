@@ -6,6 +6,7 @@ export const initialState = {
   detailDocument: false,
   accountDocument: false,
   mentorDocument: false,
+  departmentDocument: false,
 };
 
 const floatingMenuReducer = (state = initialState, action) => {
@@ -18,6 +19,7 @@ const floatingMenuReducer = (state = initialState, action) => {
         detailDocument: action.detailDocument,
         accountDocument: action.accountDocument,
         mentorDocument: action.mentorDocument,
+        departmentDocument: action.departmentDocument,
       };
     default:
       return state;

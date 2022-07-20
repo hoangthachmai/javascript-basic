@@ -17,6 +17,7 @@ import React, { useEffect, useRef } from 'react';
 import { gridSpacing } from '../../../store/constant';
 import useToolbarStyles from './classes';
 import { headCells, bookingStatusList } from '../data';
+import { useSelector } from 'react-redux';
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
@@ -30,6 +31,11 @@ const EnhancedTableToolbar = (props) => {
     data,
     buttonCreateMentor,
     handleClickCreateMentor
+
+    btnCreateNewAccount,
+    createNewAccount,
+    btnCreateNewDept,
+    createNewDept,
   } = props;
 
   const filterRef = useRef(null);
@@ -103,7 +109,8 @@ const EnhancedTableToolbar = (props) => {
       search_text: '',
     })
   }
-
+  const { documentType } = useSelector((state) => state.document);
+  
   useEffect(() => {
     async function initUniversityList() {
       const data = await getListUniversity();
@@ -138,7 +145,33 @@ const EnhancedTableToolbar = (props) => {
         [classes.highlight]: numSelected > 0,
       })}
     >
-      <Grid container justify="flex-end" spacing={gridSpacing}>
+    
+     
+        <Grid container justify="flex-end" spacing={gridSpacing}>
+        {btnCreateNewAccount && (
+        <Grid item>
+            <Button 
+              variant="contained"
+              color={ "primary" }
+              onClick={createNewAccount}
+              >
+         {btnCreateNewAccount.text}
+            </Button>
+        </Grid>
+        )}
+        {btnCreateNewDept && (
+        <Grid item>
+            <Button 
+              variant="contained"
+              color={ "primary" }
+              onClick={createNewDept}
+              >
+         {btnCreateNewDept.text}
+            </Button>
+        </Grid>
+        )}
+     
+      
         <Grid item lg={6} md={6} xs={12} className={classes.toolSearchWrap}>
           {numSelected > 0 ? (
             <Typography
@@ -155,16 +188,32 @@ const EnhancedTableToolbar = (props) => {
             )
           )}
         </Grid>
+        
         <Grid item lg={6} md={6} xs={12} className={classes.toolSearchWrap}>
           <Grid container justify="flex-end">
+          {documentType !='account' && documentType !='department' ? (
             <Tooltip title="Search">
-              <Button
-                className={`${classes.toolButton} ${isOpenSearch ? classes.toolButtonActive : ''}`}
-                onClick={handleCloseInput}
-              >
-                <SearchIcon className={classes.toolButtonIcon} />
-              </Button>
-            </Tooltip>
+            <Button
+              className={`${classes.toolButton} ${isOpenSearch ? classes.toolButtonActive : ''}`}
+              onClick={handleCloseInput}
+            >
+              <SearchIcon className={classes.toolButtonIcon} />
+            </Button>
+          </Tooltip>
+          ) :
+          (
+            <div className={classes.toolSearchWrap}>
+            <SearchIcon />
+            <input
+              className={classes.toolSearchInput}
+              value={filter.search_text}
+              onChange={handleChangeSearch}
+              onKeyUp={handleEnterSearch}
+            />
+        
+          </div>
+          )}
+            
             <ClickAwayListener onClickAway={() => setIsOpenShowColumn(false)}>
               <div className={classes.toolButtonWrap}>
                 <Tooltip title="View Columns">

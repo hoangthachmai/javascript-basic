@@ -21,7 +21,7 @@ import { BookingProvider } from './../contexts/BookingContext';
 import { AccountProvider } from '../contexts/AccountContext';
 import { MentorProvider } from '../contexts/MentorContext';
 import { TaskProvider } from '../contexts/TaskContext.js';
-
+import { DepartmentProvider } from '../contexts/DepartmentContext';
 function loadLocaleData(locale) {
   switch (locale) {
     case 'fr':
@@ -65,9 +65,12 @@ const App = () => {
                               <BookingProvider>
                                 <AccountProvider>
                                   <MentorProvider>
+                                  <DepartmentProvider>
                                     <Routes />
                                     <Snackbar />
+                                  </DepartmentProvider>
                                   </MentorProvider>
+
                                 </AccountProvider>
                               </BookingProvider>
                             </TaskProvider>

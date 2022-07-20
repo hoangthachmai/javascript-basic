@@ -1,5 +1,9 @@
 export const headCells = [
   { id: 'id', numeric: false, disablePadding: false, label: 'Mã đăng ký', maxWidth: 150 },
+  { id: 'department_name', numeric: false, disablePadding: false, label: 'Tên phòng ban', maxWidth: 150 },
+  { id: 'department_parent', numeric: false, disablePadding: false, label: 'Trực thuộc phòng ban', maxWidth: 150 },
+  { id: 'number_member', numeric: false, disablePadding: false, label: 'Số thành viên', maxWidth: 150 },
+  
   { id: 'fullname', numeric: false, disablePadding: false, label: 'Khách hàng', maxWidth: 150 },
   { id: 'university_name', numeric: false, disablePadding: false, label: 'Trường', maxWidth: 100 },
   { id: 'account_id', numeric: false, disablePadding: false, label: 'ID', maxWidth: 50 },
