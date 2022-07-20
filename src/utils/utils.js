@@ -33,7 +33,7 @@ export function getUrlByAction(selectedFolder) {
       return vibEndpoints.get_all_active_department;
     }
     case departmentActions.list_inactive_department: {
-      return vibEndpoints.get_all_inactive_account;
+      return vibEndpoints.get_all_inactive_department;
     }
     case mentorActions.list_active_mentors: {
       return vibEndpoints.get_all_mentors;

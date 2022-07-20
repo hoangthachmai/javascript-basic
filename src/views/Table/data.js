@@ -1,6 +1,9 @@
 export const headCells = [
   { id: 'id', numeric: false, disablePadding: false, label: 'Mã đăng ký', maxWidth: 150 },
   { id: 'department_name', numeric: false, disablePadding: false, label: 'Tên phòng ban', maxWidth: 150 },
+  { id: 'department_parent', numeric: false, disablePadding: false, label: 'Trực thuộc phòng ban', maxWidth: 150 },
+  { id: 'number_member', numeric: false, disablePadding: false, label: 'Số thành viên', maxWidth: 150 },
+  
   { id: 'fullname', numeric: false, disablePadding: false, label: 'Khách hàng', maxWidth: 150 },
   { id: 'university_name', numeric: false, disablePadding: false, label: 'Trường', maxWidth: 100 },
   { id: 'account_id', numeric: false, disablePadding: false, label: 'ID', maxWidth: 50 },
@@ -24,11 +27,18 @@ export const headCells = [
   { id: 'total', numeric: false, disablePadding: false, label: 'Tổng số', maxWidth: 100 },
   { id: 'reject', numeric: false, disablePadding: false, label: 'Từ chối', maxWidth: 100 },
   {
+    id: 'completed',
+    numeric: false,
+    disablePadding: false,
+    label: 'Hoàn thành',
+    maxWidth: 100,
+  },
+  {
     id: 'uncomplete',
     numeric: false,
     disablePadding: false,
     label: 'Chưa hoàn thành',
-    maxWidth: 150,
+    maxWidth: 100,
   },
   { id: 'active', numeric: false, disablePadding: false, label: 'Hoạt động', maxWidth: 100 },
   { id: 'menuButtons', numeric: false, disablePadding: false, label: '', maxWidth: 150 },

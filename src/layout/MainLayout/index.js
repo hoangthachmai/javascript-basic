@@ -20,6 +20,7 @@ import ConfirmPopup from '../../views/ConfirmPopup';
 import DetailDocumentDialog from '../../views/Detail/index.js';
 import AccountModal from '../../views/FormAccount';
 import MentorModal from '../../views/Mentor/Detail';
+import DepartmentModal from '../../views/Department/Detail';
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -81,6 +82,8 @@ const MainLayout = ({ children }) => {
         return <AccountModal />;
       case 'mentor':
         return <MentorModal />;
+      case 'department':
+        return <DepartmentModal />;
     }
   }
 

@@ -45,6 +45,13 @@ export const vibEndpoints = {
   active_account: '/Primary/?FlowAlias=hnn_api_user_active_account&action=api',
 
   get_all_active_department: '/Primary/?FlowAlias=hnn_api_dept_get_all_active_department_by_page&action=api',
+  get_all_inactive_department: '/Primary/?FlowAlias=hnn_api_dept_get_all_inactive_department_by_page&action=api',
+  deactive_department: '/Primary/?FlowAlias=hnn_api_booking_user_deactive_department&action=api',
+  create_department: '/Primary/?FlowAlias=hnn_api_booking_user_create_department&action=api',
+  update_department: '/Primary/?FlowAlias=hnn_api_booking_user_update_department&action=api',
+  get_department_list:'/Primary/?FlowAlias=hnn_api_booking_user_get_department_list&action=api',
+  get_department_type_list:'/Primary/?FlowAlias=hnn_api_booking_user_get_department_type_list&action=api',
+  get_department_detail:'/Primary/?FlowAlias=hnn_api_booking_department_get_detail_department_by_name&action=api',
 
   get_all_mentors: '/Primary/?FlowAlias=hnn_api_ment_get_all_mentors&action=api',
   get_inactive_mentors: '/Primary/?FlowAlias=hnn_api_ment_get_all_inactive_mentors&action=api',
@@ -121,6 +128,15 @@ export const view = {
   mentor: {
     list: {
       create: 'MENTOR_LIST_CREATE_MENU_BUTTON'
-    }
-  }
+    },
+  },
+  department: {
+    list: {
+      create: 'DEPARTMENT_LIST_CREATE_MENU_BUTTON',
+    },
+    detail: {
+      save: 'DEPARTMENT_LIST_CREATE_FORM_BUTTON'
+    },
+  },
+  
 };

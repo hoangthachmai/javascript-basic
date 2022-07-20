@@ -5,15 +5,11 @@ const useStyles = makeStyles((theme) => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    minWidth: 550,
+    minWidth: 500,
     boxShadow: 24,
     background: '#FFFFFF',
     padding: '16px 32px',
     borderRadius: '15px',
-    overflowY: 'scroll',
-    '&::-webkit-scrollbar': {
-      display: 'none',
-    },
     [theme.breakpoints.down('xs')]: {
       maxHeight: '100vh',
       overflowY: 'scroll',
@@ -23,9 +19,6 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: 'unset'
     },
   },
-  editBoxMentor: {
-    minWidth: '80vw',
-  },
   dialogTitle: {
     background: '#F1F1F9 !important',
     padding: '8px 24px',
@@ -33,10 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogContent: {
     padding: '0 24px',
-    overflowY: 'scroll',
-    '&::-webkit-scrollbar': {
-      display: 'none',
-    }
+    overflowY: 'hidden'
   },
   gridItemInfo: {
     padding: '0 12px 10px',
@@ -57,8 +47,8 @@ const useStyles = makeStyles((theme) => ({
         background: '#f1f1f9',
         margin: '0px',
         borderRadius: '0px',
-        maxWidth: '70vw',
-        minWidth: '70vw',
+        maxWidth: '50vw',
+        minWidth: '50vw',
         maxHeight: '100%',
         overflowY: 'hidden',
         [theme.breakpoints.down('md')]: {
@@ -264,7 +254,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '20px 16px',
+    padding: '16px',
     background: '#612AFF',
     color: '#ffffff',
     borderRadius: '8px',
@@ -282,11 +272,9 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   tabItemNoteTitleWrap: {
-    flex: 1,
     '& div:first-child': {
-      fontSize: '20px',
-      fontWeight: 'bold',
-      marginBottom: '8px'
+      fontSize: '16px',
+      fontWeight: 'bold'
     }
   },
   tabItemNoteHour: {
@@ -383,124 +371,25 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center'
   },
+  imageaccount: { 
+    height: '200px',
+    width: '200px',
+    boxShadow: 'rgb(50 50 93 / 25%) 0px 2px 5px -1px, rgb(0 0 0 / 30%) 0px 1px 3px -1px',
+    borderRadius: '50%',
+    border: '1px solid #ddd',
+    objectFit: 'cover',
+    padding: '4px',
+    boxShadow: 'rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px'
+  },
   inputField: {
     '& input': {
-      padding: '8px 12px',
-      '&:disabled': {
-        background: '#DADADA'
-      }
-    },
-    '&.inputFieldDisabled': {
-      background: '#DADADA'
+      padding: '8px 12px'
     }
   },
-  multpleSelectField: {
-    padding: '1px 12px',
-    width: '100%',
-    border: '1px solid rgba(0, 0, 0, 0.23)',
-    '&:before': {
-      border: 'none !important'
-    }
-  },
-  selectField: {
-    padding: '8px 12px',
-    width: '100%',
-    borderColor: 'rgba(0, 0, 0, 0.23)'
-  },
-  inputDateField: {
-    padding: '8px 12px',
-    width: '100%',
-    border: 'none',
-    borderBottom: '1px solid #000'
-  },
-  buttonClose: {
-    float: 'right',
-    '&:hover': {
-      background: 'unset'
-    }
-  },
-  buttonScheduleWrap: {
-    display: 'flex',
+  gridItemCenter: {
     alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  buttonSchedule: {
-    padding: '8px 12px',
-    borderRadius: '10px',
-    background: '#465069',
-    color: '#FFFFFF',
-    border: 'none',
-    minWidth: '60px',
-    cursor: 'pointer',
-    '&.active': {
-      background: '#36f'
-    }
-  },
-  mentorSchedule: {
-    padding: '8px 12px',
-    border: '1px solid #746d6d',
-    borderRadius: '10px',
-    margin: '4px 12px',
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    width: '20%',
-    '&.active': {
-      background: '#36f',
-      color: '#FFF'
-    }
-  },
-  tabItemMentorAvatarBody: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    '& > img': {
-      height: '120px',
-      width: '120px',
-      borderRadius: '50%',
-      marginBottom: '16px',
-      border: '1px solid #ddd',
-      objectFit: 'cover',
-      padding: '4px',
-      boxShadow: 'rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px'
-    },
-    '& > button': {
-      marginTop: '8px',
-      padding: '6px 16px',
-      color: '#FFF',
-      background: '#3266FE',
-      '&:hover': {
-        color: '#FFF',
-        background: '#3266FE',
-      }
-    }
-  },
-  multpleSelectField: {
-    padding: '1px 12px',
-    width: '100%',
-    border: '1px solid rgba(0, 0, 0, 0.23)',
-    '&:before': {
-      border: 'none !important'
-    }
-  },
-  errorLabel: {
-    color: 'red'
-  },
-  gridItemInfoButtonWrap: {
-    marginTop: '16px'
-  },
-  gridItemInfoButton: {
-    color: '#FFF',
-    padding: '6px 16px',
-    background: '#3266FE',
-    margin: '0 8px',
-    '&:hover': {
-      color: '#FFF',
-      background: '#3266FE',
-    }
+    justifyContent: 'center'
   }
 }));
 

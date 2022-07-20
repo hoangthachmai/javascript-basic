@@ -140,6 +140,15 @@ const useToolbarStyles = makeStyles((theme) => ({
     width: '100%',
     padding: '16px 0',
   },
+  btnCreateMentor: {
+    padding: '6px 16px',
+    color: '#FFF',
+    background: '#3266FE',
+    '&:hover': {
+      color: '#FFF',
+      background: '#3266FE',
+    }
+  }
 }));
 
 export default useToolbarStyles;
