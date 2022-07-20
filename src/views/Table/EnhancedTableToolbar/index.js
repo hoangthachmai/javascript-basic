@@ -31,6 +31,8 @@ const EnhancedTableToolbar = (props) => {
     data,
     btnCreateNewAccount,
     createNewAccount,
+    btnCreateNewDept,
+    createNewDept,
   } = props;
 
   const filterRef = useRef(null);
@@ -154,6 +156,17 @@ const EnhancedTableToolbar = (props) => {
             </Button>
         </Grid>
         )}
+        {btnCreateNewDept && (
+        <Grid item>
+            <Button 
+              variant="contained"
+              color={ "primary" }
+              onClick={createNewDept}
+              >
+         {btnCreateNewDept.text}
+            </Button>
+        </Grid>
+        )}
      
       
         <Grid item lg={6} md={6} xs={12} className={classes.toolSearchWrap}>
@@ -186,7 +199,7 @@ const EnhancedTableToolbar = (props) => {
         
         <Grid item lg={6} md={6} xs={12} className={classes.toolSearchWrap}>
           <Grid container justify="flex-end">
-          {documentType !='account' ? (
+          {documentType !='account' && documentType !='department' ? (
             <Tooltip title="Search">
             <Button
               className={`${classes.toolButton} ${isOpenSearch ? classes.toolButtonActive : ''}`}
