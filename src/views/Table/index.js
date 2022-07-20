@@ -338,9 +338,9 @@ export default function GeneralTable(props) {
     reloadCurrentDocuments();
   };
 
-  const handleNoteBooking = async (note) => {
+  const handleNoteBooking = async (note, isSend) => {
     try {
-      await setNoteBooking(selected[0], note);
+      await setNoteBooking(selected[0], note, isSend);
     } catch (e) {
     } finally {
       setIsOpenModalNote(false);

@@ -39,7 +39,7 @@ const Summnary = () => {
                 <ReportCard
                   primary={statistic.total}
                   secondary="Tổng đăng ký"
-                  color={theme.palette.primary.main}
+                  color={theme.palette.info.main}
                   iconPrimary={MonetizationOnTwoTone}
                 />
               </Grid>
@@ -68,7 +68,7 @@ const Summnary = () => {
                 <ReportCard
                   primary={statistic.completed}
                   secondary="Đã hoàn thành"
-                  color={theme.palette.info.main}
+                  color={theme.palette.primary.main}
                   iconPrimary={CheckCircleOutlineIcon}
                   footerData=""
                 />

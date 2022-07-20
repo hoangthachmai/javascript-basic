@@ -80,12 +80,13 @@ export const BookingProvider = ({ children }) => {
       });
   };
 
-  const setNoteBooking = async (id, note) => {
+  const setNoteBooking = async (id, note, is_send) => {
     return axiosInstance
       .post(vibEndpoints.set_note_booking, {
         outputtype: 'RawJson',
         id: id,
         note: note,
+        is_send: is_send
       })
       .then((response) => {
         if (response.status === 200 && response.data.return === 200) return true;

@@ -3,9 +3,9 @@ import {
   Box,
   Button,
   Modal,
-  InputLabel,
+  Checkbox,
   MenuItem,
-  Select,
+  Grid,
   FormControl,
   TextField,
   Table,
@@ -15,6 +15,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  FormControlLabel,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import useBooking from './../../../hooks/useBooking';
@@ -46,9 +47,13 @@ const style = {
     width: '100%',
     marginBottom: '20px',
   },
+  noteContainer: {
+    display: 'flex',
+    alignItems: 'center'
+  },
   noteLabel: {
     fontWeight: 'bold',
-    marginTop: 15
+    // marginTop: 15,
   },
   input: {},
   buttonWrap: {
@@ -80,14 +85,6 @@ const style = {
     maxHeight: 250,
     marginBottom: 25,
   },
-  multpleSelectField: {
-    padding: '1px 12px',
-    width: '100%',
-    border: '1px solid rgba(0, 0, 0, 0.23)',
-    '&:before': {
-      border: 'none !important',
-    },
-  },
 };
 
 const notesData = ['Bắt đầu', 'Hoàn thành', 'Mentor tham gia muộn', 'Khách hàng tham gia muộn'];
@@ -114,6 +111,7 @@ export default function NoteModal({
   const { getLitsNote } = useBooking();
   const [note, setNote] = useState('');
   const [noteList, setNoteList] = useState([]);
+  const [isSend, setIsSend] = useState(false);
 
   const handleChange = (e) => {
     setNote(e.target.value);
@@ -121,7 +119,7 @@ export default function NoteModal({
 
   const handleSubmitForm = (event) => {
     event.preventDefault();
-    handleSubmit(note);
+    handleSubmit(note, isSend);
   };
 
   const handleCloseModal = () => {
@@ -177,7 +175,24 @@ export default function NoteModal({
                   </MenuItem>
                 ))}
               </TextField>
-              <div style={style.noteLabel}>Ghi chú:</div>
+              <Grid container>
+                <Grid item xs={6} style={style.noteContainer}>
+                  <div style={style.noteLabel}>Ghi chú:</div>
+                </Grid>
+                <Grid item xs={6}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox checked={isSend} onChange={(e) => setIsSend(e.target.checked)} />
+                    }
+                    label="Thông báo"
+                  />
+                  {/* <Checkbox
+                    checked={isSend}
+                    onChange={(e) => setIsSend(e.target.checked)}
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                  /> */}
+                </Grid>
+              </Grid>
               <TextField
                 fullWidth
                 multiline
