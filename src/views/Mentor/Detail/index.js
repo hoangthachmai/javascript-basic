@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useView from '../../../hooks/useView';
 import useBooking from '../../../hooks/useBooking';
 import useMentor from '../../../hooks/useMentor';
-import { FLOATING_MENU_CHANGE } from '../../../store/actions.js';
+import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE } from '../../../store/actions.js';
 import PermissionModal from '../../FloatingMenu/UploadFile/index.js';
 import useStyles from './classes.js';
 import { userAvatar, initMentorData, genderList } from '../../../store/constants/initial';
@@ -83,6 +83,7 @@ const MentorModal = () => {
     setMentorData(initMentorData);
     setDocumentToDefault();
     dispatch({ type: FLOATING_MENU_CHANGE, mentorDocument: false });
+    dispatch({ type: DOCUMENT_CHANGE, selectedDocument: null, documentType: 'mentor' });
   };
 
   const handleOpenSnackbar = (isOpen, type, text) => {
@@ -532,16 +533,18 @@ const MentorModal = () => {
                           <Grid spacing={1} container className={`${classes.gridItemInfo} ${classes.gridItemInfoButtonWrap}`} justify="center" alignItems="center">
                             <Button
                               className={classes.gridItemInfoButton}
-                              onClick={() => setScheduleModal({ isOpen: true, type: 'working' })} 
+                              onClick={() => setScheduleModal({ isOpen: true, type: 'working' })}
                             >
                               Lịch làm việc
                             </Button>
-                            <Button
-                              className={classes.gridItemInfoButton}
-                              onClick={() => setScheduleModal({ isOpen: true, type: 'vacation' })}
-                            >
-                              Lịch nghỉ phép
-                            </Button>
+                            {selectedDocument?.id && (
+                              <Button
+                                className={classes.gridItemInfoButton}
+                                onClick={() => setScheduleModal({ isOpen: true, type: 'vacation' })}
+                              >
+                                Lịch nghỉ phép
+                              </Button>
+                            )}
                           </Grid>
                         </div>
                       </div>
