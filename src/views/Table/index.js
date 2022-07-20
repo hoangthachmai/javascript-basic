@@ -36,7 +36,7 @@ export default function GeneralTable(props) {
 
   useEffect(() => {
     const initOptions = {
-      id: Object.values(bookingActions).includes(selectedFolder.action),
+      id: tableColumns.includes('booking_id'),
       fullname: tableColumns.includes('fullname'),
       university_name: tableColumns.includes('university'),
       email_address: tableColumns.includes('email'),
@@ -51,13 +51,14 @@ export default function GeneralTable(props) {
       rating: tableColumns.includes('rating'),
       total: tableColumns.includes('total'),
       reject: tableColumns.includes('reject'),
+      completed: tableColumns.includes('completed'),
       uncomplete: tableColumns.includes('uncomplete'),
       note: tableColumns.includes('note'),
       account_id: tableColumns.includes('account_id'),
       image_url: tableColumns.includes('image_url'),
       full_name: tableColumns.includes('full_name'),
       menuButtons: !!menuButtons.length || false,
-    } 
+    }
     setDisplayOptions(initOptions);
   }, [tableColumns, selectedFolder]);
 
@@ -85,6 +86,10 @@ export default function GeneralTable(props) {
   const buttonBookingApprove = menuButtons.find(
     (button) => button.name === view.booking.list.approve
   );
+
+  const buttonCreateMentor = menuButtons.find(
+    (button) => button.name === view.mentor.list.create
+  )
 
   const [isOpenModalNote, setIsOpenModalNote] = React.useState(false);
   const [isOpenModal, setIsOpenModal] = React.useState(false);
@@ -364,6 +369,11 @@ export default function GeneralTable(props) {
     return ""
   }
 
+  const handleClickCreateMentor = () => {
+    dispatch({ type: DOCUMENT_CHANGE, selectedDocument: {}, documentType });
+    dispatch({ type: FLOATING_MENU_CHANGE, mentorDocument: true });
+  }
+
   return (
     <React.Fragment>
       {isOpenModalNote && (
@@ -401,6 +411,8 @@ export default function GeneralTable(props) {
                 displayOptions={displayOptions}
                 data={stableSort(documents || [], getComparator(order, orderBy))}
                 getListUniversity={getListUniversity}
+                buttonCreateMentor={buttonCreateMentor}
+                handleClickCreateMentor={handleClickCreateMentor}
               />
               <TableContainer>
                 <Table
@@ -572,6 +584,9 @@ export default function GeneralTable(props) {
                             )}
                             {displayOptions.reject && (
                               <TableCell align="left">{row.reject}</TableCell>
+                            )}
+                            {displayOptions.completed && (
+                              <TableCell align="left">{row.completed}</TableCell>
                             )}
                             {displayOptions.uncomplete && (
                               <TableCell align="left">{row.uncomplete}</TableCell>

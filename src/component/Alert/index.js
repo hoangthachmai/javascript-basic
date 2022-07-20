@@ -2,9 +2,7 @@ import React from 'react';
 import MuiAlert from '@material-ui/lab/Alert';
 
 const Alert = (props) => {
-  const { ...rest } = props;
-
-  return <MuiAlert {...rest} />;
+  return <MuiAlert elevation={6} variant="filled" {...props} />; 
 };
 
 export default Alert;

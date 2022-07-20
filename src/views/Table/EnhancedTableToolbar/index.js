@@ -28,6 +28,8 @@ const EnhancedTableToolbar = (props) => {
     displayOptions,
     getListUniversity,
     data,
+    buttonCreateMentor,
+    handleClickCreateMentor
   } = props;
 
   const filterRef = useRef(null);
@@ -148,19 +150,8 @@ const EnhancedTableToolbar = (props) => {
               {numSelected} bản ghi được chọn
             </Typography>
           ) : (
-            isOpenSearch && (
-              <div className={classes.toolSearchWrap}>
-                <SearchIcon />
-                <input
-                  className={classes.toolSearchInput}
-                  value={filter.search_text}
-                  onChange={handleChangeSearch}
-                  onKeyUp={handleEnterSearch}
-                />
-                <Button className={classes.toolButtonSearch} onClick={handleCloseInput}>
-                  <ClearIcon className={classes.toolButtonIcon} />
-                </Button>
-              </div>
+            buttonCreateMentor && (
+              <Button onClick={handleClickCreateMentor} className={classes.btnCreateMentor}>{buttonCreateMentor.text}</Button>
             )
           )}
         </Grid>
