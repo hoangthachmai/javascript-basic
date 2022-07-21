@@ -246,6 +246,9 @@ const DetailDocumentDialog = () => {
   const handleCloseDialog = () => {
     setDocumentToDefault();
     dispatch({ type: FLOATING_MENU_CHANGE, detailDocument: false });
+    dispatch({ type: DOCUMENT_CHANGE, selectedDocument: null, documentType: 'mentor' });
+    setMentor({});
+    setFeedback({});
   };
 
   const handleSaveBooking = async () => {
