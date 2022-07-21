@@ -241,7 +241,7 @@ export const useStyles = makeStyles((theme) => ({
     background: '#FF6600 !important'
   },
   styleStatus7: {
-    background: '#C4007C !important'
+    background: '#ffc501 !important'
   },
   styleStatus8: {
     background: '#FE0000 !important'
@@ -254,7 +254,7 @@ export const useStyles = makeStyles((theme) => ({
   },
 
   styleStatus11: {
-    background: '#ffc501 !important'
+    background: '#C4007C !important'
   },
   styleStatus12: {
     background: '#0010A4 !important'

@@ -5,12 +5,19 @@ import BookingWrapper from './../../Booking/index';
 import AccountWrapper from '../../Account';
 import DepartmentWrapper from '../../Department';
 import { Grid } from '@material-ui/core';
-import { bookingActions, gridSpacing, accountActions, departmentActions, mentorActions } from './../../../store/constant';
+import {
+  bookingActions,
+  gridSpacing,
+  accountActions,
+  departmentActions,
+  mentorActions,
+} from './../../../store/constant';
 import MentorWrapper from '../../Mentor';
 import Summnary from './../Summary/index';
 
 const Default = () => {
   const { selectedFolder } = useSelector((state) => state.folder);
+  const { projects } = useSelector((state) => state.project);
 
   const availableBookingEndpoint = Object.values(bookingActions);
   const availableAccountEndpoint = Object.values(accountActions);
@@ -19,7 +26,9 @@ const Default = () => {
 
   return (
     <Grid container spacing={gridSpacing}>
-      {!getUrlByAction(selectedFolder) && <Summnary />}
+      {!getUrlByAction(selectedFolder) && projects[0]?.selected && (
+        <Summnary />
+      )}
       {getUrlByAction(selectedFolder) && (
         <Grid item xs={12}>
           {availableBookingEndpoint.includes(selectedFolder?.action) && <BookingWrapper />}

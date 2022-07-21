@@ -210,12 +210,19 @@ const DetailDocumentDialog = () => {
     getConsultantDetail(selectedDocument.mentor_id);
     if (tabDisplayOptions.feedback) {
       getFeedbackDetail(selectedDocument.id);
+    } else {
+      setFeedback({
+        times: '',
+        comment: '',
+        assess_mentor: 0,
+        assess_service: 0,
+      });
     }
   }, [selectedDocument]);
 
   const getFeedbackDetail = async (id) => {
     const data = await getFeedback(id);
-    if (data?.assess_mentor) setFeedback({ ...data });
+    if (data?.times) setFeedback({ ...data });
     else
       setFeedback({
         times: '',

@@ -26,6 +26,7 @@ import { style, useStyles } from './style';
 import { bookingStatusList } from './data';
 import { getComparator, stableSort, getTodayAndTomorrow } from '../../utils/table';
 import SearchIcon from '@material-ui/icons/Search';
+
 export default function GeneralTable(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -632,11 +633,11 @@ export default function GeneralTable(props) {
                             {displayOptions.mentor_name && (
                               
                               <TableCell>
-                                 {row.image_url && (
+                                 {/* {row.image_url && (
                                     <img src={row.image_url}
                                     style={style.tableUserAvatar}
                                   />
-                                  )}
+                                  )} */}
                                    <div >
                                    <span>   
                                     {row.mentor_name || ''}
@@ -680,14 +681,14 @@ export default function GeneralTable(props) {
                             {displayOptions.total && (
                               <TableCell align="left">{row.total}</TableCell>
                             )}
-                            {displayOptions.reject && (
-                              <TableCell align="left">{row.reject}</TableCell>
+                            {displayOptions.uncomplete && (
+                              <TableCell align="left">{row.uncomplete}</TableCell>
                             )}
                             {displayOptions.completed && (
                               <TableCell align="left">{row.completed}</TableCell>
                             )}
-                            {displayOptions.uncomplete && (
-                              <TableCell align="left">{row.uncomplete}</TableCell>
+                            {displayOptions.reject && (
+                              <TableCell align="left">{row.reject}</TableCell>
                             )}
                             {displayOptions.active && (
                               <TableCell align="left">

@@ -27,7 +27,6 @@ export const initMentorData = {
   short_address: "",
   experience: "",
   degree: "",
-  short_address: '',
   alumnus: '',
   gender: '',
   vacation_start: '',

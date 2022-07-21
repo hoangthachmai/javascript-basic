@@ -127,13 +127,11 @@ const MentorModal = () => {
 
   const handleSubmitForm = async () => {
     try {
-      const { time1, date1, time2, date2 } = mentorData;
-      const formData = { ...mentorData, workday1: `${time1} ${date1}`, workday2: `${time2} ${date2}` };
       if (selectedDocument?.id) {
-        await updateMentor(formData);
+        await updateMentor(mentorData);
         handleOpenSnackbar(true, 'success', 'Cập nhật Mentor thành công!')
       } else {
-        await createMentor(formData);
+        await createMentor(mentorData);
         handleOpenSnackbar(true, 'success', 'Tạo mới Mentor thành công!')
       }
       handleCloseDialog();
@@ -144,10 +142,8 @@ const MentorModal = () => {
 
   const handleSubmitWorkingDay = async (data) => {
     try {
-      const { time1, date1, time2, date2 } = data;
-      const formData = { ...data, workday1: `${time1} ${date1}`, workday2: `${time2} ${date2}` };
       if (selectedDocument?.id) {
-        await updateMentor(formData);
+        await updateMentor(data);
         handleOpenSnackbar(true, 'success', 'Cập nhật lịch làm việc thành công!')
       }
       setMentorData({ ...mentorData, ...data });

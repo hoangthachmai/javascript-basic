@@ -55,7 +55,7 @@ export default function ScheduleModal({ isOpen, handleClose, submit, type, mento
 
   const handleChangeWorkingDay = (event, id) => {
     const { target: { name, value, checked } } = event;
-    if (name == 'day' || name === 'hour') validateWorkingDay(name, value, id);
+    if (name === 'day' || name === 'hour') validateWorkingDay(name, value, id);
     const newWorkingDay = cloneDeep(workingDay);
     newWorkingDay[id][name] = value || checked;
     setWorkingDay(newWorkingDay)
