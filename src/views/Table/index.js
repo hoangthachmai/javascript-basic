@@ -92,15 +92,15 @@ export default function GeneralTable(props) {
   const buttonBookingApprove = menuButtons.find(
     (button) => button.name === view.booking.list.approve
   );
- 
-  const buttonAccountCreate= menuButtons.find(
+
+  const buttonAccountCreate = menuButtons.find(
     (button) => button.name === view.user.list.create
   );
 
-  const buttonDeptCreate= menuButtons.find(
+  const buttonDeptCreate = menuButtons.find(
     (button) => button.name === view.department.list.create
   );
-    
+
 
   const buttonCreateMentor = menuButtons.find(
     (button) => button.name === view.mentor.list.create
@@ -160,17 +160,17 @@ export default function GeneralTable(props) {
     getListUniversity,
   } = useBooking();
 
-  const { 
+  const {
     activeDepartment,
     getDepartmentDetail,
-    } = useDepartment();
+  } = useDepartment();
 
   const {
-    getAccountDetail, 
+    getAccountDetail,
     activeAccount,
   } = useAccount();
 
-  const { getMentorDetail } = useMentor();
+  const { getMentorDetail, toggleActiveMentor } = useMentor();
 
   useEffect(() => {
     if (selectedProject && selectedFolder && url) {
@@ -275,20 +275,20 @@ export default function GeneralTable(props) {
       dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType });
       dispatch({ type: FLOATING_MENU_CHANGE, mentorDocument: true });
     } else if (documentType === 'department') {
-    detailDocument = await getDepartmentDetail(selectedDocument.department_code);
-    dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType });
-    dispatch({ type: FLOATING_MENU_CHANGE, departmentDocument: true });
-  }
+      detailDocument = await getDepartmentDetail(selectedDocument.department_code);
+      dispatch({ type: DOCUMENT_CHANGE, selectedDocument: detailDocument, documentType });
+      dispatch({ type: FLOATING_MENU_CHANGE, departmentDocument: true });
+    }
 
   };
 
-  const openDialogCreate=()=>{
+  const openDialogCreate = () => {
     if (documentType === 'account') {
       dispatch({ type: FLOATING_MENU_CHANGE, accountDocument: true });
     } else if (documentType === 'department') {
       dispatch({ type: FLOATING_MENU_CHANGE, departmentDocument: true });
-  }
-};
+    }
+  };
   const reloadCurrentDocuments = () => {
     setSelected([]);
     fetchDocument({ page: 1 });
@@ -363,6 +363,7 @@ export default function GeneralTable(props) {
     });
     reloadCurrentDocuments();
   };
+
   const toggleSetDepartment = async (event, department_code, is_active) => {
     event.stopPropagation()
     await activeDepartment({
@@ -371,6 +372,17 @@ export default function GeneralTable(props) {
     });
     reloadCurrentDocuments();
   };
+
+  const handleToggleActiveMentor = async (event, id) => {
+    event.stopPropagation()
+    await toggleActiveMentor({
+      id,
+      is_active: event.target.checked
+    })
+    reloadCurrentDocuments();
+
+  }
+
   const handleNoteBooking = async (note, isSend) => {
     try {
       await setNoteBooking(selected[0], note, isSend);
@@ -437,8 +449,8 @@ export default function GeneralTable(props) {
             <div style={style.tableTitle}>{tableTitle}
             </div>
           </Grid>
-         
-         
+
+
         </Grid>
         <Grid item xs={12}>
           <Card className={classes.root}>
@@ -551,7 +563,7 @@ export default function GeneralTable(props) {
                                 </>
                               </TableCell>
                             )}
-                             {displayOptions.department_name && (
+                            {displayOptions.department_name && (
                               <TableCell align="left">
                                 <>
                                   <span
@@ -564,7 +576,7 @@ export default function GeneralTable(props) {
                                 </>
                               </TableCell>
                             )}
-                              {displayOptions.department_parent && (
+                            {displayOptions.department_parent && (
                               <TableCell align="left">
                                 <>
                                   <span
@@ -577,7 +589,7 @@ export default function GeneralTable(props) {
                                 </>
                               </TableCell>
                             )}
-                              {displayOptions.number_member && (
+                            {displayOptions.number_member && (
                               <TableCell align="left">
                                 <>
                                   <span
@@ -631,22 +643,22 @@ export default function GeneralTable(props) {
                               </TableCell>
                             )}
                             {displayOptions.mentor_name && (
-                              
+
                               <TableCell>
-                                 {/* {row.image_url && (
+                                {/* {row.image_url && (
                                     <img src={row.image_url}
                                     style={style.tableUserAvatar}
                                   />
                                   )} */}
-                                   <div >
-                                   <span>   
+                                <div >
+                                  <span>
                                     {row.mentor_name || ''}
-                                      </span> 
-                                  </div>
-                                  
-                                 
-                                </TableCell>
-                               
+                                  </span>
+                                </div>
+
+
+                              </TableCell>
+
                             )}
                             {displayOptions.link && (
                               <TableCell align="left">
@@ -693,17 +705,22 @@ export default function GeneralTable(props) {
                             {displayOptions.active && (
                               <TableCell align="left">
                                 <>
-                                
-                                {documentType=='account' ?(
-                                  <FormControlLabel
-                                  control={<Switch color="primary" checked={row.is_active} onClick={(event) => toggleSetActiveAccount(event, row.email_address, event.target.checked)} />}
-                                />
-                                ):(
-                                  <FormControlLabel
-                                  control={<Switch color="primary" checked={row.is_active} onClick={(event) => toggleSetDepartment(event, row.department_code, event.target.checked)} />}
-                                />
-                                )}
-                                  
+                                  {(() => {
+                                    switch (documentType) {
+                                      case 'account':
+                                        return <FormControlLabel
+                                          control={<Switch color="primary" checked={row.is_active} onClick={(event) => toggleSetActiveAccount(event, row.email_address, event.target.checked)} />}
+                                        />
+                                      case 'department':
+                                        return <FormControlLabel
+                                          control={<Switch color="primary" checked={row.is_active} onClick={(event) => toggleSetDepartment(event, row.department_code, event.target.checked)} />}
+                                        />
+                                      case 'mentor':
+                                        return <FormControlLabel
+                                          control={<Switch color="primary" checked={!!row.is_active} onClick={(event) => handleToggleActiveMentor(event, row.id)} />}
+                                        />
+                                    }
+                                  })()}
                                   &nbsp;&nbsp;
                                 </>
                               </TableCell>

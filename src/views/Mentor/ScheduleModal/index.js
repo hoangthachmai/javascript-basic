@@ -159,6 +159,7 @@ export default function ScheduleModal({ isOpen, handleClose, submit, type, mento
                     </Grid>
                     <Grid item lg={2} md={2} xs={12}>
                       <Switch
+                        color="primary"
                         name="is_active"
                         checked={!!workingDay[day].is_active}
                         onChange={(e) => handleChangeWorkingDay(e, day)}

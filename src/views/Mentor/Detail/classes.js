@@ -392,6 +392,11 @@ const useStyles = makeStyles((theme) => ({
     },
     '&.inputFieldDisabled': {
       background: '#DADADA'
+    },
+  },
+  multilineInputField: {
+    '& div': {
+      padding: '8px 12px',
     }
   },
   multpleSelectField: {

@@ -53,11 +53,13 @@ export const vibEndpoints = {
   get_department_type_list:'/Primary/?FlowAlias=hnn_api_booking_user_get_department_type_list&action=api',
   get_department_detail:'/Primary/?FlowAlias=hnn_api_booking_department_get_detail_department_by_name&action=api',
 
+  // mentor
   get_all_mentors: '/Primary/?FlowAlias=hnn_api_ment_get_all_mentors&action=api',
   get_inactive_mentors: '/Primary/?FlowAlias=hnn_api_ment_get_all_inactive_mentors&action=api',
   get_mentor_detail_by_id: '/Primary/?FlowAlias=hnn_api_ment_get_mentor_detail_by_id&action=api',
   create_mentor: '/Primary/?FlowAlias=hnn_api_ment_create_mentor&action=api',
   update_mentor: '/Primary/?FlowAlias=hnn_api_ment_update_mentor&action=api',
+  set_active_mentor: '/Primary/?FlowAlias=hnn_api_ment_set_active_mentor&action=api',
 
   get_statistic_data: '/Primary/?FlowAlias=hnn_api_booking_get_statistic_data&action=api',
   get_log_data: '/Primary/?FlowAlias=hnn_api_booking_get_log_data&action=api'
@@ -129,6 +131,11 @@ export const view = {
     list: {
       create: 'MENTOR_LIST_CREATE_MENU_BUTTON'
     },
+    form: {
+      working: 'MENTOR_DETAIL_WORKDAY_FORM_BUTTON',
+      leave: 'MENTOR_DETAIL_LEAVE_FORM_BUTTON',
+      save: 'MENTOR_DETAIL_SAVE_FORM_BUTTON'
+    }
   },
   department: {
     list: {

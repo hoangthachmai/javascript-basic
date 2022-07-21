@@ -1,8 +1,9 @@
 import {
-  Snackbar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Slide, Tab, Tabs, Typography, TextField, MenuItem, Select
+  Switch, Snackbar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Slide, Tab, Tabs, Typography, TextField, MenuItem, Select
 } from '@material-ui/core';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import TodayIcon from '@material-ui/icons/Today';
 import Alert from '../../../component/Alert'
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
@@ -11,9 +12,11 @@ import useView from '../../../hooks/useView';
 import useBooking from '../../../hooks/useBooking';
 import useMentor from '../../../hooks/useMentor';
 import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE } from '../../../store/actions.js';
+import { view } from '../../../store/constant';
+import { userAvatar, initMentorData, genderList } from '../../../store/constants/initial';
+import { dateOfWeek, timeWorking, workingType } from '../../../store/constants/time';
 import PermissionModal from '../../FloatingMenu/UploadFile/index.js';
 import useStyles from './classes.js';
-import { userAvatar, initMentorData, genderList } from '../../../store/constants/initial';
 import ScheduleModal from '../ScheduleModal';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -51,6 +54,14 @@ function a11yProps(index) {
 const MentorModal = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+
+  const { form_buttons: formButtons } = useView();
+
+  const workingDayButton = formButtons.find((button) => button.name === view.mentor.form.working);
+  const leaveButton = formButtons.find((button) => button.name === view.mentor.form.leave);
+  const saveButton = formButtons.find((button) => button.name === view.mentor.form.save);
+
+
   const [tabIndex, setTabIndex] = React.useState(0);
   const [openDialogUploadImage, setOpenDiaLogUploadImage] = React.useState(false);
   const handleChangeTab = (event, newValue) => {
@@ -249,12 +260,27 @@ const MentorModal = () => {
                         component="span"
                         variant="subtitle1"
                       >
-                        <DescriptionOutlinedIcon className={`${tabIndex === 1 ? classes.tabActiveIcon : ''}`} />
-                        Lịch sử thay đổi
+                        <TodayIcon className={`${tabIndex === 1 ? classes.tabActiveIcon : ''}`} />
+                        Lịch làm việc
                       </Typography>
                     }
                     value={1}
                     {...a11yProps(1)}
+                  />
+                  <Tab
+                    className={classes.unUpperCase}
+                    label={
+                      <Typography
+                        className={classes.tabLabels}
+                        component="span"
+                        variant="subtitle1"
+                      >
+                        <DescriptionOutlinedIcon className={`${tabIndex === 2 ? classes.tabActiveIcon : ''}`} />
+                        Lịch sử thay đổi
+                      </Typography>
+                    }
+                    value={2}
+                    {...a11yProps(2)}
                   />
 
                 </Tabs>
@@ -278,22 +304,76 @@ const MentorModal = () => {
                       <div className={classes.tabItem}>
                         <div className={classes.tabItemTitle}>
                           <div className={classes.tabItemLabel}>
-                            <span>Title</span>
+                            <AccountCircleOutlinedIcon />
+                            <span>Thông tin tư vấn</span>
                           </div>
                         </div>
                         <div className={classes.tabItemBody}>
-                          <Grid item lg={12} md={12} xs={12}>
-                            <TextField
-                              fullWidth
-                              multiline
-                              rows={2}
-                              rowsMax={2}
-                              variant="outlined"
-                              name="title"
-                              value={mentorData?.title}
-                              className={classes.inputField}
-                              onChange={handleChangeMentor}
-                            />
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4} >
+                              <span className={classes.tabItemLabelField}>Ngành tư vấn:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              <Select
+                                name="career"
+                                labelId="career-label"
+                                id="career-name"
+                                className={classes.multpleSelectField}
+                                value={mentorData.career}
+                                onChange={handleChangeMentor}
+                              >
+                                {careerDemandList?.career?.map((item) => (
+                                  <MenuItem
+                                    key={item}
+                                    value={item}
+                                  >
+                                    {item}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Năm kinh nghiệm:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              <TextField
+                                fullWidth
+                                rows={1}
+                                rowsMax={1}
+                                variant="outlined"
+                                name="experience"
+                                value={mentorData?.experience}
+                                className={classes.inputField}
+                                onChange={handleChangeMentor}
+                              />
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4}>
+                              <span className={classes.tabItemLabelField}>Lĩnh vực tư vấn:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              <Select
+                                name="advise"
+                                labelId="advise-label-1"
+                                id="advise-name-1"
+                                multiple
+                                className={classes.multpleSelectField}
+                                value={mentorData.advise}
+                                onChange={handleChangeMentor}
+                              >
+                                {careerDemandList.demand?.map((item) => (
+                                  <MenuItem
+                                    key={item}
+                                    value={item}
+                                  >
+                                    {item}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </Grid>
                           </Grid>
                         </div>
                       </div>
@@ -320,6 +400,24 @@ const MentorModal = () => {
                                 name="fullname"
                                 value={mentorData.fullname}
                                 className={classes.inputField}
+                                onChange={handleChangeMentor}
+                              />
+                            </Grid>
+                          </Grid>
+                          <Grid container className={classes.gridItemInfo} alignItems="center">
+                            <Grid item lg={4} md={4} xs={4} >
+                              <span className={classes.tabItemLabelField}>Title:</span>
+                            </Grid>
+                            <Grid item lg={8} md={8} xs={8}>
+                              <TextField
+                                fullWidth
+                                multiline
+                                rows={1}
+                                rowsMax={2}
+                                variant="outlined"
+                                name="title"
+                                value={mentorData?.title}
+                                className={classes.multilineInputField}
                                 onChange={handleChangeMentor}
                               />
                             </Grid>
@@ -452,95 +550,135 @@ const MentorModal = () => {
                           </Grid>
                         </div>
                       </div>
+
+                    </Grid>
+                  </Grid>
+                </TabPanel>
+                <TabPanel value={tabIndex} index={1}>
+                  <Grid container spacing={1}>
+                    <Grid item lg={6} md={6} xs={12}>
                       <div className={classes.tabItem}>
                         <div className={classes.tabItemTitle}>
                           <div className={classes.tabItemLabel}>
-                            <AccountCircleOutlinedIcon />
-                            <span>Thông tin tư vấn</span>
+                            <TodayIcon />
+                            <span>Lịch làm việc</span>
                           </div>
                         </div>
                         <div className={classes.tabItemBody}>
-                          <Grid container className={classes.gridItemInfo} alignItems="center">
-                            <Grid item lg={4} md={4} xs={4} >
-                              <span className={classes.tabItemLabelField}>Ngành tư vấn:</span>
+                          {mentorData?.workday?.map(workingDay => (
+                            <Grid spacing={1} container className={classes.gridItemInfo} alignItems="center">
+                              <Grid item lg={3} md={3} xs={12}>
+                                <Select
+                                  disabled={true}
+                                  name="day"
+                                  labelId="date-label"
+                                  className={classes.multpleSelectField}
+                                  defaultValue={workingDay.day}
+                                >
+                                  {dateOfWeek?.map((item) => (
+                                    <MenuItem
+                                      key={item.value}
+                                      value={item.value}
+                                    >
+                                      {item.label}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                              </Grid>
+                              <Grid item lg={3} md={3} xs={12}>
+                                <Select
+                                  disabled={true}
+                                  name="hour"
+                                  labelId="time1-label"
+                                  className={classes.multpleSelectField}
+                                  defaultValue={workingDay.hour}
+                                >
+                                  {timeWorking?.map((item) => (
+                                    <MenuItem
+                                      key={item.value}
+                                      value={item.value}
+                                    >
+                                      {item.label}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                              </Grid>
+                              <Grid item lg={4} md={4} xs={12}>
+                                <Select
+                                  disabled={true}
+                                  name="type"
+                                  labelId="time1-label"
+                                  className={classes.multpleSelectField}
+                                  defaultValue={workingDay.type}
+                                >
+                                  {workingType?.map((item) => (
+                                    <MenuItem
+                                      key={item.value}
+                                      value={item.value}
+                                    >
+                                      {item.label}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                              </Grid>
+                              <Grid item lg={2} md={2} xs={12}>
+                                <Switch
+                                  color="primary"
+                                  disabled={true}
+                                  name="is_active"
+                                  checked={!!workingDay.is_active}
+                                  inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                              </Grid>
                             </Grid>
-                            <Grid item lg={8} md={8} xs={8}>
-                              <Select
-                                name="career"
-                                labelId="career-label"
-                                id="career-name"
-                                className={classes.multpleSelectField}
-                                value={mentorData.career}
-                                onChange={handleChangeMentor}
-                              >
-                                {careerDemandList?.career?.map((item) => (
-                                  <MenuItem
-                                    key={item}
-                                    value={item}
-                                  >
-                                    {item}
-                                  </MenuItem>
-                                ))}
-                              </Select>
-                            </Grid>
-                          </Grid>
-                          <Grid container className={classes.gridItemInfo} alignItems="center">
+                          ))}
+                        </div>
+                      </div>
+                    </Grid>
+                    <Grid item lg={6} md={6} xs={12}>
+                      <div className={classes.tabItem}>
+                        <div className={classes.tabItemTitle}>
+                          <div className={classes.tabItemLabel}>
+                            <TodayIcon />
+                            <span>Lịch nghỉ phép</span>
+                          </div>
+                        </div>
+                        <div className={classes.tabItemBody}>
+                          <Grid spacing={1} container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
-                              <span className={classes.tabItemLabelField}>Năm kinh nghiệm:</span>
+                              <span className={classes.tabItemLabelField}>Ngày bắt đầu:</span>
                             </Grid>
                             <Grid item lg={8} md={8} xs={8}>
                               <TextField
-                                fullWidth
-                                rows={1}
-                                rowsMax={1}
-                                variant="outlined"
-                                name="experience"
-                                value={mentorData?.experience}
+                                disabled={true}
+                                id="datetime-local"
+                                type="datetime-local"
+                                name="vacation_start"
+                                value={mentorData?.vacation_start}
                                 className={classes.inputField}
-                                onChange={handleChangeMentor}
+                                InputLabelProps={{
+                                  shrink: true,
+                                }}
                               />
                             </Grid>
                           </Grid>
-                          <Grid container className={classes.gridItemInfo} alignItems="center">
+                          <Grid spacing={1} container className={classes.gridItemInfo} alignItems="center">
                             <Grid item lg={4} md={4} xs={4}>
-                              <span className={classes.tabItemLabelField}>Lĩnh vực tư vấn:</span>
+                              <span className={classes.tabItemLabelField}>Ngày kết thúc:</span>
                             </Grid>
                             <Grid item lg={8} md={8} xs={8}>
-                              <Select
-                                name="advise"
-                                labelId="advise-label-1"
-                                id="advise-name-1"
-                                multiple
-                                className={classes.multpleSelectField}
-                                value={mentorData.advise}
-                                onChange={handleChangeMentor}
-                              >
-                                {careerDemandList.demand?.map((item) => (
-                                  <MenuItem
-                                    key={item}
-                                    value={item}
-                                  >
-                                    {item}
-                                  </MenuItem>
-                                ))}
-                              </Select>
+                              <TextField
+                                disabled={true}
+                                id="datetime-local"
+                                type="datetime-local"
+                                name="vacation_end"
+                                value={mentorData?.vacation_end}
+                                className={classes.inputField}
+                                InputLabelProps={{
+                                  shrink: true,
+                                }}
+                              />
                             </Grid>
-                          </Grid>
-                          <Grid spacing={1} container className={`${classes.gridItemInfo} ${classes.gridItemInfoButtonWrap}`} justify="center" alignItems="center">
-                            <Button
-                              className={classes.gridItemInfoButton}
-                              onClick={() => setScheduleModal({ isOpen: true, type: 'working' })}
-                            >
-                              Lịch làm việc
-                            </Button>
-                            {selectedDocument?.id && (
-                              <Button
-                                className={classes.gridItemInfoButton}
-                                onClick={() => setScheduleModal({ isOpen: true, type: 'vacation' })}
-                              >
-                                Lịch nghỉ phép
-                              </Button>
-                            )}
                           </Grid>
                         </div>
                       </div>
@@ -561,14 +699,32 @@ const MentorModal = () => {
                   Đóng
                 </Button>
               </Grid>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  style={{ background: 'rgb(97, 42, 255)' }}
-                  onClick={handleSubmitForm}
-                >
-                  Lưu
-                </Button>
+              <Grid item className={classes.gridItemInfoButtonWrap}>
+                {workingDayButton && (
+                  <Button
+                    className={classes.gridItemInfoButton}
+                    onClick={() => setScheduleModal({ isOpen: true, type: 'working' })}
+                  >
+                    {workingDayButton.text}
+                  </Button>
+                )}
+                {(leaveButton && selectedDocument?.id) && (
+                  <Button
+                    className={classes.gridItemInfoButton}
+                    onClick={() => setScheduleModal({ isOpen: true, type: 'vacation' })}
+                  >
+                    {leaveButton.text}
+                  </Button>
+                )}
+                {saveButton && (
+                  <Button
+                    variant="contained"
+                    style={{ background: 'rgb(97, 42, 255)' }}
+                    onClick={handleSubmitForm}
+                  >
+                    {saveButton.text}
+                  </Button>
+                )}
               </Grid>
             </Grid>
           </DialogActions>
