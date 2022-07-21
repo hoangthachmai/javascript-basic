@@ -16,7 +16,7 @@ import {
   MenuItem,
   TextField,
   InputLabel,
-
+  Snackbar,
 } from '@material-ui/core';
 
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
@@ -28,6 +28,7 @@ import useView from '../../../hooks/useView';
 import useStyles from './classes.js';
 import { FLOATING_MENU_CHANGE, DOCUMENT_CHANGE } from '../../../store/actions';
 import useDepartment from '../../../hooks/useDepartment';
+import Alert from '../../../component/Alert'
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
@@ -84,6 +85,11 @@ const DepartmentModal = () => {
     is_active: true,
     parent_department_code: "",
   });
+  const [snackbarStatus, setSnackbarStatus] = useState({
+    isOpen: false,
+    type: '',
+    text: '',
+  })
   const [categories, setCategory] = React.useState();
   const [departmentTypes, setDepartmentType] = React.useState();
   useEffect(() => {
@@ -139,11 +145,13 @@ const DepartmentModal = () => {
           ...department,
           outputtype: 'RawJson',
         });
+        handleOpenSnackbar(true,'success','Tạo mới thành công!');
       } else {
         await updateDepartment({
           ...department,
           outputtype: 'RawJson',
         });
+        handleOpenSnackbar(true,'success','Cập nhật thành công!');
       }
         
       handleCloseDialog();
@@ -168,7 +176,13 @@ const DepartmentModal = () => {
     setTabIndex(0);
 
   };
-
+  const handleOpenSnackbar = (isOpen, type, text) => {
+    setSnackbarStatus({
+      isOpen: isOpen,
+      type: type,
+      text: text
+    })
+  }
   const handleOpenDiaLog = () => {
     setOpenDiaLogUploadImage(true);
   }
@@ -179,7 +193,17 @@ const DepartmentModal = () => {
 
     <React.Fragment>
      
-
+     {snackbarStatus.isOpen && (
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={snackbarStatus.isOpen}
+          autoHideDuration={3000}
+          onClose={() => setSnackbarStatus({ ...snackbarStatus, isOpen: false })}>
+          <Alert onClose={() => setSnackbarStatus({ ...snackbarStatus, isOpen: false })} severity={snackbarStatus.type} sx={{ width: '100%' }}>
+            {snackbarStatus.text}
+          </Alert>
+        </Snackbar>
+      )}
       <Grid container>
         <Dialog
           open={openDialog || false}

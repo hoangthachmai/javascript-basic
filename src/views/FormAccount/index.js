@@ -14,11 +14,12 @@ import {
   Select,
   FormControl,
   MenuItem,
-  TextField
+  TextField,
+  Snackbar,
 } from '@material-ui/core';
 
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
-
+import Alert from '../../component/Alert/index.js';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { gridSpacing, view } from '../../store/constant.js';
@@ -88,6 +89,7 @@ const AccountModal = () => {
     email_address: '',
     is_active: true,
     employee_id: '',
+    account_id: '',
   });
 
   useEffect(() => {
@@ -120,15 +122,48 @@ const AccountModal = () => {
     dispatch({ type: DOCUMENT_CHANGE, selectedDocument: null, documentType: 'account' });
     dispatch({ type: FLOATING_MENU_CHANGE, accountDocument: false });
   };
-
+  const [snackbarStatus, setSnackbarStatus] = useState({
+    isOpen: false,
+    type: '',
+    text: '',
+  })
+  const handleOpenSnackbar = (isOpen, type, text) => {
+    setSnackbarStatus({
+      isOpen: isOpen,
+      type: type,
+      text: text
+    })
+  }
   const handleUpdateAccount = async () => {
     try {
-
-      await updateAccount({
-        ...account,
-        outputtype: 'RawJson',
-        company_code: 'HNN'
-      });
+      if (account.account_id ===''){
+        let check=await createAccount({
+          ...account,
+          outputtype: 'RawJson',
+          company_code: 'HNN'
+        });
+        if (check==true){
+          handleOpenSnackbar(true,'success','Tạo mới thành công!');
+        }
+        else {
+          handleOpenSnackbar(true,'success','Tài khoản đã tồn tại!');
+        }
+      }
+      else{
+        let check=await updateAccount({
+          ...account,
+          outputtype: 'RawJson',
+          company_code: 'HNN'
+        });
+        if (check==true){
+          handleOpenSnackbar(true,'success','Cập nhập thành công!');
+        }
+        else {
+          handleOpenSnackbar(true,'success','Tài khoản đã tồn tại!');
+        }
+        
+      }
+      
       handleCloseDialog();
       
     } catch (error) {
@@ -172,7 +207,17 @@ const AccountModal = () => {
         onSuccess={setURL}
         onClose={handleCloseDiaLog}
       />
-
+      {snackbarStatus.isOpen && (
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={snackbarStatus.isOpen}
+          autoHideDuration={3000}
+          onClose={() => setSnackbarStatus({ ...snackbarStatus, isOpen: false })}>
+          <Alert onClose={() => setSnackbarStatus({ ...snackbarStatus, isOpen: false })} severity={snackbarStatus.type} sx={{ width: '100%' }}>
+            {snackbarStatus.text}
+          </Alert>
+        </Snackbar>
+      )}
       <Grid container>
         <Dialog
           open={openDialog || false}
